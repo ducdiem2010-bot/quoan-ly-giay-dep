@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm sản phẩm - Admin</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>SHOES ADMIN</h2>
+
+        <nav>
+            <a href="admin.html">Dashboard</a>
+            <a href="admin_product.html" class="active">Sản phẩm</a>
+            <a href="#">Đơn hàng</a>
+            <a href="#">Khách hàng</a>
+            <a href="#">Danh mục</a>
+            <a href="#">Khuyến mãi</a>
+            <a href="#">Cài đặt</a>
+        </nav>
+
+        <div class="logout">
+            <a href="login.html">Đăng xuất</a>
+        </div>
+    </aside>
+
+
+    <!-- Nội dung -->
+    <main class="content">
+
+        <!-- Header -->
+        <header class="header">
+            <h1>Thêm sản phẩm</h1>
+            <div class="admin-info">Admin</div>
+        </header>
+
+
+        <!-- Form thêm sản phẩm -->
+        <section class="main-content">
+
+            <div class="form-box">
+
+                <h2>Thông tin sản phẩm</h2>
+
+                <form>
+
+                    <label for="product-name">Tên sản phẩm</label>
+                    <input type="text" id="product-name"
+                           placeholder="Nhập tên giày">
+
+                    <label for="category">Danh mục</label>
+                    <select id="category">
+                        <option value="">-- Chọn danh mục --</option>
+                        <option>Nike</option>
+                        <option>Adidas</option>
+                        <option>Asics</option>
+                        <option>Lacoste</option>
+                        <option>Puma</option>
+                    </select>
+
+                    <label for="price">Giá sản phẩm</label>
+                    <input type="number" id="price"
+                           placeholder="Nhập giá">
+
+                    <label for="quantity">Số lượng</label>
+                    <input type="number" id="quantity"
+                           placeholder="Nhập số lượng">
+
+                    <label for="size">Kích thước</label>
+                    <input type="text" id="size"
+                           placeholder="Ví dụ: 39, 40, 41, 42">
+
+                    <label for="color">Màu sắc</label>
+                    <input type="text" id="color"
+                           placeholder="Nhập màu giày">
+
+                    <label for="image">Hình ảnh</label>
+                    <input type="file" id="image">
+
+                    <label for="description">Mô tả</label>
+                    <textarea id="description"
+                              placeholder="Nhập mô tả sản phẩm"></textarea>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-save">
+                            Thêm sản phẩm
+                        </button>
+
+                        <a href="admin.html" class="btn-cancel">
+                            Hủy
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

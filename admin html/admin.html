@@ -1,0 +1,960 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shoes Store</title>
+
+    <style>
+
+        /* =========================
+           RESET
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* =========================
+           LOGIN / REGISTER
+        ========================= */
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #f5f5f5;
+        }
+
+        .login-box {
+            width: 400px;
+            padding: 30px;
+
+            background: white;
+
+            border-radius: 10px;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #666;
+        }
+
+        .login-box label {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+
+            background: #222;
+            color: white;
+
+            border: none;
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            background: #444;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link a {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           ADMIN
+        ========================= */
+
+        #adminPage {
+            display: none;
+        }
+
+        .admin-body {
+            display: flex;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+
+            background: #222;
+            color: white;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar nav a {
+            display: block;
+
+            color: white;
+            text-decoration: none;
+
+            padding: 14px;
+
+            margin-bottom: 5px;
+
+            border-radius: 5px;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: #444;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            width: calc(100% - 40px);
+        }
+
+        .logout a {
+            display: block;
+
+            padding: 12px;
+
+            color: white;
+            text-decoration: none;
+
+            background: #c0392b;
+
+            text-align: center;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+
+        /* CONTENT */
+
+        .content {
+            margin-left: 240px;
+
+            width: calc(100% - 240px);
+
+            padding: 30px;
+        }
+
+
+        /* HEADER */
+
+        .header {
+            background: white;
+
+            padding: 20px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            border-radius: 8px;
+
+            margin-bottom: 25px;
+        }
+
+        .admin-info {
+            font-weight: bold;
+        }
+
+
+        /* MAIN */
+
+        .main-content {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 8px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #666;
+        }
+
+
+        /* CARDS */
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #f8f8f8;
+
+            padding: 25px;
+
+            border-radius: 8px;
+
+            border: 1px solid #ddd;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           PRODUCT TABLE
+        ========================= */
+
+        .product-section {
+            margin-top: 30px;
+        }
+
+        .product-section h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+
+            border-bottom: 1px solid #ddd;
+
+            text-align: left;
+        }
+
+        table th {
+            background: #f1f1f1;
+        }
+
+        .edit-btn {
+            padding: 6px 10px;
+
+            background: #ffc107;
+
+            border: none;
+            border-radius: 4px;
+
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            padding: 6px 10px;
+
+            background: #dc3545;
+
+            color: white;
+
+            border: none;
+            border-radius: 4px;
+
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     LOGIN
+================================================== -->
+
+<div id="loginPage">
+
+    <div class="container">
+
+        <div class="login-box">
+
+            <h2>Đăng nhập</h2>
+
+            <p>
+                Chào mừng bạn quay trở lại!
+            </p>
+
+
+            <form onsubmit="login(event)">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Nhập email"
+                    required
+                >
+
+
+                <label>Mật khẩu</label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Nhập mật khẩu"
+                    required
+                >
+
+
+                <button type="submit">
+                    Đăng nhập
+                </button>
+
+            </form>
+
+
+            <div class="link">
+
+                Chưa có tài khoản?
+
+                <a onclick="showRegister()">
+                    Đăng ký
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     REGISTER
+================================================== -->
+
+<div id="registerPage" style="display: none;">
+
+    <div class="container">
+
+        <div class="login-box">
+
+            <h2>Đăng ký tài khoản</h2>
+
+            <p>
+                Tạo tài khoản để mua giày dễ dàng hơn
+            </p>
+
+
+            <form onsubmit="register(event)">
+
+                <label>Họ và tên</label>
+
+                <input
+                    type="text"
+                    placeholder="Nhập họ và tên"
+                    required
+                >
+
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    placeholder="Nhập email"
+                    required
+                >
+
+
+                <label>Số điện thoại</label>
+
+                <input
+                    type="tel"
+                    placeholder="Nhập số điện thoại"
+                    required
+                >
+
+
+                <label>Mật khẩu</label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Nhập mật khẩu"
+                    required
+                >
+
+
+                <label>Xác nhận mật khẩu</label>
+
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Nhập lại mật khẩu"
+                    required
+                >
+
+
+                <button type="submit">
+                    Đăng ký
+                </button>
+
+            </form>
+
+
+            <div class="link">
+
+                Đã có tài khoản?
+
+                <a onclick="showLogin()">
+                    Đăng nhập
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     ADMIN DASHBOARD
+================================================== -->
+
+<div id="adminPage">
+
+    <div class="admin-body">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <h2>
+                SHOES ADMIN
+            </h2>
+
+
+            <nav>
+
+                <a href="#" class="active">
+                    Dashboard
+                </a>
+
+                <a href="#">
+                    Sản phẩm
+                </a>
+
+                <a href="#">
+                    Đơn hàng
+                </a>
+
+                <a href="#">
+                    Khách hàng
+                </a>
+
+                <a href="#">
+                    Danh mục
+                </a>
+
+                <a href="#">
+                    Khuyến mãi
+                </a>
+
+                <a href="#">
+                    Cài đặt
+                </a>
+
+            </nav>
+
+
+            <div class="logout">
+
+                <a onclick="logout()">
+                    Đăng xuất
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTENT -->
+
+        <main class="content">
+
+
+            <!-- HEADER -->
+
+            <header class="header">
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <div class="admin-info">
+                    Admin
+                </div>
+
+            </header>
+
+
+            <!-- MAIN CONTENT -->
+
+            <section class="main-content">
+
+
+                <div class="welcome">
+
+                    <h2>
+                        Quản lý cửa hàng giày dép
+                    </h2>
+
+                    <p>
+                        Chào mừng bạn đến với trang quản trị.
+                    </p>
+
+                </div>
+
+
+                <!-- THỐNG KÊ -->
+
+                <div class="cards">
+
+
+                    <div class="card">
+
+                        <h3>
+                            Sản phẩm
+                        </h3>
+
+                        <p>
+                            120
+                        </p>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <h3>
+                            Đơn hàng
+                        </h3>
+
+                        <p>
+                            35
+                        </p>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <h3>
+                            Khách hàng
+                        </h3>
+
+                        <p>
+                            250
+                        </p>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <h3>
+                            Doanh thu
+                        </h3>
+
+                        <p>
+                            25.000.000đ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BẢNG SẢN PHẨM -->
+
+                <div class="product-section">
+
+                    <h2>
+                        Danh sách sản phẩm
+                    </h2>
+
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Mã SP
+                                </th>
+
+                                <th>
+                                    Tên sản phẩm
+                                </th>
+
+                                <th>
+                                    Thương hiệu
+                                </th>
+
+                                <th>
+                                    Giá
+                                </th>
+
+                                <th>
+                                    Số lượng
+                                </th>
+
+                                <th>
+                                    Thao tác
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            <tr>
+
+                                <td>
+                                    SP001
+                                </td>
+
+                                <td>
+                                    Nike Air Force 1
+                                </td>
+
+                                <td>
+                                    Nike
+                                </td>
+
+                                <td>
+                                    2.500.000đ
+                                </td>
+
+                                <td>
+                                    20
+                                </td>
+
+                                <td>
+
+                                    <button class="edit-btn">
+                                        Sửa
+                                    </button>
+
+                                    <button class="delete-btn">
+                                        Xóa
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    SP002
+                                </td>
+
+                                <td>
+                                    Adidas Superstar
+                                </td>
+
+                                <td>
+                                    Adidas
+                                </td>
+
+                                <td>
+                                    2.000.000đ
+                                </td>
+
+                                <td>
+                                    15
+                                </td>
+
+                                <td>
+
+                                    <button class="edit-btn">
+                                        Sửa
+                                    </button>
+
+                                    <button class="delete-btn">
+                                        Xóa
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    SP003
+                                </td>
+
+                                <td>
+                                    Asics Gel-Kayano
+                                </td>
+
+                                <td>
+                                    Asics
+                                </td>
+
+                                <td>
+                                    3.200.000đ
+                                </td>
+
+                                <td>
+                                    10
+                                </td>
+
+                                <td>
+
+                                    <button class="edit-btn">
+                                        Sửa
+                                    </button>
+
+                                    <button class="delete-btn">
+                                        Xóa
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
+
+<script>
+
+
+    /* =========================
+       HIỆN ĐĂNG KÝ
+    ========================= */
+
+    function showRegister() {
+
+        document.getElementById("loginPage").style.display = "none";
+
+        document.getElementById("registerPage").style.display = "block";
+
+    }
+
+
+    /* =========================
+       HIỆN ĐĂNG NHẬP
+    ========================= */
+
+    function showLogin() {
+
+        document.getElementById("registerPage").style.display = "none";
+
+        document.getElementById("loginPage").style.display = "block";
+
+    }
+
+
+    /* =========================
+       ĐĂNG KÝ
+    ========================= */
+
+    function register(event) {
+
+        event.preventDefault();
+
+
+        const password =
+            document.getElementById("registerPassword").value;
+
+
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+
+        if (password !== confirmPassword) {
+
+            alert(
+                "Mật khẩu xác nhận không trùng khớp!"
+            );
+
+            return;
+        }
+
+
+        alert(
+            "Đăng ký tài khoản thành công!"
+        );
+
+
+        showLogin();
+
+    }
+
+
+    /* =========================
+       ĐĂNG NHẬP
+    ========================= */
+
+    function login(event) {
+
+        event.preventDefault();
+
+
+        const email =
+            document.getElementById("loginEmail").value;
+
+
+        const password =
+            document.getElementById("loginPassword").value;
+
+
+        /*
+           TÀI KHOẢN DEMO
+
+           Email:
+           admin@gmail.com
+
+           Mật khẩu:
+           123456
+        */
+
+        if (
+            email === "admin@gmail.com" &&
+            password === "123456"
+        ) {
+
+            document.getElementById("loginPage").style.display = "none";
+
+            document.getElementById("adminPage").style.display = "block";
+
+        }
+
+        else {
+
+            alert(
+                "Email hoặc mật khẩu không đúng!"
+            );
+
+        }
+
+    }
+
+
+    /* =========================
+       ĐĂNG XUẤT
+    ========================= */
+
+    function logout() {
+
+        document.getElementById("adminPage").style.display = "none";
+
+        document.getElementById("loginPage").style.display = "block";
+
+    }
+
+
+</script>
+
+
+</body>
+</html>
+```
