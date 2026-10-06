@@ -1,0 +1,35 @@
+/* style_chi_tiet_san_pham.css - chỉ chứa phần riêng của trang chi tiết sản phẩm */
+
+/* ===== Trang chi tiết sản phẩm ===== */
+
+/* Ảnh nhỏ: giữ tỉ lệ vuông-ngang đều nhau */
+.thumb-box {
+  aspect-ratio: 4 / 3;
+}
+
+/* Ô chọn màu dạng tròn (Bootstrap không có sẵn) */
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #6c757d;
+  cursor: pointer;
+}
+.btn-check:checked + .color-swatch {
+  outline: 3px solid #212529;
+  outline-offset: 2px;
+}
+.swatch-1 { background-color: #cfd1cc; }
+.swatch-2 { background-color: #212529; }
+.swatch-3 { background-color: #ffffff; }
+.swatch-4 { background-color: #0d6efd; }
+
+/* Nút size: độ rộng tối thiểu cho đều nhau */
+.size-btn {
+  min-width: 60px;
+}
+
+/* Khung số lượng: không để kéo giãn hết cột */
+.qty-group {
+  max-width: 160px;
+}

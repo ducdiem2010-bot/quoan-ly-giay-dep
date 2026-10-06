@@ -1,0 +1,43 @@
+/* style.css
+   Chỉ chứa những chi tiết Bootstrap 5 KHÔNG có sẵn class mặc định.
+   Không dùng để dựng lại lưới/layout — phần đó để Bootstrap (container, row, col) lo.
+*/
+
+/* Thanh tìm kiếm: giới hạn chiều rộng tối đa, thay cho style inline */
+.search-form {
+  max-width: 480px;
+}
+
+/* Khung Logo: theo bản vẽ có viền chữ nhật quanh chữ LOGO */
+.logo-box {
+  border: 1px solid #212529;
+  border-radius: 4px;
+  padding: 6px 16px;
+}
+
+/* Thanh menu: cho phép cuộn ngang thay vì vỡ layout khi màn hình < 1024px,
+   theo đúng yêu cầu "không dùng overflow: hidden" và không ẩn mất mục nào */
+nav .nav {
+  -webkit-overflow-scrolling: touch;
+}
+nav .nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+/* Badge số lượng giỏ hàng: Bootstrap badge mặc định không có size nhỏ gọn kiểu "chấm tròn góc" */
+header .badge {
+  font-size: 0.65rem;
+  padding: 0.25em 0.45em;
+}
+
+/* Footer luôn nằm cuối trang kể cả khi nội dung ngắn */
+html, body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+main {
+  flex: 1 0 auto;
+}
