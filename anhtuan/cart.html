@@ -1,0 +1,209 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - Shoes Store</title>
+    <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+<header class="header">
+    <h2>SHOES STORE</h2>
+
+    <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="cart.html">Giỏ hàng</a>
+        <a href="login.html">Đăng nhập</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <h1>Giỏ hàng</h1>
+
+    <div class="cart-layout">
+
+        <!-- DANH SÁCH SẢN PHẨM -->
+        <section class="cart-items">
+
+            <!-- Sản phẩm 1 -->
+            <div class="cart-item" data-price="2500000">
+
+                <div class="product-image">
+                    Ảnh giày
+                </div>
+
+                <div class="product-info">
+                    <h3>Nike Air Force 1</h3>
+                    <p>Size: 42</p>
+
+                    <p class="price">
+                        <span class="item-price">2.500.000</span> VNĐ
+                    </p>
+
+                    <div class="quantity">
+                        <button onclick="changeQuantity(this, -1)">-</button>
+
+                        <input type="number"
+                               value="1"
+                               min="1"
+                               onchange="updateCart()">
+
+                        <button onclick="changeQuantity(this, 1)">+</button>
+                    </div>
+                </div>
+
+                <button class="remove" onclick="removeItem(this)">
+                    Xóa
+                </button>
+
+            </div>
+
+
+            <!-- Sản phẩm 2 -->
+            <div class="cart-item" data-price="2000000">
+
+                <div class="product-image">
+                    Ảnh giày
+                </div>
+
+                <div class="product-info">
+                    <h3>Adidas Superstar</h3>
+                    <p>Size: 41</p>
+
+                    <p class="price">
+                        <span class="item-price">2.000.000</span> VNĐ
+                    </p>
+
+                    <div class="quantity">
+                        <button onclick="changeQuantity(this, -1)">-</button>
+
+                        <input type="number"
+                               value="1"
+                               min="1"
+                               onchange="updateCart()">
+
+                        <button onclick="changeQuantity(this, 1)">+</button>
+                    </div>
+                </div>
+
+                <button class="remove" onclick="removeItem(this)">
+                    Xóa
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- TỔNG TIỀN -->
+        <aside class="cart-summary">
+
+            <h2>Tổng đơn hàng</h2>
+
+            <div class="summary-row">
+                <span>Tạm tính</span>
+                <span id="subtotal">4.500.000 VNĐ</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Phí vận chuyển</span>
+                <span>30.000 VNĐ</span>
+            </div>
+
+            <hr>
+
+            <div class="summary-row total">
+                <span>Tổng cộng</span>
+                <span id="total">4.530.000 VNĐ</span>
+            </div>
+
+            <a href="checkout.html" class="checkout-btn">
+                Tiến hành thanh toán
+            </a>
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+<script>
+
+/* Tăng / giảm số lượng */
+function changeQuantity(button, amount) {
+
+    let input = button.parentElement.querySelector("input");
+
+    let quantity = parseInt(input.value);
+
+    quantity = quantity + amount;
+
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    input.value = quantity;
+
+    updateCart();
+}
+
+
+/* Tính lại tiền */
+function updateCart() {
+
+    let items = document.querySelectorAll(".cart-item");
+
+    let subtotal = 0;
+
+    items.forEach(function(item) {
+
+        let price = parseInt(item.dataset.price);
+
+        let quantity = parseInt(
+            item.querySelector("input").value
+        );
+
+        let itemTotal = price * quantity;
+
+        /* Hiển thị tiền của sản phẩm */
+        item.querySelector(".item-price").innerText =
+            itemTotal.toLocaleString("vi-VN");
+
+        /* Cộng vào tổng */
+        subtotal += itemTotal;
+    });
+
+
+    /* Phí vận chuyển */
+    let shipping = 30000;
+
+    let total = subtotal + shipping;
+
+
+    /* Hiển thị tổng */
+    document.getElementById("subtotal").innerText =
+        subtotal.toLocaleString("vi-VN") + " VNĐ";
+
+    document.getElementById("total").innerText =
+        total.toLocaleString("vi-VN") + " VNĐ";
+}
+
+
+/* Xóa sản phẩm */
+function removeItem(button) {
+
+    button.parentElement.remove();
+
+    updateCart();
+}
+
+</script>
+
+</body>
+</html>
+```

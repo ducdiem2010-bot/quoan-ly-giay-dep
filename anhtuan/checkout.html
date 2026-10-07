@@ -1,0 +1,104 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - Shoes Store</title>
+    <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+<header class="header">
+    <h2>SHOES STORE</h2>
+
+    <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="cart.html">Giỏ hàng</a>
+        <a href="login.html">Đăng nhập</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <h1>Thanh toán</h1>
+
+    <div class="checkout-layout">
+
+        <!-- Thông tin giao hàng -->
+        <section class="checkout-form">
+
+            <h2>Thông tin giao hàng</h2>
+
+            <label>Họ và tên</label>
+            <input type="text" placeholder="Nhập họ và tên">
+
+            <label>Số điện thoại</label>
+            <input type="tel" placeholder="Nhập số điện thoại">
+
+            <label>Email</label>
+            <input type="email" placeholder="Nhập email">
+
+            <label>Địa chỉ nhận hàng</label>
+            <input type="text" placeholder="Nhập địa chỉ">
+
+            <label>Ghi chú</label>
+            <textarea placeholder="Ghi chú cho đơn hàng"></textarea>
+
+            <h2>Phương thức thanh toán</h2>
+
+            <div class="payment">
+                <label>
+                    <input type="radio" name="payment" checked>
+                    Thanh toán khi nhận hàng (COD)
+                </label>
+
+                <label>
+                    <input type="radio" name="payment">
+                    Chuyển khoản ngân hàng
+                </label>
+            </div>
+
+        </section>
+
+        <!-- Đơn hàng -->
+        <aside class="order-summary">
+
+            <h2>Đơn hàng của bạn</h2>
+
+            <div class="order-item">
+                <span>Nike Air Force 1 × 1</span>
+                <span>2.500.000 VNĐ</span>
+            </div>
+
+            <div class="order-item">
+                <span>Adidas Superstar × 1</span>
+                <span>2.000.000 VNĐ</span>
+            </div>
+
+            <hr>
+
+            <div class="order-item">
+                <span>Phí vận chuyển</span>
+                <span>30.000 VNĐ</span>
+            </div>
+
+            <div class="order-total">
+                <span>Tổng cộng</span>
+                <span>4.530.000 VNĐ</span>
+            </div>
+
+            <button class="order-btn">
+                Đặt hàng
+            </button>
+
+        </aside>
+
+    </div>
+
+</main>
+
+</body>
+</html>
+```
