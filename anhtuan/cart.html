@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - Shoes Store</title>
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+
+<body data-page="cart">
+
+<header class="header">
+    <h2><a href="user.html">SHOES STORE</a></h2>
+
+    <nav>
+        <a href="user.html">Trang chủ</a>
+        <a href="cart.html">Giỏ hàng (<span data-cart-count aria-live="polite">0</span>)</a>
+        <a href="user.html#san-pham">Sản phẩm</a>
+    </nav>
+</header>
+
+<main class="container">
+    <h1>Giỏ hàng</h1>
+    <a class="secondary-link" href="user.html#san-pham">Tiếp tục xem sản phẩm</a>
+    <p id="cartMessage" class="status-message" role="status" aria-live="polite" hidden></p>
+    <noscript><p class="status-message is-error">Vui lòng bật JavaScript để xem giỏ hàng.</p></noscript>
+
+    <section id="cartEmpty" class="empty-state" hidden aria-labelledby="emptyCartTitle">
+        <h2 id="emptyCartTitle">Giỏ hàng đang trống</h2>
+        <p>Chọn sản phẩm và size để thêm vào giỏ.</p>
+        <a class="secondary-link" href="user.html#san-pham">Xem sản phẩm</a>
+    </section>
+
+    <div id="cartContent" class="cart-layout">
+        <section id="cartItems" class="cart-items" aria-label="Danh sách sản phẩm trong giỏ"></section>
+        <aside class="cart-summary">
+            <h2>Tổng đơn hàng</h2>
+            <div class="summary-row"><span>Tạm tính</span><span id="subtotal">0 VNĐ</span></div>
+            <p class="pickup-note">Nhận hàng và thanh toán tại cửa hàng.</p>
+            <hr>
+            <div class="summary-row total"><span>Tổng cộng</span><span id="total">0 VNĐ</span></div>
+            <a id="checkoutLink" href="checkout.html" class="checkout-btn">Tiến hành thanh toán</a>
+        </aside>
+    </div>
+</main>
+
+
+
+
+    <script src="shop.js"></script>
+</body>
+</html>

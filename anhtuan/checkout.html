@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - Shoes Store</title>
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+
+<body data-page="checkout">
+
+<header class="header">
+    <h2><a href="user.html">SHOES STORE</a></h2>
+
+    <nav>
+        <a href="user.html">Trang chủ</a>
+        <a href="cart.html">Giỏ hàng (<span data-cart-count aria-live="polite">0</span>)</a>
+        <a href="user.html#san-pham">Sản phẩm</a>
+    </nav>
+</header>
+
+<main class="container">
+    <h1>Thanh toán</h1>
+    <a class="secondary-link" href="cart.html">← Quay lại giỏ hàng</a>
+    <noscript><p class="status-message is-error">Vui lòng bật JavaScript để xem giỏ và kiểm tra thông tin.</p></noscript>
+
+    <section id="checkoutEmpty" class="empty-state" hidden aria-labelledby="emptyCheckoutTitle">
+        <h2 id="emptyCheckoutTitle">Giỏ hàng đang trống</h2>
+        <p>Thêm sản phẩm trước khi đi tiếp.</p>
+        <a class="secondary-link" href="user.html#san-pham">Xem sản phẩm</a>
+    </section>
+
+    <form id="checkoutForm" class="checkout-layout" novalidate>
+        <section class="checkout-form">
+            <h2>Thông tin liên hệ</h2>
+            <label for="fullName">Họ và tên *</label>
+            <input id="fullName" name="full_name" type="text" autocomplete="name" maxlength="60" placeholder="Nhập họ và tên" required>
+            <label for="phone">Số điện thoại *</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel-national" inputmode="tel" maxlength="20" placeholder="Ví dụ: 0912345678" required>
+            <label for="email">Email (không bắt buộc)</label>
+            <input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="Nhập email">
+            <label for="note">Ghi chú (không bắt buộc)</label>
+            <textarea id="note" name="note" maxlength="300" placeholder="Ghi chú cho đơn hàng"></textarea>
+            <h2>Phương thức thanh toán</h2>
+            <div class="payment">
+                <label><input type="radio" name="payment" value="at_store" checked> Thanh toán khi nhận hàng tại cửa hàng</label>
+            </div>
+        </section>
+
+        <aside class="order-summary">
+            <h2>Đơn hàng của bạn</h2>
+            <div id="orderItems"></div>
+            <hr>
+            <p class="pickup-note">Nhận hàng và trả tiền trực tiếp tại cửa hàng.</p>
+            <div class="order-total"><span>Tổng cộng</span><span id="checkoutTotal">0 VNĐ</span></div>
+            <button type="submit" class="order-btn">Xác nhận thông tin</button>
+            <p id="checkoutMessage" class="status-message" role="status" aria-live="polite" hidden></p>
+        </aside>
+    </form>
+</main>
+
+    <script src="shop.js"></script>
+</body>
+</html>

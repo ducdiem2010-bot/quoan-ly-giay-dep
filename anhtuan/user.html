@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trang chủ - Shoes Store</title>
+
+    <link rel="stylesheet" href="user.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+
+<body data-page="home">
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <a class="logo" href="user.html">SHOES STORE</a>
+
+        <div class="header-right">
+            <a href="user.html#san-pham">Sản phẩm</a>
+            <a href="cart.html">Giỏ hàng (<span data-cart-count aria-live="polite">0</span>)</a>
+        </div>
+
+    </header>
+
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <a href="user.html">Trang chủ</a>
+
+            <a href="user.html#san-pham">Sản phẩm</a>
+
+            <a href="user.html#tim-kiem">Tìm kiếm</a>
+
+            <a href="cart.html">Giỏ hàng (<span data-cart-count aria-live="polite">0</span>)</a>
+
+            <a href="user.html#lien-he">Liên hệ</a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- CONTAINER -->
+    <main class="container">
+
+        <section class="content">
+            <h1>Trang chủ</h1>
+            <p>Khám phá các mẫu giày và chọn size phù hợp với bạn.</p>
+
+            <section id="san-pham" class="home-products" aria-labelledby="productsTitle">
+                <h2 id="productsTitle">Sản phẩm</h2>
+                <form id="searchForm" class="home-search" role="search">
+                    <label id="tim-kiem" for="searchInput">Tìm kiếm sản phẩm</label>
+                    <input id="searchInput" type="search" placeholder="Nhập tên giày hoặc thương hiệu..." aria-describedby="searchStatus">
+                    <button type="submit">Tìm kiếm</button>
+                </form>
+                <p id="searchStatus" class="search-status" role="status" aria-live="polite">Có 4 sản phẩm.</p>
+                <div class="home-product-grid">
+                <a class="home-card" data-product-card="SP001" href="product_detail.html?id=SP001">
+                    <div class="home-card-image" aria-hidden="true">ẢNH GIÀY</div>
+                    <h3>Nike Air Force 1</h3>
+                    <p>Thương hiệu: Nike</p>
+                    <strong>2.500.000 VNĐ</strong>
+                    <span class="view-detail">Xem chi tiết</span>
+                </a>
+                <a class="home-card" data-product-card="SP002" href="product_detail.html?id=SP002">
+                    <div class="home-card-image" aria-hidden="true">ẢNH GIÀY</div>
+                    <h3>Adidas Superstar</h3>
+                    <p>Thương hiệu: Adidas</p>
+                    <strong>2.000.000 VNĐ</strong>
+                    <span class="view-detail">Xem chi tiết</span>
+                </a>
+                <a class="home-card" data-product-card="SP003" href="product_detail.html?id=SP003">
+                    <div class="home-card-image" aria-hidden="true">ẢNH GIÀY</div>
+                    <h3>Puma Suede</h3>
+                    <p>Thương hiệu: Puma</p>
+                    <strong>1.800.000 VNĐ</strong>
+                    <span class="view-detail">Xem chi tiết</span>
+                </a>
+                <a class="home-card" data-product-card="SP004" href="product_detail.html?id=SP004">
+                    <div class="home-card-image" aria-hidden="true">ẢNH GIÀY</div>
+                    <h3>Asics Gel</h3>
+                    <p>Thương hiệu: Asics</p>
+                    <strong>2.300.000 VNĐ</strong>
+                    <span class="view-detail">Xem chi tiết</span>
+                </a>
+                </div>
+            </section>
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div>
+                <h3>SHOES STORE</h3>
+                <p>Website bán giày dép nam</p>
+            </div>
+
+            <div>
+                <h3>Liên kết</h3>
+                <a href="user.html">Trang chủ</a>
+                <a href="user.html#san-pham">Sản phẩm</a>
+                <a href="cart.html">Giỏ hàng (<span data-cart-count aria-live="polite">0</span>)</a>
+            </div>
+
+            <div id="lien-he">
+                <h3>Liên hệ</h3>
+                <p>Email: shoesstore@gmail.com</p>
+                <p>Hotline: 0123 456 789</p>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            © 2026 Shoes Store
+        </div>
+
+    </footer>
+
+    <script src="shop.js"></script>
+</body>
+</html>
