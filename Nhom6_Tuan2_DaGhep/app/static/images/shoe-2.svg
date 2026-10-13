@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="540" viewBox="0 0 720 540" role="img" aria-label="Minh họa giày thể thao">
+ <rect width="720" height="540" rx="25" fill="#f4e4d3"/>
+ <ellipse cx="360" cy="430" rx="240" ry="34" fill="#213a3020"/>
+ <g transform="translate(85,105) rotate(-11 270 185)">
+ <path d="M83 245 C143 231 168 168 207 104 C228 70 272 83 292 121 L322 178 Q352 207 444 228 C511 244 545 271 548 316 L541 350 L79 350 Q47 327 64 290 Z" fill="#e2b788" stroke="#9e6b52" stroke-width="9"/>
+ <path d="M84 325 H545 V353 Q521 380 478 378 L121 376 Q79 365 84 325" fill="#fefefe" stroke="#9e6b52" stroke-width="8"/>
+ <path d="M210 112 Q228 112 252 142 L293 206" fill="none" stroke="#fff" stroke-width="20" stroke-linecap="round" opacity=".8"/>
+ <path d="M300 207 L387 237 L322 265" fill="none" stroke="#9e6b52" stroke-width="21" stroke-linecap="round" stroke-linejoin="round" opacity=".77"/>
+ <path d="M220 179 L291 205 M198 207 L275 236 M179 235 L260 265" fill="none" stroke="#fdfdfb" stroke-width="10" stroke-linecap="round"/>
+ <path d="M112 351 H502" stroke="#9e6b52" stroke-width="4" stroke-dasharray="22 14"/>
+ </g></svg>

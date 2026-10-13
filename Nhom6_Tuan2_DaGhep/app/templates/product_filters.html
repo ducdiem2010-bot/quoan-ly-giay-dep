@@ -1,0 +1,93 @@
+{# Form GET W3-011. Các mã lựa chọn hiện là danh mục mẫu, chưa lọc SQL. #}
+<section class="catalog-filters" aria-labelledby="filter-title">
+  <div class="filter-heading">
+    <div>
+      <span class="eyebrow">TÌM SẢN PHẨM</span>
+      <h2 id="filter-title">Tìm kiếm & bộ lọc</h2>
+    </div>
+    <a class="filter-reset" href="{{ url_for('w3_catalog.product_list') }}">Bỏ tất cả lựa chọn</a>
+  </div>
+  <p class="filter-preview-note" id="filter-preview-note">
+    Danh mục lựa chọn dùng dữ liệu mẫu. Từ khóa tìm kiếm hoạt động;
+    bộ lọc và sắp xếp hiện chỉ lưu lựa chọn.
+  </p>
+
+  <form id="catalog-filter-form" method="get" action="{{ url_for('w3_catalog.product_list') }}"
+        aria-describedby="filter-preview-note">
+    {# Gửi form mới luôn trở lại trang 1, không giữ page cũ. #}
+    <input type="hidden" name="page" value="1">
+    <div class="filter-search">
+      <label for="filter-q">Tên sản phẩm hoặc thương hiệu</label>
+      <input class="form-control" id="filter-q" name="q" type="search"
+             value="{{ filter_ui['values']['q'] }}" maxlength="80"
+             placeholder="Ví dụ: Nike, sandal…">
+    </div>
+
+    <fieldset class="filter-fieldset">
+      <legend>Thuộc tính sản phẩm</legend>
+      <div class="filter-attributes">
+        {% for field in filter_ui.selects %}
+        <div class="filter-field">
+          <label for="filter-{{ field.name }}">{{ field.label }}</label>
+          <select class="form-select" id="filter-{{ field.name }}" name="{{ field.name }}"
+                  {% if filter_ui.errors.get(field.name) %}aria-invalid="true" aria-describedby="error-{{ field.name }}"{% endif %}>
+            <option value=""{% if not field.selected %} selected{% endif %}>Tất cả</option>
+            {% for option in field.options %}
+            <option value="{{ option.value }}"{% if field.selected == option.value %} selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+          </select>
+          {% if filter_ui.errors.get(field.name) %}
+          <p class="filter-error" id="error-{{ field.name }}">{{ filter_ui.errors[field.name] }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <div class="filter-bottom">
+      <fieldset class="filter-fieldset filter-price">
+        <legend>Khoảng giá (VNĐ)</legend>
+        <div class="filter-price-inputs">
+          {% for name, label in [('price_min', 'Giá từ'), ('price_max', 'Giá đến')] %}
+          <div class="filter-field">
+            <label for="filter-{{ name }}">{{ label }}</label>
+            <input class="form-control" id="filter-{{ name }}" name="{{ name }}"
+                   type="number" inputmode="decimal" min="0" step="any"
+                   value="{{ filter_ui['values'][name] }}" placeholder="Không giới hạn"
+                   {% if filter_ui.errors.get(name) %}aria-invalid="true" aria-describedby="error-{{ name }}"{% endif %}>
+            {% if filter_ui.errors.get(name) %}
+            <p class="filter-error" id="error-{{ name }}">{{ filter_ui.errors[name] }}</p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="filter-field filter-sort">
+        <label for="filter-sort">Sắp xếp</label>
+        <select class="form-select" id="filter-sort" name="sort"
+                {% if filter_ui.errors.get('sort') %}aria-invalid="true" aria-describedby="error-sort"{% endif %}>
+          <option value=""{% if not filter_ui['values']['sort'] %} selected{% endif %}>Mặc định</option>
+          {% for option in filter_ui.sort_options %}
+          <option value="{{ option.value }}"{% if filter_ui['values']['sort'] == option.value %} selected{% endif %}>{{ option.label }}</option>
+          {% endfor %}
+        </select>
+        {% if filter_ui.errors.get('sort') %}
+        <p class="filter-error" id="error-sort">{{ filter_ui.errors.sort }}</p>
+        {% endif %}
+      </div>
+      <button class="action-primary filter-submit" type="submit">Tìm kiếm & lưu lựa chọn</button>
+    </div>
+  </form>
+
+  {% if filter_ui.chosen %}
+  <div class="filter-selection" aria-labelledby="selection-title">
+    <h3 id="selection-title">Lựa chọn đã lưu</h3>
+    <ul class="filter-selection-list">
+      {% for choice in filter_ui.chosen %}
+      <li><span>{{ choice.label }}:</span> {{ choice.value }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>

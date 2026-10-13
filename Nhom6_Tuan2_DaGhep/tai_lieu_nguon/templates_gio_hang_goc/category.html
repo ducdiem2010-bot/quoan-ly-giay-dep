@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Danh Sách Sản Phẩm</h1>
+
+{% if products %}
+    <div class="product-list">
+        {% for p in products %}
+        <div class="product-card">
+            <span class="category">{{ p.TenDanhMuc }}</span>
+            <h3>{{ p.TenSanPham }}</h3>
+            <p>Thương hiệu: {{ p.ThuongHieu }}</p>
+            <p class="price">{{ "{:,.0f}".format(p.GiaBan) }} VNĐ</p>
+            <a href="/product/{{ p.MaSanPham }}">Xem chi tiết</a>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Danh mục này chưa có sản phẩm nào.</p>
+{% endif %}
+{% endblock %}

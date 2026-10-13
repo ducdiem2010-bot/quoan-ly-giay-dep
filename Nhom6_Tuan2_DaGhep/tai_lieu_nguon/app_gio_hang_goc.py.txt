@@ -1,0 +1,92 @@
+from flask import Flask, render_template, abort
+from data import get_all_products, get_product_by_id, get_products_by_category
+
+app = Flask(__name__)
+
+# Route Trang chủ
+@app.route('/')
+def index():
+    products = get_all_products()
+    return render_template('index.html', products=products)
+
+# Route Trang chi tiết
+@app.route('/product/<int:product_id>')
+def product_detail(product_id):
+    product = get_product_by_id(product_id)
+    if not product:
+        abort(404)
+    return render_template('product.html', product=product)
+
+from flask import Flask, render_template, abort, session, redirect, url_for
+from data import get_all_products, get_product_by_id, get_products_by_category
+
+app = Flask(__name__)
+app.secret_key = 'chuoi_bi_mat_cua_hang_2026'
+# Route Trang chủ
+@app.route('/')
+def index():
+    products = get_all_products()
+    return render_template('index.html', products=products)
+
+# Route Trang chi tiết
+@app.route('/product/<int:product_id>')
+def product_detail(product_id):
+    product = get_product_by_id(product_id)
+    if not product:
+        abort(404)
+    return render_template('product.html', product=product)
+
+
+# Route Trang danh mục
+@app.route('/category/<int:category_id>')
+def category(category_id):
+    products = get_products_by_category(category_id)
+    return render_template('category.html', products=products)
+
+# Route Thêm vào giỏ hàng
+@app.route('/add-to-cart/<int:product_id>')
+def add_to_cart(product_id):
+    cart = session.get('cart', {})
+    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
+    session['cart'] = cart
+    return redirect(url_for('view_cart'))
+
+# Route Xem giỏ hàng
+@app.route('/cart')
+def view_cart():
+    cart = session.get('cart', {})
+    cart_items = []
+    total = 0
+    for pid, qty in cart.items():
+        product = get_product_by_id(int(pid))
+        if product:
+            product['quantity'] = qty
+            product['subtotal'] = float(product['GiaBan']) * qty
+            total += product['subtotal']
+            cart_items.append(product)
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+# Xử lý lỗi 404 - Không tìm thấy trang
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+# Xử lý lỗi 500 - Lỗi server
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
+# Xử lý lỗi 404 - Không tìm thấy trang
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+# Xử lý lỗi 500 - Lỗi server
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)

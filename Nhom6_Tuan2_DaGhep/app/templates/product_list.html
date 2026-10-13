@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Danh sách sản phẩm - Shoes Store{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_filters.css') }}">
+{% endblock %}
+{% block content %}
+<section class="catalog-page" aria-labelledby="catalog-title">
+  <div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Sản phẩm</div>
+  <header class="catalog-heading">
+    <div>
+      <span class="eyebrow">SHOES STORE</span>
+      <h1 id="catalog-title">Danh sách sản phẩm</h1>
+      <p>Khám phá các mẫu giày dép và chọn sản phẩm để xem chi tiết.</p>
+    </div>
+    <span class="catalog-total">{{ pagination.total }} sản phẩm</span>
+  </header>
+
+  {% include "product_filters.html" %}
+
+  {% if keyword %}
+  <p class="catalog-search-note">Kết quả tìm kiếm cho <strong>“{{ keyword }}”</strong>.
+    <a href="{{ url_for('w3_catalog.product_list') }}">Xem tất cả sản phẩm</a>
+  </p>
+  {% endif %}
+
+  <div id="catalog-products" class="catalog-products">
+    {% if products %}
+    <p class="catalog-range">Hiển thị {{ pagination.first_item }}–{{ pagination.last_item }} trong {{ pagination.total }} sản phẩm</p>
+    <div class="product-grid">
+      {% for product in products %}
+        {% include "product_card.html" %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state catalog-empty" role="status">
+      <span class="catalog-empty-mark" aria-hidden="true">0</span>
+      {% if keyword %}
+      <h2>Không tìm thấy sản phẩm</h2>
+      <p>Chưa có sản phẩm phù hợp với từ khóa bạn đã nhập.</p>
+      {% else %}
+      <h2>Chưa có sản phẩm</h2>
+      <p>Cửa hàng đang cập nhật sản phẩm. Bạn vui lòng quay lại sau.</p>
+      {% endif %}
+      <a class="action-primary" href="{{ url_for('w3_catalog.product_list') if keyword else url_for('home') }}">{{ 'Xem tất cả sản phẩm' if keyword else 'Về trang chủ' }}</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <nav class="catalog-pagination" aria-label="Phân trang sản phẩm">
+    <ul class="pagination">
+      <li class="page-item{% if not pagination.prev_url %} disabled{% endif %}">
+        {% if pagination.prev_url %}
+        <a class="page-link" href="{{ pagination.prev_url }}" rel="prev" aria-label="Trang trước">← Trước</a>
+        {% else %}
+        <span class="page-link" aria-disabled="true">← Trước</span>
+        {% endif %}
+      </li>
+      <li class="page-item active"><span class="page-link catalog-current" aria-current="page">Trang {{ pagination.page }} / {{ pagination.page_count }}</span></li>
+      <li class="page-item{% if not pagination.next_url %} disabled{% endif %}">
+        {% if pagination.next_url %}
+        <a class="page-link" href="{{ pagination.next_url }}" rel="next" aria-label="Trang sau">Sau →</a>
+        {% else %}
+        <span class="page-link" aria-disabled="true">Sau →</span>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+</section>
+{% endblock %}

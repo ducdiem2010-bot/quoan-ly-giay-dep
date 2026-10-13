@@ -1,0 +1,41 @@
+/* W3-011: form dùng được cả khi Bootstrap CDN không tải. */
+.catalog-filters { margin-bottom: 26px; padding: 25px 28px; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+.filter-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+.filter-heading h2 { margin: 6px 0 0; font-size: 23px; font-weight: 800; letter-spacing: -.025em; }
+.filter-reset { padding: 9px 0; color: #416647; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.filter-preview-note { margin: 0 0 22px; padding: 12px 15px; border-radius: 10px; background: #f5f7ef; color: #58634f; font-size: 13px; line-height: 1.6; }
+.filter-search { margin-bottom: 20px; }
+.catalog-filters label { display: block; margin: 0 0 8px; font-size: 13px; font-weight: 700; }
+.catalog-filters input:not([type="hidden"]), .catalog-filters select { display: block; box-sizing: border-box; width: 100%; min-width: 0; min-height: 45px; padding: 11px 12px; border: 1px solid #d4dfce; border-radius: 9px; background-color: #fff; color: var(--ink); font-family: inherit; font-size: 14px; line-height: 1.5; }
+.catalog-filters input::placeholder { color: #778173; }
+.catalog-filters input:focus-visible, .catalog-filters select:focus-visible, .catalog-filters button:focus-visible { outline: 3px solid #799b47; outline-offset: 3px; }
+.filter-fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.filter-fieldset legend { float: none; width: auto; margin: 0 0 12px; padding: 0; font-size: 13px; font-weight: 750; color: #617056; }
+.filter-attributes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.filter-field { min-width: 0; }
+.filter-bottom { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; gap: 20px; align-items: end; margin-top: 20px; }
+.filter-price-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.filter-submit { min-height: 45px; border: 0; font-family: inherit; cursor: pointer; text-align: center; }
+.filter-error { margin: 7px 0 0; color: #9d2c2c; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.catalog-filters [aria-invalid="true"] { border-color: #b55252; }
+.filter-selection { margin-top: 23px; padding-top: 18px; border-top: 1px solid var(--line); }
+.filter-selection h3 { margin: 0 0 11px; font-size: 13px; font-weight: 750; }
+.filter-selection-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.filter-selection-list li { max-width: 100%; padding: 7px 11px; border: 1px solid #d5e2c5; border-radius: 9px; background: #f2f7e8; color: #36543b; font-size: 13px; overflow-wrap: anywhere; }
+.filter-selection-list span { font-weight: 750; }
+@media (max-width: 1000px) {
+  .filter-attributes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .filter-bottom { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+  .filter-submit { grid-column: 1 / -1; justify-self: start; }
+}
+@media (max-width: 600px) {
+  .catalog-filters { padding: 20px; }
+  .filter-heading h2 { font-size: 21px; }
+  .filter-attributes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .filter-bottom { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .filter-submit { width: 100%; justify-self: stretch; }
+}
+@media (max-width: 380px) {
+  .catalog-filters { padding: 16px; }
+  .filter-attributes, .filter-price-inputs { grid-template-columns: minmax(0, 1fr); }
+}

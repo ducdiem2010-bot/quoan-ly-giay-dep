@@ -1,0 +1,14 @@
+W3-010/W3-011 ADD-ONLY — EXCERPT OF ACTUAL TEST EXECUTION
+
+Command: python -m unittest discover -s tests -p 'test_*.py' -v
+Environment: Python 3.12; Flask test client; temporary SQLite databases.
+Test groups: 10 original Week 2 + 10 Week 2 with W3 + 6 W3-010 + 11 W3-011 + 5 integration.
+
+Final execution output:
+----------------------------------------------------------------------
+Ran 42 tests in 1.603s
+
+OK
+
+Not a browser or SQL Server integration log.
+All 72 original files were separately compared byte-for-byte and by SHA-256.

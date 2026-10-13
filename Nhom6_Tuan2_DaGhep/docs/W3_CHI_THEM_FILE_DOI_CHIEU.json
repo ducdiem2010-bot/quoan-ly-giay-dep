@@ -1,0 +1,412 @@
+{
+  "task": [
+    "W3-010",
+    "W3-011"
+  ],
+  "delivery_date_vietnam": "2026-10-13",
+  "source_zip": "Nhom6_WebGiayDep_Tuan2_DaGhep_NghiemThu (1)(1).zip",
+  "source_zip_sha256": "1832c8e52f2654b0bc0d9b88afb34c9903b62de3d1fbf01644349693fc702f28",
+  "original_file_count": 72,
+  "original_unchanged_count": 72,
+  "added_count": 17,
+  "modified_original_files": [],
+  "deleted_original_files": [],
+  "added_files": [
+    "HUONG_DAN_W3_CHI_THEM_FILE.md",
+    "app/catalog_filter_options.py",
+    "app/catalog_filters.py",
+    "app/catalog_ui.py",
+    "app/static/css/product_filters.css",
+    "app/static/css/product_list.css",
+    "app/templates/product_card.html",
+    "app/templates/product_filters.html",
+    "app/templates/product_list.html",
+    "app/w3_routes.py",
+    "docs/W3_CHI_THEM_FILE_DOI_CHIEU.json",
+    "docs/W3_CHI_THEM_FILE_KIEM_THU.md",
+    "docs/W3_CHI_THEM_FILE_test_log.txt",
+    "run_w3.py",
+    "tests/test_w3_010.py",
+    "tests/test_w3_011.py",
+    "tests/test_w3_add_only.py"
+  ],
+  "original_files": [
+    {
+      "path": ".gitignore",
+      "sha256": "cf57ea72c0f588c08cbf3d5187b44cb1e5db0e6a83f41aa456416a03fc2612e0",
+      "identical_bytes": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "66b3a62bf0279b00705687c226f08030ef0942c9b554dbe079e03dfb4b7816f3",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/__init__.py",
+      "sha256": "529f726736e23a8503961e288d0ecf79695a9a6f12bb27b311119e0a8ac35279",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/data.py",
+      "sha256": "7ca75dc80d5d422811f120edabf6ca9538df6f66ec049268ea3302ee65c51a8b",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/db.py",
+      "sha256": "1011b3b0fe55e1cb81d0d8aeaa8d668e954b18a1598fa6cfdac78e73acae5b11",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/routes.py",
+      "sha256": "f7328d5f1480d0250da7e959bc08f26b301d945e2ad8ffc6500eb9249420fa92",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/static/css/style.css",
+      "sha256": "63dc369f1a2f8e531706a25417918d1cdf74e3ca8551fb4cd06df8cef07a27a0",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/static/images/shoe-1.svg",
+      "sha256": "3c3d5135e28807fb824d476ad7495aa5a32b09d382b33541dbe5134f2cf741d0",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/static/images/shoe-2.svg",
+      "sha256": "fb8337886f4b9cf962c748d094b3fa699005c7f5bdec8489b2809e6529e2612c",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/static/images/shoe-3.svg",
+      "sha256": "2f9eb3b4f8cf5f1c6d5c32f443a9e94b1ed9cdc4e4186b80e48e2c7acc165eb5",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/static/js/site.js",
+      "sha256": "f7ad67ac2128787fd50872e91a6f4044701ebfb82b437eed3b3b5099c72fa02b",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/404.html",
+      "sha256": "f130c705849d7404b4fb27d9f4cde34c1daee342216ca5ccb5f86f55dab3d8af",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/500.html",
+      "sha256": "4d9e88b897c20a5fd491f6ddf949cc72ca6fe9553a796a96a6ae26ab43c46f02",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/_product_card.html",
+      "sha256": "b98f159a4be4fed6a9a0f102936b7c7026201e950b4f32b33e100436ec5b35b1",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/admin/index.html",
+      "sha256": "727e6122988876619d3d0cc14937de1682aeb86134d84b28965cf53bb946d797",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/admin/product_add.html",
+      "sha256": "02bc12c0fcdbc0f010abac30b2541020e2f72165a251f83a0b35587e410d3251",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/admin_base.html",
+      "sha256": "75b21df1abfcc9709f035fe243926f3ef2705b8c8ca6325572ec14283cdeff59",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/base.html",
+      "sha256": "39c123747e86df32a92152c189be4f7e9e09c49720d303ad62a76c9bbd0107bf",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/cart.html",
+      "sha256": "85fd28463607910cae0b94413a5eb7b08ee42fa330f868dd0961231ec11f2d01",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/category.html",
+      "sha256": "b8ae3d1ec589df756e433fd5bdc5cabc6588ba5d64be073e0e0663c546ae1dd3",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/checkout.html",
+      "sha256": "933514e1867e7514eb6dee354e1734a556cf2eef22b6298a831af118bc2add22",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/error.html",
+      "sha256": "bce416104f555fb7eb7ec78f2d1620997f81c1e5421c63268388eda66a79c916",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/index.html",
+      "sha256": "f58bca06dcd1faa5c1e01847f5a69eaa0a6cd13a9e913fa9c04347f1f37e26b5",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/login.html",
+      "sha256": "4599720603daf8f3931524e2fd6641fc7b484d91260117dedc78a4d78d85f4d1",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/product_detail.html",
+      "sha256": "b81f0720011a0c22a84158e4dabc7a4f25de4bfbe75a2575ba77bb49dfaa4083",
+      "identical_bytes": true
+    },
+    {
+      "path": "app/templates/register.html",
+      "sha256": "02688fe183d520bf70a6126590f117d1f9937c1a6f8abe720d54765990505f22",
+      "identical_bytes": true
+    },
+    {
+      "path": "database/schema.sql",
+      "sha256": "0bd7b27c9d133f817b20ed5ca5acb71cead8c900348d28fa3c916c9035a15f1d",
+      "identical_bytes": true
+    },
+    {
+      "path": "database/schema_sqlite.sql",
+      "sha256": "7f84ff0d0ac81122b2a18b72eb48a1fc15bdc0237a03ec0e23797892c0d3b375",
+      "identical_bytes": true
+    },
+    {
+      "path": "database/seed.sql",
+      "sha256": "0e45e7275f6af8dbdadc0ceb5f6e57f29cbb9781971c28a03d082cd833678be2",
+      "identical_bytes": true
+    },
+    {
+      "path": "database/seed_sqlite.sql",
+      "sha256": "f34401300467cc5b2fc14fe80bf77318d6c3bcf6a05b8da9e862c50fc37199c5",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/BANG_DOI_CHIEU_NGHIEM_THU.xlsx",
+      "sha256": "fa08d44b46d9555b699a38d87a0dbb3ec741b77b1151d019dfd9ca2b675d77e1",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/BAO_CAO_SMOKE_TEST.md",
+      "sha256": "e3952db5f3c62f82b0931c0860d6cb09590d83bf8cb54e4d31528689f253852b",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/CON_VIEC_CAN_XAC_NHAN.md",
+      "sha256": "01ed8fa496f4b6e22de97aef4686b5d226f61896ea67e7a17cfbca627b3c4471",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/NGUON_VA_QUYET_DINH_GHEP.md",
+      "sha256": "8e334c9faafee31f49213d4e23cb9450dd877e7180897eaa3e5156a2cb7edccc",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/Thiet_Ke_Kien_Truc_Tuan2.docx",
+      "sha256": "9e27bfbc1232269e0b6ca6a61a5296133498815298d6fd8c8ff79630c83fa277",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/UI_API_CONTRACT_V1.md",
+      "sha256": "4d600d9f7e1f28b7cb3fb3f29b95bb9c310dde15d1f3f5ebdf5dc34713787bb7",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/data_dictionary.md",
+      "sha256": "d584d8847a894028d45c8a8e69e9c325d289c1b223e3e4177096d2c618981740",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/smoke_test_log.txt",
+      "sha256": "78186b1b4d3d87a8ec8f57ef8c6a458b68a143ca9309e1e4a094e9e554bc91c2",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/so_do/ERD_Giao_Dich_Hinh.png",
+      "sha256": "57932385af81b7cb436712a560d24bc52afe32ab9370532c37e005de11ac3e80",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/so_do/ERD_Minh_SanPham.drawio",
+      "sha256": "7ab11a62e6febcd734e43413360c1e4759fc226bd8d5280cfef2bba3f608430d",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/so_do/ERD_Nghia_GiaoDich.drawio",
+      "sha256": "1bed775068c8ed0fd923e0c009b600ae78700552c8941828fdffb06328f33bc5",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/so_do/ERD_San_Pham_Hinh.png",
+      "sha256": "5e5daa5bc248decdecf6bb12674d2652eee9176eae659615b107510b7ccf5f3b",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/so_do/Kien_truc_3_tang.png",
+      "sha256": "d38be73600f388c421f31c443e32062d02fbe26ecceb6c1356b99eab9d4a152b",
+      "identical_bytes": true
+    },
+    {
+      "path": "docs/so_do/Wireframe_Tuan2_TaiDung.drawio",
+      "sha256": "e8d289c89e80770d1da885bdec364f8fc7209ab9e74143f2b44190abf807cf00",
+      "identical_bytes": true
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "4a03526f911f57cbfc14c1ea148bfb3f53e45b20584a7c0c1ed14e6e2210ec67",
+      "identical_bytes": true
+    },
+    {
+      "path": "run.py",
+      "sha256": "8174e1e121a2d6a19178fa50afd0d68f77f865e78a69ccbcf5e978f43aa909df",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/GHI_CHU_UI_TUAN.md",
+      "sha256": "2e59eddc2785a3cf470384ce2931d8453cfd72dcccad5c99acac99e129e479b6",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/README.md",
+      "sha256": "2e59eddc2785a3cf470384ce2931d8453cfd72dcccad5c99acac99e129e479b6",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/cart.css",
+      "sha256": "1403efc77387b115c81a1ba00253800f0b6860fdb0a7bc84693ceb3d94a4437d",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/cart.html",
+      "sha256": "3b13743f5ce8b249f3078a7cc5e9ca3e1d2d2362fbef3d3131b0aa5dd2398b4e",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/checkout.html",
+      "sha256": "169f4072f340f218366eaf53ece8a2f6e8978819d031b324ae3cb50bdedf4821",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/common.css",
+      "sha256": "68e3a340ee70bd2234771e1db1694b658fa1c2da1df2fc4711883f4523588913",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/index.html",
+      "sha256": "a4371c17bc122d704490ca163068f29954c8cd8776efec58288293412dd56cb2",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/product_detail.css",
+      "sha256": "537cdf2a405ab81e05606e76178a8e7abd49a4848af721b1e6efafba3043fdd0",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/product_detail.html",
+      "sha256": "f5ade34fe86c87c304b72f265192f10848a0fc49b007892ed14fd9aa0c499687",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/shop.js",
+      "sha256": "530f815b7f823d668d73305c138c89a4079b18bb7518bc887dfc1a81f08536cc",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/user.css",
+      "sha256": "ac13584cc6ba2d345d52aaf994b20c111155dc60491f2e35e168d0a3f6b0c35d",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/HTML_Tuan_goc/user.html",
+      "sha256": "a4371c17bc122d704490ca163068f29954c8cd8776efec58288293412dd56cb2",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/admin_github_snapshot_khong_la_template.htm",
+      "sha256": "8bb7f985075353ad13541a34e76aaee2d02fb37ca2df936d168de51f019ec093",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/app_gio_hang_goc.py.txt",
+      "sha256": "3acaec56763fee5015d20c2f6aa2af4cabfa23bcb083d48447670579e1108082",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/routes_base_trang_trang.py.txt",
+      "sha256": "a84a47b346bb04241b5913790de7f35cd63e18a0ee7a4843742b5bf9ccb811d3",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/schema_sqlserver_goc.sql",
+      "sha256": "8d2b44a762821ff3896264a5b3c8b557fe12196e42afbdae1c57c2cef5681c6b",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/seed_sqlserver_goc.sql",
+      "sha256": "175c30c69823fb467327010bbddce28c927f1f50bbd11efd8a83aac4e356ebe3",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/404.html",
+      "sha256": "15a24b4081b395f6f8a28088c7536c4cc2d52a447024b7ce057cb4d98fae355f",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/500.html",
+      "sha256": "b7a00d1d26a7327e90932d0f046b3cfdcac42453e4eedf92f66b94385994c481",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/base.html",
+      "sha256": "b78503198dac7995afceac2a005d4c16503670646b1df9dd7417241005e13a09",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/cart.html",
+      "sha256": "2790af14f063bbc3fef9f931bcbd343c60dd360b4889be87ea6c943ce19c96fe",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/category.html",
+      "sha256": "9e286cf576875acce7c51307c30103702c41322662afa162cc07b58593606920",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/index copy.html",
+      "sha256": "fc9d0ea9f11f36d868b1a03b94a44758b07891722d445522fbdbfd2cb2ae7682",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/index.html",
+      "sha256": "fc9d0ea9f11f36d868b1a03b94a44758b07891722d445522fbdbfd2cb2ae7682",
+      "identical_bytes": true
+    },
+    {
+      "path": "tai_lieu_nguon/templates_gio_hang_goc/product.html",
+      "sha256": "7b3a15e9ed84b214c9454aeba846657ac727a30d9a273b3fa1aad1e64a82849d",
+      "identical_bytes": true
+    },
+    {
+      "path": "tests/test_smoke.py",
+      "sha256": "0db604c68d3dd3b9364d67eef31df3e03441c0108fa09f234e4b0c71871fa1e1",
+      "identical_bytes": true
+    }
+  ],
+  "runner": "py run_w3.py",
+  "old_runner_unchanged": "py run.py",
+  "new_route": "/products",
+  "architecture": "Blueprint w3_catalog registered after unchanged original create_app returns",
+  "new_templates_extend_original_base": true,
+  "tests": {
+    "passed": 42,
+    "original_week2": 10,
+    "week2_with_w3": 10,
+    "W3_010": 6,
+    "W3_011": 11,
+    "integration": 5
+  },
+  "M2b_received": false,
+  "new_filters_and_sort_database_integrated": false,
+  "browser_verified": false,
+  "sqlserver_verified": false
+}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Giỏ Hàng{% endblock %}
+
+{% block content %}
+<h1>🛒 Giỏ Hàng Của Bạn</h1>
+
+{% if cart_items %}
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background: #2c3e50; color: white;">
+                <th style="padding: 12px; text-align: left;">Sản phẩm</th>
+                <th style="padding: 12px;">Đơn giá</th>
+                <th style="padding: 12px;">Số lượng</th>
+                <th style="padding: 12px;">Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 12px;"><strong>{{ item.TenSanPham }}</strong></td>
+                <td style="padding: 12px; text-align: center;">{{ "{:,.0f}".format(item.GiaBan) }} VNĐ</td>
+                <td style="padding: 12px; text-align: center;">{{ item.quantity }}</td>
+                <td style="padding: 12px; text-align: center; color: #e74c3c; font-weight: bold;">
+                    {{ "{:,.0f}".format(item.subtotal) }} VNĐ
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background: #ecf0f1;">
+                <td colspan="3" style="padding: 15px; text-align: right; font-size: 18px;">
+                    <strong>TỔNG CỘNG:</strong>
+                </td>
+                <td style="padding: 15px; text-align: center; color: #e74c3c; font-size: 20px; font-weight: bold;">
+                    {{ "{:,.0f}".format(total) }} VNĐ
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div style="margin-top: 20px; text-align: right;">
+        <a href="/" style="padding: 12px 24px; background: #95a5a6; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">← Tiếp tục mua</a>
+    </div>
+{% else %}
+    <div style="text-align: center; padding: 60px 20px;">
+        <p style="font-size: 60px; margin: 0;">🛒</p>
+        <h2 style="color: #888;">Giỏ hàng của bạn đang trống</h2>
+        <a href="/" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #3498db; color: white; text-decoration: none; border-radius: 5px;">🏠 Về trang chủ mua sắm</a>
+    </div>
+{% endif %}
+{% endblock %}

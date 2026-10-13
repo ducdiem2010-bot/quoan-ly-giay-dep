@@ -1,0 +1,17 @@
+{# Partial dùng chung; product giữ nguyên tên trường của schema hiện tại. #}
+<article class="product-card" data-product-id="{{ product.MaSanPham }}">
+  <a class="product-visual" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Xem {{ product.TenSanPham }}">
+    {# Schema tuần 2 chưa có ảnh sản phẩm: dùng SVG minh họa hiện có. #}
+    <img src="{{ url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') }}" alt="Ảnh minh họa {{ product.TenSanPham }}" loading="lazy" width="400" height="350">
+  </a>
+  <div class="product-meta">
+    <span class="eyebrow">{{ product.ThuongHieu or 'Giày dép' }}</span>
+    <span class="stock-label">Còn {{ product.TongTon }}</span>
+  </div>
+  <h3><a href="{{ url_for('product_detail', product_id=product.MaSanPham) }}">{{ product.TenSanPham }}</a></h3>
+  <p class="category-label">{{ product.TenDanhMuc }}</p>
+  <div class="card-bottom">
+    <strong>{{ product.GiaBan|vnd }}</strong>
+    <a class="circle-arrow" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Xem chi tiết {{ product.TenSanPham }}">↗</a>
+  </div>
+</article>
