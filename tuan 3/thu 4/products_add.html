@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shoes Store - Thêm sản phẩm</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    font-family: Arial, sans-serif;
+    background: #f3f5f9;
+    color: #222;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px #00000012;
+}
+
+h1, h2 {
+    color: #202b3c;
+}
+
+label {
+    display: block;
+    margin: 14px 0 7px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+.variant {
+    padding: 15px;
+    margin-top: 15px;
+    background: #f8fafc;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+}
+
+button {
+    padding: 11px 15px;
+    margin: 12px 5px 0 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add {
+    background: #2563eb;
+    color: white;
+}
+
+.save {
+    background: #15803d;
+    color: white;
+}
+
+.remove {
+    background: #dc2626;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#message {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background: #eff6ff;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+@media (max-width: 550px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>SHOES STORE</h1>
+    <h2>Thêm sản phẩm và biến thể</h2>
+
+    <form id="productForm">
+        <label for="name">Tên sản phẩm</label>
+        <input id="name" maxlength="200"
+               placeholder="Ví dụ: Nike Air Force 1" required>
+
+        <label for="price">Giá sản phẩm (VNĐ)</label>
+        <input id="price" type="number"
+               min="0" step="0.01" required>
+
+        <h2>Danh sách biến thể</h2>
+        <div id="variants"></div>
+
+        <button type="button" class="add" id="addVariant">
+            + Thêm biến thể
+        </button>
+
+        <button type="submit" class="save" id="saveButton">
+            Lưu sản phẩm và biến thể
+        </button>
+    </form>
+
+    <p id="message" role="status"></p>
+
+    <h2>Sản phẩm đã lưu</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số biến thể</th>
+                </tr>
+            </thead>
+            <tbody id="productList"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const STORAGE_KEY = "shoes_store_atomic_demo";
+
+const form = document.getElementById("productForm");
+const variantsBox = document.getElementById("variants");
+const message = document.getElementById("message");
+const saveButton = document.getElementById("saveButton");
+
+let products = [];
+
+try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    products = raw ? JSON.parse(raw) : [];
+
+    if (!Array.isArray(products)) {
+        throw new Error("Dữ liệu lưu không hợp lệ.");
+    }
+} catch {
+    message.textContent =
+        "Không đọc được dữ liệu đã lưu. Hãy kiểm tra bộ nhớ trình duyệt.";
+    message.style.color = "#dc2626";
+}
+
+function showMessage(text, success = false) {
+    message.textContent = text;
+    message.style.color = success ? "#15803d" : "#dc2626";
+}
+
+function addVariant() {
+    const box = document.createElement("div");
+    box.className = "variant";
+
+    box.innerHTML = `
+        <label>Color ID</label>
+        <input class="color" type="number" min="1"
+               step="1" required placeholder="Ví dụ: 1">
+
+        <label>Size ID</label>
+        <input class="size" type="number" min="1"
+               step="1" required placeholder="Ví dụ: 40">
+
+        <label>Stock Qty</label>
+        <input class="stock" type="number" min="0"
+               step="1" value="0" required>
+
+        <button type="button" class="remove">
+            Xóa biến thể khỏi biểu mẫu
+        </button>
+    `;
+
+    box.querySelector(".remove").addEventListener("click", () => {
+        box.remove();
+    });
+
+    variantsBox.appendChild(box);
+}
+
+document.getElementById("addVariant")
+    .addEventListener("click", addVariant);
+
+function readInteger(input, name, min) {
+    const raw = input.value.trim();
+    const value = Number(raw);
+
+    if (
+        raw === "" ||
+        !Number.isSafeInteger(value) ||
+        value < min
+    ) {
+        throw new Error(
+            name + (min === 0
+                ? " phải là số nguyên không âm."
+                : " phải là số nguyên lớn hơn 0.")
+        );
+    }
+
+    return value;
+}
+
+function renderProducts(data) {
+    const tbody = document.getElementById("productList");
+    tbody.replaceChildren();
+
+    data.forEach(product => {
+        const row = document.createElement("tr");
+
+        [
+            product.id,
+            product.name,
+            Number(product.price).toLocaleString("vi-VN"),
+            product.variants.length
+        ].forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        tbody.appendChild(row);
+    });
+}
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    if (saveButton.disabled) return;
+
+    saveButton.disabled = true;
+
+    try {
+        const name = document.getElementById("name")
+            .value.trim();
+
+        const priceRaw = document.getElementById("price").value;
+        const price = Number(priceRaw);
+
+        if (!name || name.length > 200) {
+            throw new Error("Tên sản phẩm không hợp lệ.");
+        }
+
+        if (
+            priceRaw === "" ||
+            !Number.isFinite(price) ||
+            price < 0
+        ) {
+            throw new Error("Giá sản phẩm phải hợp lệ và không âm.");
+        }
+
+        const boxes = [
+            ...variantsBox.querySelectorAll(".variant")
+        ];
+
+        if (boxes.length === 0) {
+            throw new Error("Sản phẩm cần ít nhất một biến thể.");
+        }
+
+        const variants = boxes.map(box => ({
+            color_id: readInteger(
+                box.querySelector(".color"), "Color ID", 1
+            ),
+            size_id: readInteger(
+                box.querySelector(".size"), "Size ID", 1
+            ),
+            stock_qty: readInteger(
+                box.querySelector(".stock"), "Stock Qty", 0
+            )
+        }));
+
+        // Bước 1: kiểm tra trùng cặp màu + size.
+        const keys = variants.map(v =>
+            `${v.color_id}:${v.size_id}`
+        );
+
+        if (new Set(keys).size !== keys.length) {
+            throw new Error(
+                "Biến thể bị trùng Color ID + Size ID."
+            );
+        }
+
+        // Bước 2: tạo dữ liệu mới trong bộ nhớ,
+        // chưa thay đổi dữ liệu đang lưu.
+        const nextId = products.reduce(
+            (max, p) => Math.max(max, p.id), 0
+        ) + 1;
+
+        const newProduct = {
+            id: nextId,
+            name,
+            price,
+            variants
+        };
+
+        const nextProducts = [...products, newProduct];
+
+        // Bước 3: chuẩn bị toàn bộ dữ liệu trước khi ghi.
+        const serialized = JSON.stringify(nextProducts);
+
+        // Bước 4: ghi một lần. Nếu setItem thất bại,
+        // products trong bộ nhớ vẫn chưa thay đổi.
+        localStorage.setItem(STORAGE_KEY, serialized);
+
+        // Chỉ cập nhật bộ nhớ sau khi ghi thành công.
+        products = nextProducts;
+
+        renderProducts(products);
+        form.reset();
+        variantsBox.replaceChildren();
+        addVariant();
+
+        showMessage(
+            "Thành công! Sản phẩm và toàn bộ biến thể đã được lưu.",
+            true
+        );
+
+    } catch (error) {
+        showMessage(
+            "KHÔNG LƯU ĐƯỢC DỮ LIỆU.\n" +
+            error.message +
+            "\nDanh sách sản phẩm trong bộ nhớ chưa bị cập nhật."
+        );
+    } finally {
+        saveButton.disabled = false;
+    }
+});
+
+renderProducts(products);
+addVariant();
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Quản lý sản phẩm</title>
+    <link rel="stylesheet" href="product.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SHOES ADMIN - Quản lý sản phẩm</h1>
+
+        <form id="productForm">
+            <input type="hidden" id="productId">
+
+            <label>Tên sản phẩm</label>
+            <input id="name" required placeholder="Nhập tên giày">
+
+            <label>Thương hiệu</label>
+            <select id="brand" required>
+                <option value="">-- Chọn thương hiệu --</option>
+                <option>Nike</option>
+                <option>Adidas</option>
+                <option>Puma</option>
+                <option>Asics</option>
+                <option>Lacoste</option>
+            </select>
+
+            <label>Loại giày</label>
+            <select id="type" required>
+                <option value="">-- Chọn loại giày --</option>
+                <option>Giày thể thao</option>
+                <option>Giày chạy bộ</option>
+                <option>Giày da</option>
+                <option>Dép</option>
+            </select>
+
+            <label>Đối tượng</label>
+            <select id="gender" required>
+                <option value="">-- Chọn đối tượng --</option>
+                <option>Nam</option>
+                <option>Nữ</option>
+                <option>Unisex</option>
+            </select>
+
+            <label>Giá bán (VNĐ)</label>
+            <input type="number" id="price" min="1" step="1"
+                   required placeholder="Ví dụ: 1200000">
+
+            <button type="submit" id="saveButton">Thêm sản phẩm</button>
+            <button type="button" id="cancelButton" hidden>Hủy sửa</button>
+        </form>
+
+        <p id="message" role="status"></p>
+
+        <h2>Danh sách sản phẩm</h2>
+        <input id="search" placeholder="Tìm kiếm sản phẩm...">
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Thương hiệu</th>
+                        <th>Loại</th>
+                        <th>Đối tượng</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="productList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="product.js"></script>
+</body>
+</html>

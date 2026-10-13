@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa thông tin sản phẩm</title>
+    <link rel="stylesheet" href="product_edit.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sửa thông tin sản phẩm</h1>
+
+        <form id="productForm">
+            <label for="name">Tên sản phẩm</label>
+            <input id="name" type="text" required>
+
+            <label for="description">Mô tả</label>
+            <textarea id="description" required></textarea>
+
+            <label for="price">Giá sản phẩm (VNĐ)</label>
+            <input id="price" type="number" min="1" step="1" required>
+
+            <label for="brand">Thương hiệu</label>
+            <select id="brand" required>
+                <option value="">-- Chọn thương hiệu --</option>
+                <option value="Nike">Nike</option>
+                <option value="Adidas">Adidas</option>
+                <option value="Puma">Puma</option>
+                <option value="Asics">Asics</option>
+            </select>
+
+            <label for="type">Loại giày</label>
+            <select id="type" required>
+                <option value="">-- Chọn loại --</option>
+                <option value="Thể thao">Thể thao</option>
+                <option value="Chạy bộ">Chạy bộ</option>
+                <option value="Sneaker">Sneaker</option>
+                <option value="Giày da">Giày da</option>
+            </select>
+
+            <label for="gender">Giới tính</label>
+            <select id="gender" required>
+                <option value="">-- Chọn giới tính --</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Unisex">Unisex</option>
+            </select>
+
+            <label for="status">Trạng thái</label>
+            <select id="status" required>
+                <option value="Đang bán">Đang bán</option>
+                <option value="Ngừng bán">Ngừng bán</option>
+                <option value="Ẩn">Ẩn</option>
+            </select>
+
+            <p class="note">
+                Giá áp dụng chung cho sản phẩm.
+                Màu sắc và size không có giá riêng.
+            </p>
+
+            <p id="message" role="status"></p>
+
+            <button type="submit">Lưu thay đổi</button>
+            <button type="button" class="cancel"
+                onclick="location.href='product_list.html'">
+                Quay lại danh sách
+            </button>
+        </form>
+    </div>
+
+    <script src="product_edit.js"></script>
+</body>
+</html>
+    
