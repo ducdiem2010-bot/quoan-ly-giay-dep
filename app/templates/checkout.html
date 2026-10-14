@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Xác nhận thông tin - Shoes Store{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Xác nhận thông tin</div>
+<div class="section-title"><div><span class="eyebrow">MẪU GIAO DIỆN TUẦN 2</span><h1>Thông tin nhận tại cửa hàng</h1></div></div>
+<div class="checkout-layout"><div class="panel"><h2>Thông tin liên hệ</h2>
+  <p class="notice notice-warning">Đây là biểu mẫu giao diện Tuần 2. Chưa tạo đơn hàng thật và chưa thu tiền.</p>
+  <label for="full_name">Họ tên</label><input id="full_name" name="full_name" type="text" placeholder="Nhập họ tên" autocomplete="name">
+  <label for="phone">Số điện thoại</label><input id="phone" name="phone" type="tel" placeholder="09xxxxxxxx" autocomplete="tel-national">
+  <label for="email">Email (không bắt buộc)</label><input id="email" name="email" type="email" autocomplete="email">
+  <label for="note">Ghi chú</label><textarea id="note" name="note" rows="3"></textarea>
+  <p><strong>Phương thức thanh toán:</strong> tại cửa hàng khi nhận hàng.</p>
+</div><aside class="panel cart-summary"><h2>Thông tin giỏ hàng</h2>
+  {% for item in cart_items %}<p class="summary-line"><span>{{ item.TenSanPham }} × {{ item.quantity }}</span><strong>{{ item.subtotal|vnd }}</strong></p>{% endfor %}
+  <hr><p class="summary-line summary-total"><span>Tổng cộng</span><strong>{{ total|vnd }}</strong></p>
+  <button disabled class="action-primary" type="button">Xác nhận đơn (chưa triển khai)</button>
+  <p class="pickup-hint">Nhận tại cửa hàng • Không thanh toán online</p>
+</aside></div>
+{% endblock %}

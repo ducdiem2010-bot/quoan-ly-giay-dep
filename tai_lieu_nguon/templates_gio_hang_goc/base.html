@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cửa Hàng Giày Dép{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
+        header { background: #2c3e50; color: white; padding: 15px 30px; }
+        header h1 { display: inline-block; }
+        nav { display: inline-block; margin-left: 30px; }
+        nav a { color: white; text-decoration: none; margin-right: 20px; }
+        nav a:hover { text-decoration: underline; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; }
+        .cart-link { float: right; }
+        footer { text-align: center; padding: 20px; color: #888; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>👟 Cửa Hàng Giày Dép</h1>
+        <nav>
+            <a href="/">Trang chủ</a>
+            <a href="/category/1">Giày Thể Thao</a>
+            <a href="/category/2">Giày Sneaker</a>
+            <a href="/category/3">Dép & Sandal</a>
+        </nav>
+        <a href="/cart" class="cart-link">🛒 Giỏ hàng</a>
+    </header>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        &copy; 2026 Cửa Hàng Giày Dép. All rights reserved.
+    </footer>
+</body>
+</html>

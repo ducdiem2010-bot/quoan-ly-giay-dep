@@ -1,0 +1,13 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Mẫu form thêm sản phẩm{% endblock %}
+{% block admin_content %}<span class="eyebrow">FORM TUẦN 2</span><h1>Chuẩn bị thêm sản phẩm</h1><p>Kiểm tra form đầu vào; <strong>chưa lưu dữ liệu</strong>.</p>
+<form method="post" class="admin-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<label for="name">Tên sản phẩm *</label><input type="text" id="name" name="name" required maxlength="200">
+<label for="price">Giá bán (VNĐ) *</label><input type="number" id="price" name="price" required min="0" step="1000">
+<label for="stock">Số lượng tồn *</label><input type="number" id="stock" name="stock" min="0" required step="1">
+<label for="category_id">Danh mục *</label><select id="category_id" name="category_id" required><option value="">Chọn danh mục</option>
+{% for cat in categories %}<option value="{{ cat.MaDanhMuc }}">{{ cat.TenDanhMuc }}</option>{% endfor %}</select>
+<label for="image">Tên ảnh / đường dẫn ảnh nội bộ *</label><input type="text" id="image" name="image" required placeholder="shoe-1.svg">
+<label for="brand">Thương hiệu</label><input type="text" id="brand" name="brand" maxlength="100">
+<label for="description">Mô tả</label><textarea id="description" name="description" rows="3"></textarea>
+<button class="action-primary" type="submit">Kiểm tra biểu mẫu</button></form>{% endblock %}

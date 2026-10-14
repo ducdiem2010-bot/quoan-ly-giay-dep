@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Trang chủ - Shoes Store{% endblock %}
+{% block content %}
+<section class="hero"><div class="hero-copy"><span class="hero-pill">BỘ SƯU TẬP MỚI • 2026</span>
+  <h1>Tìm đôi giày<br><em>hợp phong cách</em> của bạn.</h1>
+  <p>Khám phá sản phẩm, chọn size và lưu giỏ hàng. Mua và nhận trực tiếp tại cửa hàng.</p>
+  <a href="#san-pham" class="action-primary">Khám phá sản phẩm <span>↗</span></a>
+</div><div class="hero-art"><img src="{{ url_for('static', filename='images/shoe-1.svg') }}" alt="Minh họa giày thể thao"></div></section>
+<section id="san-pham" class="section-products"><div class="section-title"><div><span class="eyebrow">GIÀY • DÉP • SANDAL</span><h2>Tất cả sản phẩm</h2></div><span>{{ products|length }} sản phẩm</span></div>
+  <form method="get" action="{{ url_for('home') }}" class="search-row" role="search">
+    <label for="searchInput" class="sr-only">Tìm kiếm theo tên hoặc thương hiệu</label>
+    <input id="searchInput" name="q" type="search" value="{{ keyword }}" placeholder="Tìm giày, thương hiệu..." maxlength="80">
+    <button class="action-primary" type="submit">Tìm kiếm</button>
+  </form>
+  <div class="category-pills"><a href="{{ url_for('home') }}" class="pill active">Tất cả</a>{% for cat in categories %}<a href="{{ url_for('category', category_id=cat.MaDanhMuc) }}" class="pill">{{ cat.TenDanhMuc }}</a>{% endfor %}</div>
+  {% if products %}<div class="product-grid">{% for product in products %}{% include '_product_card.html' %}{% endfor %}</div>
+  {% else %}<p class="empty-state">Chưa tìm được sản phẩm phù hợp. <a href="{{ url_for('home') }}">Xóa bộ lọc</a>.</p>{% endif %}
+</section>
+{% endblock %}
