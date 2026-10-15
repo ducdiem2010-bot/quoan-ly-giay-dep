@@ -1,0 +1,92 @@
+﻿[
+  {
+    "id": "SP1001",
+    "name": "Nike Air Force 1 '07",
+    "brand": "Nike",
+    "category": "Giày thời trang",
+    "gender": "Unisex",
+    "price": 2690000,
+    "stock": 35,
+    "image": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80",
+    "description": "Thiết kế huyền thoại với chất liệu da cao cấp màu trắng tinh tế, đệm khí Nike Air êm ái.",
+    "status": "active",
+    "createdAt": 1700000001000,
+    "variants": [
+      { "id": "V1001-1", "color": "Trắng", "size": "39", "stock": 8, "price": 2690000, "sku": "AF1-WHT-39" },
+      { "id": "V1001-2", "color": "Trắng", "size": "40", "stock": 12, "price": 2690000, "sku": "AF1-WHT-40" },
+      { "id": "V1001-3", "color": "Trắng", "size": "41", "stock": 10, "price": 2690000, "sku": "AF1-WHT-41" },
+      { "id": "V1001-4", "color": "Trắng", "size": "42", "stock": 5, "price": 2690000, "sku": "AF1-WHT-42" }
+    ]
+  },
+  {
+    "id": "SP1002",
+    "name": "Adidas Ultraboost Light",
+    "brand": "Adidas",
+    "category": "Giày chạy bộ",
+    "gender": "Nam",
+    "price": 3200000,
+    "stock": 22,
+    "image": "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80",
+    "description": "Dòng giày chạy hàng đầu của Adidas trang bị đệm Boost siêu nhẹ, êm ái và trợ lực vượt trội.",
+    "status": "active",
+    "createdAt": 1700000002000,
+    "variants": [
+      { "id": "V1002-1", "color": "Đen", "size": "40", "stock": 6, "price": 3200000, "sku": "UB-BLK-40" },
+      { "id": "V1002-2", "color": "Đen", "size": "41", "stock": 8, "price": 3200000, "sku": "UB-BLK-41" },
+      { "id": "V1002-3", "color": "Xám", "size": "42", "stock": 5, "price": 3200000, "sku": "UB-GRY-42" },
+      { "id": "V1002-4", "color": "Xám", "size": "43", "stock": 3, "price": 3200000, "sku": "UB-GRY-43" }
+    ]
+  },
+  {
+    "id": "SP1003",
+    "name": "Puma RS-X Reinvention",
+    "brand": "Puma",
+    "category": "Giày thể thao",
+    "gender": "Unisex",
+    "price": 1950000,
+    "stock": 18,
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
+    "description": "Phong cách Chunky Sneaker hầm hố, phối màu bắt mắt cùng công nghệ đệm RS giảm chấn tối đa.",
+    "status": "active",
+    "createdAt": 1700000003000,
+    "variants": [
+      { "id": "V1003-1", "color": "Đỏ/Trắng", "size": "39", "stock": 4, "price": 1950000, "sku": "RSX-RED-39" },
+      { "id": "V1003-2", "color": "Đỏ/Trắng", "size": "40", "stock": 6, "price": 1950000, "sku": "RSX-RED-40" },
+      { "id": "V1003-3", "color": "Đỏ/Trắng", "size": "41", "stock": 8, "price": 1950000, "sku": "RSX-RED-41" }
+    ]
+  },
+  {
+    "id": "SP1004",
+    "name": "Nike Jordan 1 Retro High",
+    "brand": "Nike",
+    "category": "Giày thời trang",
+    "gender": "Unisex",
+    "price": 4500000,
+    "stock": 4,
+    "image": "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80",
+    "description": "Huyền thoại bóng rổ đường phố với phối màu Chicago cổ điển, phiên bản giới hạn.",
+    "status": "active",
+    "createdAt": 1700000004000,
+    "variants": [
+      { "id": "V1004-1", "color": "Đỏ/Đen", "size": "41", "stock": 2, "price": 4500000, "sku": "AJ1-CHI-41" },
+      { "id": "V1004-2", "color": "Đỏ/Đen", "size": "42", "stock": 2, "price": 4500000, "sku": "AJ1-CHI-42" }
+    ]
+  },
+  {
+    "id": "SP1005",
+    "name": "Asics Gel-Kayano 29",
+    "brand": "Asics",
+    "category": "Giày chạy bộ",
+    "gender": "Nam",
+    "price": 2890000,
+    "stock": 14,
+    "image": "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=800&q=80",
+    "description": "Hỗ trợ ổn định bàn chân tối đa cho người chạy cự ly dài với công nghệ FF BLAST PLUS và GEL.",
+    "status": "hidden",
+    "createdAt": 1700000005000,
+    "variants": [
+      { "id": "V1005-1", "color": "Xanh dương", "size": "41", "stock": 7, "price": 2890000, "sku": "GEL-BLU-41" },
+      { "id": "V1005-2", "color": "Xanh dương", "size": "42", "stock": 7, "price": 2890000, "sku": "GEL-BLU-42" }
+    ]
+  }
+]

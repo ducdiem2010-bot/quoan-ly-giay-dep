@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý đơn hàng - Shoes Store Admin</title>
+
+    <!-- Kiểm tra phiên đăng nhập Admin hoặc tạo phiên demo dự phòng -->
+    <script>
+        try {
+            let session = JSON.parse(sessionStorage.getItem("shoesAdminSession") || "null");
+            if (!session || session.role !== "admin") {
+                session = {
+                    id: 1,
+                    name: "Admin Quản Trị",
+                    email: "admin@gmail.com",
+                    role: "admin"
+                };
+                sessionStorage.setItem("shoesAdminSession", JSON.stringify(session));
+            }
+        } catch (error) {
+            console.warn("Lỗi kiểm tra session:", error);
+        }
+    </script>
+
+    <link rel="stylesheet" href="./admin_products.css">
+    <link rel="stylesheet" href="./admin_module.css">
+    <script src="./admin_orders.js" defer></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR ĐỒNG BỘ -->
+    <aside class="sidebar">
+
+        <a href="./admin_base.html" class="sidebar-logo">
+            <span class="logo-icon">S</span>
+            <span class="logo-text">
+                <strong>SHOES ADMIN</strong>
+                <small>Hệ thống quản lý giày</small>
+            </span>
+        </a>
+
+        <p class="sidebar-label">MENU CHÍNH</p>
+
+        <nav class="sidebar-nav">
+            <a href="./admin_base.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./admin_products.html" class="nav-item">
+                <span class="nav-icon">👟</span>
+                <span>Sản phẩm & Biến thể</span>
+            </a>
+
+            <a href="./admin_orders.html" class="nav-item active" aria-current="page">
+                <span class="nav-icon">📦</span>
+                <span>Đơn hàng</span>
+            </a>
+
+            <a href="./admin_customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Khách hàng</span>
+            </a>
+
+            <a href="./admin_login.html" class="nav-item">
+                <span class="nav-icon">🔐</span>
+                <span>Trang Đăng Nhập</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="admin-profile">
+                <div class="avatar">AD</div>
+                <div class="profile-info">
+                    <strong id="adminName">Admin Quản Trị</strong>
+                    <small>Quản trị viên cấp cao</small>
+                </div>
+            </div>
+
+            <a href="./admin_login.html" class="logout-link" id="logoutBtn">
+                <span>↪</span> Đăng xuất
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h1>Quản lý đơn hàng & Pre-order</h1>
+                <p>Theo dõi tiến độ đơn hàng tại cửa hàng, lịch giao nhận và đơn đặt trước</p>
+            </div>
+
+            <div class="topbar-actions">
+                <div class="backend-status-badge">
+                    <span class="status-dot"></span>
+                    <span>Theo dõi đơn hàng thời gian thực</span>
+                </div>
+            </div>
+        </header>
+
+        <div id="notice" class="notice" role="status"></div>
+
+        <!-- THỐNG KÊ ĐƠN HÀNG (STATS GRID) -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">🧾</div>
+                <div class="stat-info">
+                    <p>Tổng đơn hàng</p>
+                    <h2 id="totalOrders">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">📦</div>
+                <div class="stat-info">
+                    <p>Đơn Pre-order</p>
+                    <h2 id="preorderCount">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">⏳</div>
+                <div class="stat-info">
+                    <p>Chờ xác nhận</p>
+                    <h2 id="pendingCount">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                    <p>Đã hoàn thành</p>
+                    <h2 id="completedCount">0</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL THEO DÕI ĐƠN PRE-ORDER -->
+        <section class="panel preorder-panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>📦 Theo dõi đơn đặt trước (Pre-order)</h2>
+                    <p>Các đơn hàng đang chờ hãng nhập về hoặc chờ khách đến cửa hàng nhận giày</p>
+                </div>
+                <span class="preorder-label">PRE-ORDER</span>
+            </div>
+
+            <div class="preorder-summary">
+                <div>
+                    <span class="summary-dot waiting"></span>
+                    <span>Đang chờ hàng:</span>
+                    <strong id="waitingStockCount">0</strong>
+                </div>
+
+                <div>
+                    <span class="summary-dot arrived"></span>
+                    <span>Hàng đã về kho:</span>
+                    <strong id="arrivedCount">0</strong>
+                </div>
+
+                <div>
+                    <span class="summary-dot ready"></span>
+                    <span>Sẵn sàng nhận:</span>
+                    <strong id="readyCount">0</strong>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MÃ ĐƠN</th>
+                            <th>SẢN PHẨM & BIẾN THỂ</th>
+                            <th>NGÀY DỰ KIẾN CÓ HÀNG</th>
+                            <th>TÌNH TRẠNG</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preorderList">
+                        <tr>
+                            <td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">
+                                Đang tải danh sách đơn Pre-order...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PANEL DANH SÁCH TẤT CẢ ĐƠN HÀNG -->
+        <section class="panel order-list-panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Danh sách tất cả đơn hàng</h2>
+                    <p>Quản lý toàn bộ đơn đặt hàng, cập nhật trạng thái xử lý và giao nhận</p>
+                </div>
+            </div>
+
+            <div class="order-filters">
+                <input
+                    type="search"
+                    id="searchOrder"
+                    placeholder="Tìm theo mã đơn, tên khách hàng, SĐT, tên giày..."
+                    aria-label="Tìm kiếm đơn hàng"
+                >
+
+                <select id="statusFilter" aria-label="Lọc trạng thái">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Chờ xác nhận">Chờ xác nhận</option>
+                    <option value="Đang chuẩn bị hàng">Đang chuẩn bị hàng</option>
+                    <option value="Đã có hàng">Đã có hàng</option>
+                    <option value="Sẵn sàng nhận">Sẵn sàng nhận</option>
+                    <option value="Hoàn thành">Hoàn thành</option>
+                    <option value="Đã hủy">Đã hủy</option>
+                </select>
+
+                <select id="typeFilter" aria-label="Lọc loại đơn">
+                    <option value="">Tất cả loại đơn</option>
+                    <option value="Pre-order">Đơn đặt trước (Pre-order)</option>
+                    <option value="Có sẵn">Hàng có sẵn tại shop</option>
+                </select>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MÃ ĐƠN</th>
+                            <th>KHÁCH HÀNG</th>
+                            <th>SẢN PHẨM & SIZE/MÀU</th>
+                            <th>NGÀY ĐẶT</th>
+                            <th>TỔNG TIỀN</th>
+                            <th>LOẠI ĐƠN</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderList">
+                        <tr>
+                            <td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">
+                                Đang tải dữ liệu đơn hàng...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <span id="pageInfo">Trang 1</span>
+                <div>
+                    <button type="button" id="prevPage">‹ Trước</button>
+                    <button type="button" id="nextPage">Sau ›</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- CỬA SỔ CHI TIẾT ĐƠN HÀNG (MODAL) -->
+<div id="detailModal" class="modal" hidden>
+    <div class="modal-card">
+        <div class="modal-heading">
+            <h2>Chi tiết đơn hàng</h2>
+            <button type="button" id="closeModal" class="close-modal" aria-label="Đóng">✕</button>
+        </div>
+        <div id="orderDetail"></div>
+        <div style="margin-top:20px; text-align:right;">
+            <button type="button" id="closeDetailBtn" class="primary-btn">
+                Đóng
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
