@@ -1,233 +1,463 @@
 
-const products = [
-    { id: "SP01", name: "Nike Air Force 1", brand: "Nike", type: "Sneaker", gender: "Nam", price: 2200000, active: true },
-    { id: "SP02", name: "Adidas Superstar", brand: "Adidas", type: "Sneaker", gender: "Unisex", price: 1800000, active: true },
-    { id: "SP03", name: "Asics Gel Kayano", brand: "Asics", type: "Running", gender: "Nam", price: 2500000, active: true },
-    { id: "SP04", name: "Puma Suede Classic", brand: "Puma", type: "Sneaker", gender: "Nam", price: 1500000, active: false },
-    { id: "SP05", name: "Lacoste Court", brand: "Lacoste", type: "Sneaker", gender: "Unisex", price: 2100000, active: true },
-    { id: "SP06", name: "Nike Dunk Low", brand: "Nike", type: "Sneaker", gender: "Unisex", price: 2400000, active: true },
-    { id: "SP07", name: "Adidas Ultraboost", brand: "Adidas", type: "Running", gender: "Nam", price: 2800000, active: true }
-];
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
 
-// Demo quyền Admin trên giao diện.
-// Khi kết nối backend, phải lấy quyền từ máy chủ.
-let currentRole = "Admin";
-let currentPage = 1;
-const pageSize = 5;
+    // ================================
+    // 1. LẤY CÁC PHẦN TỬ HTML
+    // ================================
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const addBtn = document.getElementById("addBtn");
+    const productList = document.getElementById("productList");
+    const message = document.getElementById("message");
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const roleLabel = document.getElementById("roleLabel");
 
-const productList = document.getElementById("productList");
-const searchInput = document.getElementById("searchInput");
-const message = document.getElementById("message");
+    // ================================
+    // 2. CẤU HÌNH
+    // ================================
+    const STORAGE_KEY = "shoesProducts";
+    const PAGE_SIZE = 5;
 
-function canManage() {
-    return currentRole === "Admin";
-}
+    let currentPage = 1;
+    let searchKeyword = "";
 
-function formatPrice(price) {
-    return price.toLocaleString("vi-VN") + " đ";
-}
-
-function getFilteredProducts() {
-    const keyword = searchInput.value.trim().toLocaleLowerCase("vi");
-    return products.filter(product =>
-        product.name.toLocaleLowerCase("vi").includes(keyword)
-    );
-}
-
-function renderProducts() {
-    const filtered = getFilteredProducts();
-    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
-    currentPage = Math.min(currentPage, totalPages);
-
-    const start = (currentPage - 1) * pageSize;
-    const pageProducts = filtered.slice(start, start + pageSize);
-
-    productList.innerHTML = "";
-
-    if (pageProducts.length === 0) {
-        productList.innerHTML = `
-            <tr>
-                <td colspan="8">Không tìm thấy sản phẩm.</td>
-            </tr>`;
+    // ================================
+    // 3. DỮ LIỆU MẪU
+    // Chỉ tạo dữ liệu mẫu khi chưa có dữ liệu
+    // ================================
+    function getSampleProducts() {
+        return [
+            {
+                id: "SP001",
+                name: "Nike Air Max",
+                brand: "Nike",
+                type: "Giày thể thao",
+                gender: "Nam",
+                price: 2500000,
+                status: "Đang bán"
+            },
+            {
+                id: "SP002",
+                name: "Adidas Ultraboost",
+                brand: "Adidas",
+                type: "Giày chạy bộ",
+                gender: "Nam",
+                price: 3200000,
+                status: "Đang bán"
+            },
+            {
+                id: "SP003",
+                name: "Puma Suede Classic",
+                brand: "Puma",
+                type: "Giày thời trang",
+                gender: "Unisex",
+                price: 1800000,
+                status: "Đang bán"
+            },
+            {
+                id: "SP004",
+                name: "Asics Gel",
+                brand: "Asics",
+                type: "Giày chạy bộ",
+                gender: "Nam",
+                price: 2900000,
+                status: "Đang bán"
+            },
+            {
+                id: "SP005",
+                name: "Lacoste Sneaker",
+                brand: "Lacoste",
+                type: "Giày thời trang",
+                gender: "Nam",
+                price: 2100000,
+                status: "Đang bán"
+            },
+            {
+                id: "SP006",
+                name: "Nike Revolution",
+                brand: "Nike",
+                type: "Giày chạy bộ",
+                gender: "Nữ",
+                price: 1600000,
+                status: "Đang bán"
+            }
+        ];
     }
 
-    pageProducts.forEach(product => {
-        const row = document.createElement("tr");
+    // ================================
+    // 4. ĐỌC VÀ LƯU DỮ LIỆU
+    // ================================
+    function loadProducts() {
+        try {
+            const savedData = localStorage.getItem(STORAGE_KEY);
 
-        const values = [
-            product.id,
-            product.name,
-            product.brand,
-            product.type,
-            product.gender,
-            formatPrice(product.price)
-        ];
+            if (savedData === null) {
+                const sampleProducts = getSampleProducts();
+                localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify(sampleProducts)
+                );
+                return sampleProducts;
+            }
 
-        values.forEach(value => {
-            const cell = document.createElement("td");
-            cell.textContent = value;
-            row.appendChild(cell);
+            const products = JSON.parse(savedData);
+
+            if (!Array.isArray(products)) {
+                throw new Error("Dữ liệu sản phẩm không hợp lệ.");
+            }
+
+            return products;
+        } catch (error) {
+            console.error("Lỗi đọc sản phẩm:", error);
+            showMessage(
+                "Không đọc được dữ liệu sản phẩm trong trình duyệt.",
+                "error"
+            );
+            return [];
+        }
+    }
+
+    function saveProducts(products) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+            return true;
+        } catch (error) {
+            console.error("Lỗi lưu sản phẩm:", error);
+            showMessage("Không thể lưu dữ liệu sản phẩm.", "error");
+            return false;
+        }
+    }
+
+    // ================================
+    // 5. THÔNG BÁO
+    // ================================
+    function showMessage(text, type = "success") {
+        if (!message) return;
+
+        message.textContent = text;
+        message.className = type === "error"
+            ? "message error"
+            : "message success";
+    }
+
+    function clearMessage() {
+        if (!message) return;
+
+        message.textContent = "";
+        message.className = "";
+    }
+
+    // ================================
+    // 6. ĐỊNH DẠNG GIÁ TIỀN
+    // ================================
+    function formatPrice(price) {
+        return Number(price).toLocaleString("vi-VN") + " đ";
+    }
+
+    // ================================
+    // 7. HIỂN THỊ DANH SÁCH
+    // ================================
+    function renderProducts() {
+        const products = loadProducts();
+
+        const filteredProducts = products.filter(function (product) {
+            const keyword = searchKeyword.toLowerCase();
+
+            const searchableText = [
+                product.id,
+                product.name,
+                product.brand,
+                product.type,
+                product.gender
+            ].join(" ").toLowerCase();
+
+            // Ẩn các sản phẩm đã xóa mềm
+            return product.status !== "Đã xóa"
+                && searchableText.includes(keyword);
         });
 
-        const statusCell = document.createElement("td");
-        statusCell.textContent = product.active ? "Đang bán" : "Đã ẩn";
-        statusCell.className = product.active ? "status" : "status hidden";
-        row.appendChild(statusCell);
+        const totalPages = Math.max(
+            1,
+            Math.ceil(filteredProducts.length / PAGE_SIZE)
+        );
 
-        const actionCell = document.createElement("td");
-
-        if (canManage()) {
-            const editBtn = document.createElement("button");
-            editBtn.textContent = "Sửa";
-            editBtn.className = "action-btn";
-            editBtn.onclick = () => editProduct(product.id);
-
-            const hideBtn = document.createElement("button");
-            hideBtn.textContent = product.active ? "Ẩn" : "Hiện";
-            hideBtn.className = "action-btn hide-btn";
-            hideBtn.onclick = () => toggleProduct(product.id);
-
-            actionCell.append(editBtn, hideBtn);
-        } else {
-            actionCell.textContent = "Chỉ xem";
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
         }
 
-        row.appendChild(actionCell);
-        productList.appendChild(row);
-    });
+        const startIndex = (currentPage - 1) * PAGE_SIZE;
+        const pageProducts = filteredProducts.slice(
+            startIndex,
+            startIndex + PAGE_SIZE
+        );
 
-    document.getElementById("pageInfo").textContent =
-        `Trang ${currentPage}/${totalPages} — ${filtered.length} sản phẩm`;
+        productList.replaceChildren();
 
-    document.getElementById("prevBtn").disabled = currentPage <= 1;
-    document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+        if (pageProducts.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
 
-    document.getElementById("addBtn").hidden = !canManage();
-    document.getElementById("roleLabel").textContent =
-        "Quyền: " + currentRole;
-}
+            cell.colSpan = 8;
+            cell.textContent = "Không tìm thấy sản phẩm.";
+            cell.style.textAlign = "center";
+            cell.style.padding = "24px";
 
-function editProduct(id) {
-    if (!canManage()) {
-        message.textContent = "Bạn không có quyền quản lý sản phẩm.";
-        return;
+            row.appendChild(cell);
+            productList.appendChild(row);
+        } else {
+            pageProducts.forEach(function (product) {
+                const row = document.createElement("tr");
+
+                appendCell(row, product.id);
+                appendCell(row, product.name);
+                appendCell(row, product.brand);
+                appendCell(row, product.type);
+                appendCell(row, product.gender);
+                appendCell(row, formatPrice(product.price));
+
+                const statusCell = document.createElement("td");
+                const statusBadge = document.createElement("span");
+
+                statusBadge.textContent = product.status || "Đang bán";
+                statusBadge.className =
+                    product.status === "Đang bán"
+                        ? "status active"
+                        : "status inactive";
+
+                statusCell.appendChild(statusBadge);
+                row.appendChild(statusCell);
+
+                const actionCell = document.createElement("td");
+
+                const editButton = createButton(
+                    "Sửa",
+                    "action-btn edit-btn",
+                    function () {
+                        editProduct(product.id);
+                    }
+                );
+
+                const toggleButton = createButton(
+                    product.status === "Đang bán" ? "Ẩn" : "Hiện",
+                    "action-btn hide-btn",
+                    function () {
+                        toggleProduct(product.id);
+                    }
+                );
+
+                const deleteButton = createButton(
+                    "Xóa",
+                    "action-btn delete-btn",
+                    function () {
+                        deleteProduct(product.id);
+                    }
+                );
+
+                actionCell.append(
+                    editButton,
+                    document.createTextNode(" "),
+                    toggleButton,
+                    document.createTextNode(" "),
+                    deleteButton
+                );
+
+                row.appendChild(actionCell);
+                productList.appendChild(row);
+            });
+        }
+
+        if (pageInfo) {
+            pageInfo.textContent =
+                `Trang ${currentPage}/${totalPages} · ` +
+                `${filteredProducts.length} sản phẩm`;
+        }
+
+        if (prevBtn) prevBtn.disabled = currentPage <= 1;
+        if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
     }
 
-    const product = products.find(item => item.id === id);
-    const name = prompt("Nhập tên sản phẩm:", product.name);
-
-    if (name === null) return;
-
-    if (!name.trim()) {
-        message.textContent = "Tên sản phẩm không được để trống.";
-        return;
+    function appendCell(row, value) {
+        const cell = document.createElement("td");
+        cell.textContent = value ?? "";
+        row.appendChild(cell);
     }
 
-    product.name = name.trim();
-    message.textContent = "Đã cập nhật tên sản phẩm (dữ liệu demo).";
-    renderProducts();
-}
+    function createButton(text, className, onClick) {
+        const button = document.createElement("button");
 
-function toggleProduct(id) {
-    if (!canManage()) {
-        message.textContent = "Bạn không có quyền quản lý sản phẩm.";
-        return;
+        button.type = "button";
+        button.textContent = text;
+        button.className = className;
+        button.addEventListener("click", onClick);
+
+        return button;
     }
 
-    const product = products.find(item => item.id === id);
-    product.active = !product.active;
-
-    message.textContent = "Đã đổi trạng thái sản phẩm (dữ liệu demo).";
-    renderProducts();
-}
-
-function addProduct() {
-    if (!canManage()) {
-        message.textContent = "Bạn không có quyền thêm sản phẩm.";
-        return;
-    }
-
-    const name = prompt("Tên sản phẩm:");
-    if (name === null) return;
-
-    if (!name.trim()) {
-        message.textContent = "Tên sản phẩm không được để trống.";
-        return;
-    }
-
-    const brand = prompt("Thương hiệu:");
-    if (brand === null) return;
-
-    const type = prompt("Loại giày:");
-    if (type === null) return;
-
-    const priceText = prompt("Giá sản phẩm (VNĐ):");
-    if (priceText === null) return;
-
-    const price = Number(priceText);
-
-    if (!brand.trim() || !type.trim() ||
-        priceText.trim() === "" || !Number.isFinite(price) || price <= 0) {
-        message.textContent = "Thương hiệu, loại và giá phải hợp lệ.";
-        return;
-    }
-
-    const id = "SP" + String(
-        Math.max(0, ...products.map(p =>
-            Number(p.id.replace("SP", "")) || 0
-        )) + 1
-    ).padStart(2, "0");
-
-    products.push({
-        id,
-        name: name.trim(),
-        brand: brand.trim(),
-        type: type.trim(),
-        gender: "Nam",
-        price,
-        active: true
-    });
-
-    currentPage = 1;
-    searchInput.value = "";
-    message.textContent = "Đã thêm sản phẩm vào dữ liệu demo.";
-    renderProducts();
-}
-
-document.getElementById("searchBtn").addEventListener("click", () => {
-    currentPage = 1;
-    message.textContent = "";
-    renderProducts();
-});
-
-searchInput.addEventListener("input", () => {
-    currentPage = 1;
-    renderProducts();
-});
-
-document.getElementById("prevBtn").addEventListener("click", () => {
-    if (currentPage > 1) {
-        currentPage--;
+    // ================================
+    // 8. TÌM KIẾM SẢN PHẨM
+    // ================================
+    function searchProducts() {
+        searchKeyword = searchInput.value.trim();
+        currentPage = 1;
+        clearMessage();
         renderProducts();
     }
-});
 
-document.getElementById("nextBtn").addEventListener("click", () => {
-    const totalPages = Math.max(
-        1, Math.ceil(getFilteredProducts().length / pageSize)
-    );
+    searchBtn.addEventListener("click", searchProducts);
 
-    if (currentPage < totalPages) {
+    searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            searchProducts();
+        }
+    });
+
+    searchInput.addEventListener("input", function () {
+        if (searchInput.value.trim() === "") {
+            searchKeyword = "";
+            currentPage = 1;
+            renderProducts();
+        }
+    });
+
+    // ================================
+    // 9. THÊM SẢN PHẨM
+    // ================================
+    addBtn.addEventListener("click", function () {
+        window.location.href = "admin_product_add.html";
+    });
+
+    // ================================
+    // 10. SỬA SẢN PHẨM
+    // ================================
+    function editProduct(productId) {
+        const products = loadProducts();
+
+        const product = products.find(function (item) {
+            return item.id === productId;
+        });
+
+        if (!product) {
+            showMessage("Không tìm thấy sản phẩm.", "error");
+            return;
+        }
+
+        // Lưu sản phẩm cần sửa để trang form có thể đọc
+        sessionStorage.setItem(
+            "editingShoeProduct",
+            JSON.stringify(product)
+        );
+
+        window.location.href = "admin_product_add.html";
+    }
+
+    // ================================
+    // 11. ẨN / HIỆN SẢN PHẨM
+    // ================================
+    function toggleProduct(productId) {
+        const products = loadProducts();
+
+        const index = products.findIndex(function (item) {
+            return item.id === productId;
+        });
+
+        if (index === -1) {
+            showMessage("Không tìm thấy sản phẩm.", "error");
+            return;
+        }
+
+        products[index].status =
+            products[index].status === "Đang bán"
+                ? "Đang ẩn"
+                : "Đang bán";
+
+        if (saveProducts(products)) {
+            showMessage(
+                products[index].status === "Đang bán"
+                    ? "Đã hiển thị sản phẩm."
+                    : "Đã ẩn sản phẩm."
+            );
+            renderProducts();
+        }
+    }
+
+    // ================================
+    // 12. XÓA MỀM SẢN PHẨM
+    // ================================
+    function deleteProduct(productId) {
+        const confirmed = window.confirm(
+            "Bạn có chắc muốn ẩn sản phẩm này khỏi danh sách không?"
+        );
+
+        if (!confirmed) return;
+
+        const products = loadProducts();
+
+        const index = products.findIndex(function (item) {
+            return item.id === productId;
+        });
+
+        if (index === -1) {
+            showMessage("Không tìm thấy sản phẩm.", "error");
+            return;
+        }
+
+        // Không xóa dữ liệu vĩnh viễn
+        products[index].status = "Đã xóa";
+
+        if (saveProducts(products)) {
+            showMessage("Đã xóa mềm sản phẩm.");
+            renderProducts();
+        }
+    }
+
+    // ================================
+    // 13. PHÂN TRANG
+    // ================================
+    prevBtn.addEventListener("click", function () {
+        if (currentPage > 1) {
+            currentPage--;
+            renderProducts();
+        }
+    });
+
+    nextBtn.addEventListener("click", function () {
         currentPage++;
         renderProducts();
+    });
+
+    // ================================
+    // 14. ĐĂNG XUẤT
+    // ================================
+    logoutBtn.addEventListener("click", function () {
+        const confirmed = window.confirm("Bạn muốn đăng xuất?");
+
+        if (!confirmed) return;
+
+        // Xóa trạng thái đăng nhập demo.
+        // Không xóa dữ liệu sản phẩm.
+        sessionStorage.removeItem("loggedInUser");
+        sessionStorage.removeItem("editingShoeProduct");
+
+        window.location.href = "login.html";
+    });
+
+    // ================================
+    // 15. HIỂN THỊ QUYỀN
+    // ================================
+    const currentUser = JSON.parse(
+        sessionStorage.getItem("loggedInUser") || "null"
+    );
+
+    if (roleLabel && currentUser && currentUser.role) {
+        roleLabel.textContent = "Quyền: " + currentUser.role;
     }
+
+    // ================================
+    // 16. KHỞI CHẠY
+    // ================================
+    renderProducts();
 });
-
-document.getElementById("addBtn").addEventListener("click", addProduct);
-
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    window.location.href = "login.html";
-});
-
-renderProducts();

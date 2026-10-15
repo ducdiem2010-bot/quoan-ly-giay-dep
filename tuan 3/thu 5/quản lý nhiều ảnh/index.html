@@ -19,6 +19,24 @@
         </header>
 
         <main>
+            <!-- CHỌN SẢN PHẨM -->
+            <section class="panel">
+                <h2>Chọn sản phẩm</h2>
+                <p class="description">
+                    Chọn sản phẩm trước khi thêm hoặc quản lý hình ảnh.
+                </p>
+
+                <label for="productSelect">Sản phẩm giày dép</label>
+                <select id="productSelect">
+                    <option value="">Đang tải danh sách sản phẩm...</option>
+                </select>
+
+                <div id="selectedProductInfo" class="selected-product-info">
+                    Vui lòng chọn sản phẩm.
+                </div>
+            </section>
+
+            <!-- TẢI ẢNH -->
             <section class="panel">
                 <h2>Thêm ảnh sản phẩm</h2>
                 <p class="description">
@@ -26,7 +44,7 @@
                     Dung lượng tối đa 5 MB mỗi ảnh.
                 </p>
 
-                <label for="imageInput" class="upload-area">
+                <label for="imageInput" class="upload-area" id="uploadArea">
                     <span class="upload-icon">＋</span>
                     <strong>Nhấn để chọn ảnh</strong>
                     <span>Hoặc kéo và thả ảnh vào đây</span>
@@ -46,20 +64,21 @@
                         Chọn ảnh
                     </button>
                     <button type="button" id="clearBtn" class="btn danger">
-                        Xóa tất cả
+                        Xóa tất cả ảnh của sản phẩm
                     </button>
                 </div>
 
-                <div id="message" class="message" role="status"
-                     aria-live="polite"></div>
+                <div id="message" class="message"
+                     role="status" aria-live="polite"></div>
             </section>
 
+            <!-- DANH SÁCH ẢNH -->
             <section class="panel">
                 <div class="section-heading">
                     <div>
                         <h2>Danh sách ảnh</h2>
                         <p class="description">
-                            Chọn ảnh đại diện cho sản phẩm.
+                            Chọn ảnh đại diện hoặc xóa ảnh không cần thiết.
                         </p>
                     </div>
                     <span id="imageCount" class="count">0 ảnh</span>
@@ -67,11 +86,12 @@
 
                 <div id="imageList" class="image-grid">
                     <div class="empty">
-                        Chưa có ảnh nào. Hãy tải ảnh lên để bắt đầu.
+                        Hãy chọn sản phẩm để xem danh sách ảnh.
                     </div>
                 </div>
             </section>
 
+            <!-- ẢNH ĐẠI DIỆN -->
             <section class="panel">
                 <h2>Thông tin ảnh đại diện</h2>
                 <div id="featuredInfo" class="featured-info">

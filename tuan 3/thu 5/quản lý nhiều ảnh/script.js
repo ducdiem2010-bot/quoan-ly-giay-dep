@@ -1,423 +1,540 @@
 
-const imageInput = document.getElementById("imageInput");
-const chooseBtn = document.getElementById("chooseBtn");
-const clearBtn = document.getElementById("clearBtn");
-const imageList = document.getElementById("imageList");
-const imageCount = document.getElementById("imageCount");
-const featuredInfo = document.getElementById("featuredInfo");
-const message = document.getElementById("message");
-const uploadArea = document.querySelector(".upload-area");
+document.addEventListener("DOMContentLoaded", async function () {
+    "use strict";
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5 MB mỗi ảnh
+    const PRODUCT_KEY = "shoesProducts";
+    const DB_NAME = "ShoesStoreImageDB";
+    const STORE_NAME = "productImages";
+    const MAX_SIZE = 5 * 1024 * 1024;
 
-const ALLOWED_TYPES = {
-    "image/jpeg": "JPEG",
-    "image/png": "PNG",
-    "image/webp": "WebP"
-};
+    const productSelect = document.getElementById("productSelect");
+    const selectedProductInfo =
+        document.getElementById("selectedProductInfo");
+    const imageInput = document.getElementById("imageInput");
+    const chooseBtn = document.getElementById("chooseBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const uploadArea = document.getElementById("uploadArea");
+    const imageList = document.getElementById("imageList");
+    const imageCount = document.getElementById("imageCount");
+    const featuredInfo = document.getElementById("featuredInfo");
+    const message = document.getElementById("message");
 
-let images = [];
-let featuredId = null;
-let replacingId = null;
+    let db;
+    let products = [];
+    let currentImages = [];
+    let objectUrls = [];
 
-// Tạo UUID ngẫu nhiên
-function createUUID() {
-    if (crypto.randomUUID) {
-        return crypto.randomUUID();
+    // ==============================
+    // 1. THÔNG BÁO
+    // ==============================
+    function showMessage(text, isError = false) {
+        message.textContent = text;
+        message.className = isError
+            ? "message error"
+            : "message success";
     }
 
-    // Dự phòng cho trình duyệt cũ
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-        /[xy]/g,
-        function (c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === "x" ? r : (r & 3 | 8);
-            return v.toString(16);
-        }
-    );
-}
-
-// Hiển thị thông báo
-function showMessage(text, type = "success") {
-    message.textContent = text;
-    message.className = "message " + type;
-}
-
-// Kiểm tra chữ ký thực tế của file
-async function detectImageType(file) {
-    const buffer = await file.slice(0, 12).arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-
-    // JPEG: FF D8 FF
-    if (
-        bytes.length >= 3 &&
-        bytes[0] === 0xFF &&
-        bytes[1] === 0xD8 &&
-        bytes[2] === 0xFF
-    ) {
-        return "image/jpeg";
-    }
-
-    // PNG: 89 50 4E 47 0D 0A 1A 0A
-    const pngSignature = [
-        0x89, 0x50, 0x4E, 0x47,
-        0x0D, 0x0A, 0x1A, 0x0A
-    ];
-
-    if (
-        bytes.length >= 8 &&
-        pngSignature.every((value, index) => bytes[index] === value)
-    ) {
-        return "image/png";
-    }
-
-    // WebP: RIFF ở vị trí 0 và WEBP ở vị trí 8
-    if (
-        bytes.length >= 12 &&
-        String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
-        String.fromCharCode(...bytes.slice(8, 12)) === "WEBP"
-    ) {
-        return "image/webp";
-    }
-
-    return null;
-}
-
-// Kiểm tra định dạng, MIME và dung lượng
-async function validateImage(file) {
-    if (!file || file.size === 0) {
-        throw new Error("File rỗng hoặc không hợp lệ.");
-    }
-
-    if (file.size > MAX_SIZE) {
-        throw new Error("Ảnh vượt quá giới hạn 5 MB.");
-    }
-
-    if (!Object.hasOwn(ALLOWED_TYPES, file.type)) {
-        throw new Error("Chỉ chấp nhận JPEG, PNG và WebP.");
-    }
-
-    const actualType = await detectImageType(file);
-
-    if (!actualType) {
-        throw new Error("Nội dung file không phải ảnh hợp lệ.");
-    }
-
-    if (actualType !== file.type) {
-        throw new Error("MIME không khớp với nội dung ảnh.");
-    }
-
-    // Thử giải mã ảnh trước khi chấp nhận
-    const url = URL.createObjectURL(file);
-
-    try {
-        await new Promise((resolve, reject) => {
-            const img = new Image();
-
-            img.onload = () => {
-                if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                    resolve();
-                } else {
-                    reject(new Error("Ảnh không có kích thước hợp lệ."));
-                }
-            };
-
-            img.onerror = () => {
-                reject(new Error("File ảnh bị hỏng hoặc không giải mã được."));
-            };
-
-            img.src = url;
-        });
-    } finally {
-        URL.revokeObjectURL(url);
-    }
-
-    return actualType;
-}
-
-// Đọc và xử lý các file được chọn
-async function handleFiles(fileList) {
-    const files = Array.from(fileList);
-
-    if (files.length === 0) return;
-
-    let added = 0;
-    let failed = 0;
-    const errors = [];
-
-    for (const file of files) {
+    // ==============================
+    // 2. ĐỌC DANH SÁCH SẢN PHẨM
+    // ==============================
+    function loadProducts() {
         try {
-            const type = await validateImage(file);
+            const data = JSON.parse(
+                localStorage.getItem(PRODUCT_KEY) || "[]"
+            );
 
-            // Nếu đang thay ảnh thì giữ nguyên ID của ảnh cũ
-            const oldImage = replacingId
-                ? images.find(img => img.id === replacingId)
-                : null;
-
-            const newImage = {
-                id: oldImage ? oldImage.id : createUUID(),
-                originalName: file.name,
-                storedName: createUUID() + "." + (
-                    type === "image/jpeg" ? "jpg" :
-                    type === "image/png" ? "png" : "webp"
-                ),
-                type: type,
-                size: file.size,
-                file: file,
-                url: URL.createObjectURL(file)
-            };
-
-            if (oldImage) {
-                URL.revokeObjectURL(oldImage.url);
-
-                const index = images.findIndex(
-                    img => img.id === replacingId
-                );
-
-                images[index] = newImage;
-                replacingId = null;
-            } else {
-                images.push(newImage);
-
-                if (!featuredId) {
-                    featuredId = newImage.id;
-                }
+            if (!Array.isArray(data)) {
+                throw new Error("Danh sách sản phẩm không hợp lệ.");
             }
 
-            added++;
-        } catch (error) {
-            failed++;
-            errors.push(file.name + ": " + error.message);
-        }
-    }
-
-    imageInput.value = "";
-    replacingId = null;
-
-    renderImages();
-
-    if (failed > 0) {
-        showMessage(
-            `Đã xử lý ${added} ảnh, ${failed} ảnh bị từ chối.\n` +
-            errors.join("\n"),
-            "error"
-        );
-    } else {
-        showMessage(`Đã xử lý thành công ${added} ảnh.`, "success");
-    }
-}
-
-// Mở hộp thoại chọn ảnh
-chooseBtn.addEventListener("click", () => {
-    replacingId = null;
-    imageInput.click();
-});
-
-uploadArea.addEventListener("click", () => {
-    replacingId = null;
-});
-
-// Xử lý upload hoặc thay ảnh
-imageInput.addEventListener("change", async () => {
-    await handleFiles(imageInput.files);
-});
-
-// Kéo thả ảnh vào vùng upload
-uploadArea.addEventListener("dragover", event => {
-    event.preventDefault();
-    uploadArea.classList.add("dragging");
-});
-
-uploadArea.addEventListener("dragleave", () => {
-    uploadArea.classList.remove("dragging");
-});
-
-uploadArea.addEventListener("drop", async event => {
-    event.preventDefault();
-    uploadArea.classList.remove("dragging");
-    replacingId = null;
-
-    await handleFiles(event.dataTransfer.files);
-});
-
-// Chọn ảnh đại diện
-function setFeatured(id) {
-    featuredId = id;
-    renderImages();
-    showMessage("Đã chọn ảnh đại diện.", "success");
-}
-
-// Thay một ảnh cụ thể
-function replaceImage(id) {
-    replacingId = id;
-    imageInput.multiple = false;
-    imageInput.click();
-}
-
-// Xóa một ảnh
-function deleteImage(id) {
-    const image = images.find(img => img.id === id);
-    if (!image) return;
-
-    URL.revokeObjectURL(image.url);
-    images = images.filter(img => img.id !== id);
-
-    if (featuredId === id) {
-        featuredId = images.length > 0 ? images[0].id : null;
-    }
-
-    renderImages();
-    showMessage("Đã xóa ảnh.", "success");
-}
-
-// Xóa toàn bộ ảnh
-clearBtn.addEventListener("click", () => {
-    if (images.length === 0) {
-        showMessage("Danh sách ảnh đang trống.", "error");
-        return;
-    }
-
-    if (!confirm("Bạn có chắc muốn xóa tất cả ảnh?")) return;
-
-    images.forEach(img => URL.revokeObjectURL(img.url));
-
-    images = [];
-    featuredId = null;
-    replacingId = null;
-
-    renderImages();
-    showMessage("Đã xóa toàn bộ ảnh.", "success");
-});
-
-// Tạo phần tử HTML an toàn
-function createElement(tag, className, text = "") {
-    const element = document.createElement(tag);
-    element.className = className;
-    element.textContent = text;
-    return element;
-}
-
-// Hiển thị danh sách ảnh
-function renderImages() {
-    imageList.replaceChildren();
-    imageCount.textContent = images.length + " ảnh";
-
-    if (images.length === 0) {
-        imageList.appendChild(
-            createElement(
-                "div",
-                "empty",
-                "Chưa có ảnh nào. Hãy tải ảnh lên để bắt đầu."
-            )
-        );
-
-        featuredInfo.textContent = "Chưa chọn ảnh đại diện.";
-        return;
-    }
-
-    images.forEach(image => {
-        const isFeatured = image.id === featuredId;
-
-        const card = createElement(
-            "article",
-            "image-card" + (isFeatured ? " featured" : "")
-        );
-
-        const preview = document.createElement("img");
-        preview.className = "image-preview";
-        preview.src = image.url;
-        preview.alt = "Ảnh sản phẩm " + image.originalName;
-
-        const content = createElement("div", "card-content");
-
-        if (isFeatured) {
-            content.appendChild(
-                createElement("span", "featured-label", "★ Ảnh đại diện")
+            return data.filter(product =>
+                product.status !== "Đã xóa"
             );
+        } catch (error) {
+            console.error(error);
+            showMessage(
+                "Không đọc được danh sách sản phẩm. Hãy kiểm tra trang quản lý sản phẩm.",
+                true
+            );
+            return [];
+        }
+    }
+
+    function populateProducts() {
+        products = loadProducts();
+        productSelect.replaceChildren();
+
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "-- Chọn sản phẩm --";
+        productSelect.appendChild(placeholder);
+
+        products.forEach(product => {
+            const option = document.createElement("option");
+            option.value = String(product.id);
+            option.textContent =
+                `${product.id} - ${product.name}`;
+
+            productSelect.appendChild(option);
+        });
+
+        if (products.length === 0) {
+            selectedProductInfo.textContent =
+                "Chưa có sản phẩm. Hãy thêm sản phẩm ở trang quản lý sản phẩm trước.";
+        }
+    }
+
+    function getSelectedProduct() {
+        return products.find(
+            product => String(product.id) === productSelect.value
+        );
+    }
+
+    function updateSelectedProductInfo() {
+        const product = getSelectedProduct();
+
+        if (!product) {
+            selectedProductInfo.textContent =
+                "Vui lòng chọn sản phẩm.";
+            return;
         }
 
-        content.appendChild(
-            createElement("div", "image-name", image.originalName)
+        selectedProductInfo.textContent =
+            `Mã: ${product.id} | Tên: ${product.name} | ` +
+            `Thương hiệu: ${product.brand || "Chưa cập nhật"}`;
+    }
+
+    // ==============================
+    // 3. KHỞI TẠO INDEXEDDB
+    // ==============================
+    function openDatabase() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, 1);
+
+            request.onupgradeneeded = function () {
+                const database = request.result;
+
+                if (!database.objectStoreNames.contains(STORE_NAME)) {
+                    database.createObjectStore(STORE_NAME, {
+                        keyPath: "id"
+                    });
+                }
+            };
+
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    function getAllImages() {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, "readonly");
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    function saveImage(image) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, "readwrite");
+            transaction.objectStore(STORE_NAME).put(image);
+
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+            transaction.onabort = () => reject(transaction.error);
+        });
+    }
+
+    function deleteImage(imageId) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, "readwrite");
+            transaction.objectStore(STORE_NAME).delete(imageId);
+
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+        });
+    }
+
+    async function deleteImagesForProduct(productId) {
+        const images = await getAllImages();
+        const targets = images.filter(
+            image => String(image.productId) === String(productId)
         );
 
-        content.appendChild(
-            createElement("div", "image-meta", "Định dạng: " + image.type)
-        );
+        await new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, "readwrite");
+            const store = transaction.objectStore(STORE_NAME);
 
-        content.appendChild(
-            createElement(
-                "div",
-                "image-meta",
-                "Dung lượng: " + (image.size / 1024).toFixed(1) + " KB"
+            targets.forEach(image => store.delete(image.id));
+
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+        });
+    }
+
+    // ==============================
+    // 4. TẢI ẢNH CỦA SẢN PHẨM
+    // ==============================
+    async function loadSelectedImages() {
+        const product = getSelectedProduct();
+
+        clearObjectUrls();
+        currentImages = [];
+
+        if (!product) {
+            renderImages();
+            updateSelectedProductInfo();
+            return;
+        }
+
+        const allImages = await getAllImages();
+
+        currentImages = allImages
+            .filter(image =>
+                String(image.productId) === String(product.id)
             )
-        );
+            .sort((a, b) => a.createdAt - b.createdAt);
 
-        content.appendChild(
-            createElement("div", "image-meta", "UUID: " + image.id)
-        );
+        updateSelectedProductInfo();
+        renderImages();
+    }
 
-        content.appendChild(
-            createElement("div", "image-meta", "Tên lưu: " + image.storedName)
-        );
+    function clearObjectUrls() {
+        objectUrls.forEach(url => URL.revokeObjectURL(url));
+        objectUrls = [];
+    }
 
-        const actions = createElement("div", "card-actions");
+    // ==============================
+    // 5. HIỂN THỊ DANH SÁCH ẢNH
+    // ==============================
+    function renderImages() {
+        imageList.replaceChildren();
 
-        const featureBtn = createElement(
-            "button",
-            "btn primary",
-            isFeatured ? "Đang đại diện" : "Chọn đại diện"
-        );
+        imageCount.textContent = `${currentImages.length} ảnh`;
 
-        featureBtn.type = "button";
-        featureBtn.disabled = isFeatured;
-        featureBtn.addEventListener("click", () => setFeatured(image.id));
+        const featured = currentImages.find(image => image.isFeatured);
 
-        const replaceBtn = createElement(
-            "button",
-            "btn secondary",
-            "Thay ảnh"
-        );
+        if (featured) {
+            featuredInfo.textContent =
+                `Ảnh đại diện: ${featured.name}`;
+        } else {
+            featuredInfo.textContent = "Chưa chọn ảnh đại diện.";
+        }
 
-        replaceBtn.type = "button";
-        replaceBtn.addEventListener("click", () => replaceImage(image.id));
+        if (currentImages.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty";
+            empty.textContent = getSelectedProduct()
+                ? "Sản phẩm này chưa có ảnh."
+                : "Hãy chọn sản phẩm để xem danh sách ảnh.";
 
-        const deleteBtn = createElement(
-            "button",
-            "btn danger",
-            "Xóa ảnh"
-        );
+            imageList.appendChild(empty);
+            return;
+        }
 
-        deleteBtn.type = "button";
-        deleteBtn.addEventListener("click", () => deleteImage(image.id));
+        currentImages.forEach(image => {
+            const card = document.createElement("article");
+            card.className = "image-card";
 
-        actions.append(featureBtn, replaceBtn, deleteBtn);
-        content.appendChild(actions);
-        card.append(preview, content);
-        imageList.appendChild(card);
+            const preview = document.createElement("img");
+            preview.alt = image.name;
+            preview.src = URL.createObjectURL(image.blob);
+            objectUrls.push(preview.src);
+
+            const details = document.createElement("div");
+            details.className = "image-details";
+
+            const name = document.createElement("p");
+            name.className = "image-name";
+            name.textContent = image.name;
+
+            const size = document.createElement("p");
+            size.className = "image-size";
+            size.textContent =
+                `${(image.blob.size / 1024).toFixed(1)} KB`;
+
+            details.append(name, size);
+
+            const actions = document.createElement("div");
+            actions.className = "image-actions";
+
+            if (image.isFeatured) {
+                const badge = document.createElement("span");
+                badge.className = "badge featured-badge";
+                badge.textContent = "Ảnh đại diện";
+                actions.appendChild(badge);
+            } else {
+                actions.appendChild(createButton(
+                    "Chọn làm đại diện",
+                    "btn primary",
+                    () => setFeatured(image.id)
+                ));
+            }
+
+            actions.appendChild(createButton(
+                "Xóa ảnh",
+                "btn danger",
+                () => removeOneImage(image.id)
+            ));
+
+            card.append(preview, details, actions);
+            imageList.appendChild(card);
+        });
+    }
+
+    function createButton(text, className, handler) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = className;
+        button.textContent = text;
+        button.addEventListener("click", handler);
+        return button;
+    }
+
+    // ==============================
+    // 6. CHỌN ẢNH ĐẠI DIỆN
+    // ==============================
+    async function setFeatured(imageId) {
+        try {
+            const product = getSelectedProduct();
+            if (!product) return;
+
+            const images = await getAllImages();
+
+            for (const image of images) {
+                if (String(image.productId) !== String(product.id)) {
+                    continue;
+                }
+
+                image.isFeatured = image.id === imageId;
+                await saveImage(image);
+            }
+
+            await loadSelectedImages();
+            showMessage("Đã cập nhật ảnh đại diện.");
+        } catch (error) {
+            console.error(error);
+            showMessage("Không thể cập nhật ảnh đại diện.", true);
+        }
+    }
+
+    // ==============================
+    // 7. KIỂM TRA FILE ẢNH
+    // ==============================
+    function validateImage(file) {
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            return "Chỉ chấp nhận ảnh JPEG, PNG hoặc WebP.";
+        }
+
+        if (file.size > MAX_SIZE) {
+            return "Mỗi ảnh không được vượt quá 5 MB.";
+        }
+
+        if (file.size === 0) {
+            return "File ảnh không hợp lệ hoặc rỗng.";
+        }
+
+        return null;
+    }
+
+    // ==============================
+    // 8. THÊM ẢNH VÀ LƯU
+    // ==============================
+    async function handleFiles(fileList) {
+        const product = getSelectedProduct();
+
+        if (!product) {
+            showMessage("Bạn phải chọn sản phẩm trước khi thêm ảnh.", true);
+            return;
+        }
+
+        const files = Array.from(fileList || []);
+
+        if (files.length === 0) return;
+
+        let successCount = 0;
+        const errors = [];
+
+        try {
+            for (const file of files) {
+                const error = validateImage(file);
+
+                if (error) {
+                    errors.push(`${file.name}: ${error}`);
+                    continue;
+                }
+
+                const image = {
+                    id: crypto.randomUUID
+                        ? crypto.randomUUID()
+                        : `${Date.now()}-${Math.random()}`,
+                    productId: product.id,
+                    name: file.name,
+                    type: file.type,
+                    blob: file,
+                    isFeatured: false,
+                    createdAt: Date.now() + successCount
+                };
+
+                const alreadyHasFeatured = currentImages.some(
+                    item => item.isFeatured
+                );
+
+                if (currentImages.length === 0 && successCount === 0) {
+                    image.isFeatured = true;
+                } else if (!alreadyHasFeatured && successCount === 0) {
+                    image.isFeatured = true;
+                }
+
+                await saveImage(image);
+                successCount++;
+            }
+
+            await loadSelectedImages();
+
+            if (errors.length > 0) {
+                showMessage(
+                    `Đã lưu ${successCount} ảnh. ` + errors.join(" "),
+                    successCount === 0
+                );
+            } else {
+                showMessage(`Đã lưu ${successCount} ảnh cho ${product.name}.`);
+            }
+        } catch (error) {
+            console.error(error);
+            showMessage(
+                "Không thể lưu ảnh. Hãy kiểm tra dung lượng lưu trữ của trình duyệt.",
+                true
+            );
+        } finally {
+            imageInput.value = "";
+        }
+    }
+
+    // ==============================
+    // 9. XÓA MỘT ẢNH
+    // ==============================
+    async function removeOneImage(imageId) {
+        const image = currentImages.find(item => item.id === imageId);
+        if (!image) return;
+
+        if (!confirm(`Bạn có chắc muốn xóa ảnh "${image.name}"?`)) {
+            return;
+        }
+
+        try {
+            await deleteImage(imageId);
+
+            const remaining = currentImages.filter(
+                item => item.id !== imageId
+            );
+
+            if (image.isFeatured && remaining.length > 0) {
+                await setFeatured(remaining[0].id);
+            } else {
+                await loadSelectedImages();
+            }
+
+            showMessage("Đã xóa ảnh.");
+        } catch (error) {
+            console.error(error);
+            showMessage("Không thể xóa ảnh.", true);
+        }
+    }
+
+    // ==============================
+    // 10. XÓA TẤT CẢ ẢNH CỦA SẢN PHẨM
+    // ==============================
+    clearBtn.addEventListener("click", async function () {
+        const product = getSelectedProduct();
+
+        if (!product) {
+            showMessage("Vui lòng chọn sản phẩm trước.", true);
+            return;
+        }
+
+        if (currentImages.length === 0) {
+            showMessage("Sản phẩm chưa có ảnh.", true);
+            return;
+        }
+
+        if (!confirm(
+            `Xóa tất cả ${currentImages.length} ảnh của "${product.name}"?`
+        )) {
+            return;
+        }
+
+        try {
+            await deleteImagesForProduct(product.id);
+            await loadSelectedImages();
+            showMessage("Đã xóa tất cả ảnh của sản phẩm.");
+        } catch (error) {
+            console.error(error);
+            showMessage("Không thể xóa ảnh.", true);
+        }
     });
 
-    const featured = images.find(img => img.id === featuredId);
+    // ==============================
+    // 11. SỰ KIỆN GIAO DIỆN
+    // ==============================
+    chooseBtn.addEventListener("click", function () {
+        if (!getSelectedProduct()) {
+            showMessage("Hãy chọn sản phẩm trước khi tải ảnh lên.", true);
+            return;
+        }
 
-    if (featured) {
-        featuredInfo.replaceChildren();
+        imageInput.click();
+    });
 
-        featuredInfo.appendChild(
-            createElement("strong", "", featured.originalName)
-        );
+    imageInput.addEventListener("change", event => {
+        handleFiles(event.target.files);
+    });
 
-        featuredInfo.appendChild(
-            createElement("p", "", "UUID: " + featured.id)
-        );
+    productSelect.addEventListener("change", async function () {
+        message.textContent = "";
+        await loadSelectedImages();
+    });
 
-        featuredInfo.appendChild(
-            createElement("p", "", "Tên lưu: " + featured.storedName)
-        );
+    uploadArea.addEventListener("dragover", event => {
+        event.preventDefault();
+        uploadArea.classList.add("dragover");
+    });
 
-        featuredInfo.appendChild(
-            createElement("p", "", "Định dạng: " + featured.type)
+    uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+    });
+
+    uploadArea.addEventListener("drop", event => {
+        event.preventDefault();
+        uploadArea.classList.remove("dragover");
+        handleFiles(event.dataTransfer.files);
+    });
+
+    // ==============================
+    // 12. KHỞI CHẠY
+    // ==============================
+    try {
+        if (!("indexedDB" in window)) {
+            throw new Error("Trình duyệt không hỗ trợ IndexedDB.");
+        }
+
+        db = await openDatabase();
+        populateProducts();
+        await loadSelectedImages();
+    } catch (error) {
+        console.error(error);
+        showMessage(
+            "Không khởi tạo được nơi lưu ảnh. Hãy thử mở bằng Live Server trên trình duyệt hiện đại.",
+            true
         );
     }
-}
-
-// Khởi tạo giao diện
-renderImages();
+});

@@ -1,0 +1,59 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký Admin - Shoes Store</title>
+    <link rel="stylesheet" href="admin_auth.css">
+    <script src="admin_auth.js" defer></script>
+</head>
+<body>
+    <main class="auth-container">
+        <section class="auth-card">
+            <div class="brand">SHOES STORE</div>
+
+            <h1>Tạo tài khoản Admin</h1>
+            <p class="subtitle">Đăng ký để truy cập hệ thống quản trị</p>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <input id="registerName" type="text"
+                           placeholder="Nhập họ và tên" required minlength="2">
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input id="registerEmail" type="email"
+                           placeholder="admin@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <input id="registerPassword" type="password"
+                           placeholder="Ít nhất 6 ký tự" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input id="confirmPassword" type="password"
+                           placeholder="Nhập lại mật khẩu" required minlength="6">
+                </div>
+
+                <p id="registerMessage" class="message" role="alert"></p>
+
+                <button class="auth-button" type="submit">
+                    Đăng ký tài khoản
+                </button>
+            </form>
+
+            <p class="auth-switch">
+                Đã có tài khoản?
+                <a href="./admin_login.html">Đăng nhập</a>
+            </p>
+        </section>
+    </main>
+</body>
+</html>
+```
