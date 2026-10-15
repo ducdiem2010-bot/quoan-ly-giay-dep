@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập quản trị{% endblock %}
+{% block content %}
+<h1>Đăng nhập quản trị</h1>
+<form method="post" class="box">
+    <label for="password">Mật khẩu quản trị</label>
+    <input type="password" id="password" name="password" autofocus required>
+    <button type="submit" class="btn">Đăng nhập</button>
+</form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Quản lý sản phẩm{% endblock %}
+{% block content %}
+<h1>Quản lý sản phẩm</h1>
+<p><a href="{{ url_for('admin_product_new') }}" class="btn">Thêm sản phẩm</a></p>
+
+{% if products %}
+<table>
+    <tr>
+        <th>Mã</th><th>Tên sản phẩm</th><th>Danh mục</th><th>Thương hiệu</th>
+        <th>Giá</th><th>Biến thể</th><th>Tồn kho</th><th>Trạng thái</th><th>Thao tác</th>
+    </tr>
+    {% for p in products %}
+    <tr class="{{ '' if p.HienThi else 'hidden-row' }}">
+        <td>{{ p.MaSanPham }}</td>
+        <td>{{ p.TenSanPham }}</td>
+        <td>{{ p.TenDanhMuc }}</td>
+        <td>{{ p.ThuongHieu or '-' }}</td>
+        <td>{{ "{:,.0f}".format(p.GiaBan) }}</td>
+        <td>{{ p.SoBienThe }}</td>
+        <td>{% if p.TongTon == 0 %}<span class="muted">Hết hàng</span>{% else %}{{ p.TongTon }}{% endif %}</td>
+        <td>{{ 'Đang hiện' if p.HienThi else 'Đang ẩn' }}</td>
+        <td>
+            <a class="btn small gray" href="{{ url_for('admin_variants', product_id=p.MaSanPham) }}">Size và màu</a>
+            <form class="inline" method="post" action="{{ url_for('admin_product_toggle', product_id=p.MaSanPham) }}">
+                <button class="btn small" type="submit">{{ 'Ẩn' if p.HienThi else 'Hiện' }}</button>
+            </form>
+            <form class="inline" method="post" action="{{ url_for('admin_product_delete', product_id=p.MaSanPham) }}"
+                  onsubmit="return confirm('Xóa sản phẩm này?');">
+                <button class="btn small red" type="submit">Xóa</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Chưa có sản phẩm nào. Chọn Thêm sản phẩm để bắt đầu.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Size và màu - {{ product.TenSanPham }}{% endblock %}
+{% block content %}
+<h1>Size và màu</h1>
+<p>
+    <strong>{{ product.TenSanPham }}</strong>
+    ({{ 'đang hiện' if product.HienThi else 'đang ẩn' }} trên trang chủ)
+</p>
+
+{% if variants %}
+<table style="max-width:560px">
+    <tr><th>Size</th><th>Màu</th><th>Tồn kho</th><th>Thao tác</th></tr>
+    {% for v in variants %}
+    <tr>
+        <td>{{ v.KichThuoc }}</td>
+        <td>{{ v.MauSac }}</td>
+        <td>
+            <form class="inline" method="post"
+                  action="{{ url_for('admin_variant_stock', product_id=product.MaSanPham, variant_id=v.MaBienThe) }}">
+                <input type="number" name="so_luong_ton" min="0" value="{{ v.SoLuongTon }}" aria-label="Tồn kho">
+                <button class="btn small" type="submit">Lưu</button>
+            </form>
+        </td>
+        <td>
+            <form class="inline" method="post"
+                  action="{{ url_for('admin_variant_delete', product_id=product.MaSanPham, variant_id=v.MaBienThe) }}"
+                  onsubmit="return confirm('Xóa biến thể này?');">
+                <button class="btn small red" type="submit">Xóa</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p class="muted">Sản phẩm chưa có size và màu. Thêm biến thể đầu tiên ở form bên dưới.</p>
+{% endif %}
+
+<h3>Thêm biến thể</h3>
+<form method="post" class="box">
+    <div class="row">
+        <div>
+            <label for="kich_thuoc">Size</label>
+            <input type="text" id="kich_thuoc" name="kich_thuoc" maxlength="30" placeholder="Ví dụ: 40" required>
+        </div>
+        <div>
+            <label for="mau_sac">Màu</label>
+            <input type="text" id="mau_sac" name="mau_sac" maxlength="50" placeholder="Ví dụ: Đen" required>
+        </div>
+        <div>
+            <label for="so_luong_ton">Tồn kho</label>
+            <input type="number" id="so_luong_ton" name="so_luong_ton" min="0" value="0" required>
+        </div>
+    </div>
+    <p>
+        <button type="submit" class="btn">Thêm biến thể</button>
+        <a href="{{ url_for('admin_products') }}" class="btn gray">Xong, về danh sách</a>
+    </p>
+</form>
+{% endblock %}

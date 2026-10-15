@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Thêm sản phẩm{% endblock %}
+{% block content %}
+<h1>Thêm sản phẩm</h1>
+<form method="post" enctype="multipart/form-data" class="box">
+    <label for="ten">Tên sản phẩm</label>
+    <input type="text" id="ten" name="ten" maxlength="200" value="{{ form.get('ten', '') }}" required>
+
+    <div class="row">
+        <div>
+            <label for="ma_danh_muc">Danh mục</label>
+            <select id="ma_danh_muc" name="ma_danh_muc">
+                <option value="">Chọn danh mục</option>
+                {% for c in categories %}
+                <option value="{{ c.MaDanhMuc }}" {% if form.get('ma_danh_muc')|string == c.MaDanhMuc|string %}selected{% endif %}>{{ c.TenDanhMuc }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="danh_muc_moi" maxlength="100" placeholder="Hoặc nhập danh mục mới" value="{{ form.get('danh_muc_moi', '') }}" style="margin-top:6px">
+        </div>
+        <div>
+            <label for="ma_thuong_hieu">Thương hiệu</label>
+            <select id="ma_thuong_hieu" name="ma_thuong_hieu">
+                <option value="">Không có</option>
+                {% for b in brands %}
+                <option value="{{ b.MaThuongHieu }}" {% if form.get('ma_thuong_hieu')|string == b.MaThuongHieu|string %}selected{% endif %}>{{ b.TenThuongHieu }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="thuong_hieu_moi" maxlength="100" placeholder="Hoặc nhập thương hiệu mới" value="{{ form.get('thuong_hieu_moi', '') }}" style="margin-top:6px">
+        </div>
+    </div>
+    <p class="hint">Nếu nhập tên mới, hệ thống dùng tên mới thay cho mục đã chọn.</p>
+
+    <div class="row">
+        <div>
+            <label for="gia">Giá bán (VNĐ)</label>
+            <input type="number" id="gia" name="gia" min="0" step="1000" value="{{ form.get('gia', '') }}" required>
+        </div>
+        <div>
+            <label for="gioi_tinh">Dành cho</label>
+            <select id="gioi_tinh" name="gioi_tinh">
+                {% for g in genders %}
+                <option value="{{ g }}" {% if form.get('gioi_tinh', 'Unisex') == g %}selected{% endif %}>{{ g }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <label for="mo_ta">Mô tả</label>
+    <textarea id="mo_ta" name="mo_ta" rows="4">{{ form.get('mo_ta', '') }}</textarea>
+
+    <label for="hinh_anh">Ảnh sản phẩm</label>
+    <input type="file" id="hinh_anh" name="hinh_anh" accept=".jpg,.jpeg,.png,.webp">
+    <p class="hint">Định dạng jpg, png hoặc webp, tối đa 5 MB. Có thể bỏ trống.</p>
+
+    <label><input type="checkbox" name="hien_thi" value="1" {% if not form or form.get('hien_thi') %}checked{% endif %}> Hiện sản phẩm trên trang chủ</label>
+
+    <p>
+        <button type="submit" class="btn">Lưu và thêm size, màu</button>
+        <a href="{{ url_for('admin_products') }}" class="btn gray">Hủy</a>
+    </p>
+</form>
+{% endblock %}
