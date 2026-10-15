@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Giỏ hàng - Shoes Store{% endblock %}
+{% block content %}
+<div class="section-title"><div><span class="eyebrow">GIỎ HÀNG</span><h1>Giỏ hàng của bạn</h1></div><a href="{{ url_for('home') }}">← Tiếp tục mua sắm</a></div>
+{% if cart_items %}<div class="cart-layout"><div class="cart-items">
+{% for item in cart_items %}<div class="cart-item"><img src="{{ url_for('static', filename='images/shoe-' ~ ((item.MaSanPham % 3)+1) ~ '.svg') }}" alt="Hình minh họa {{ item.TenSanPham }}">
+<div class="cart-info"><strong>{{ item.TenSanPham }}</strong><p>Size {{ item.KichThuoc }} • {{ item.MauSac }}</p><p>{{ item.GiaBan|vnd }} × {{ item.quantity }}</p><strong>{{ item.subtotal|vnd }}</strong></div>
+<form method="post" action="{{ url_for('remove_from_cart', variant_id=item.MaBienThe) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="text-button delete-button" type="submit">Xóa</button></form></div>
+{% endfor %}</div><aside class="cart-summary"><h2>Tổng đơn hàng</h2><p class="summary-line"><span>Tạm tính</span><strong>{{ total|vnd }}</strong></p><p>Phí giao hàng: không áp dụng.</p><hr><p class="summary-line summary-total"><span>Tổng tiền</span><strong>{{ total|vnd }}</strong></p><a href="{{ url_for('checkout') }}" class="action-primary">Tiếp tục xác nhận →</a></aside></div>
+{% else %}<section class="empty-state"><h2>Giỏ hàng đang trống</h2><p>Hãy chọn sản phẩm và size phù hợp với bạn.</p><a href="{{ url_for('home') }}" class="action-primary">Xem sản phẩm</a></section>{% endif %}
+{% endblock %}
