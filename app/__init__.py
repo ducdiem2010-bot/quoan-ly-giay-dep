@@ -1,5 +1,11 @@
+
 from flask import Flask
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-from app import routes
+    @app.route("/")
+    def home():
+        return "Nhom 6 - Bo khung Flask moi da chay thanh cong!"
+
+    return app
