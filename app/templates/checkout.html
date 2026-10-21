@@ -1,19 +1,48 @@
 {% extends 'base.html' %}
-{% block title %}Xác nhận thông tin - Shoes Store{% endblock %}
+{% block title %}Thông tin giao hàng và thanh toán - Shoes Store{% endblock %}
 {% block content %}
-<div class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Xác nhận thông tin</div>
-<div class="section-title"><div><span class="eyebrow">MẪU GIAO DIỆN TUẦN 2</span><h1>Thông tin nhận tại cửa hàng</h1></div></div>
-<div class="checkout-layout"><div class="panel"><h2>Thông tin liên hệ</h2>
-  <p class="notice notice-warning">Đây là biểu mẫu giao diện Tuần 2. Chưa tạo đơn hàng thật và chưa thu tiền.</p>
-  <label for="full_name">Họ tên</label><input id="full_name" name="full_name" type="text" placeholder="Nhập họ tên" autocomplete="name">
-  <label for="phone">Số điện thoại</label><input id="phone" name="phone" type="tel" placeholder="09xxxxxxxx" autocomplete="tel-national">
-  <label for="email">Email (không bắt buộc)</label><input id="email" name="email" type="email" autocomplete="email">
-  <label for="note">Ghi chú</label><textarea id="note" name="note" rows="3"></textarea>
-  <p><strong>Phương thức thanh toán:</strong> tại cửa hàng khi nhận hàng.</p>
-</div><aside class="panel cart-summary"><h2>Thông tin giỏ hàng</h2>
-  {% for item in cart_items %}<p class="summary-line"><span>{{ item.TenSanPham }} × {{ item.quantity }}</span><strong>{{ item.subtotal|vnd }}</strong></p>{% endfor %}
-  <hr><p class="summary-line summary-total"><span>Tổng cộng</span><strong>{{ total|vnd }}</strong></p>
-  <button disabled class="action-primary" type="button">Xác nhận đơn (chưa triển khai)</button>
-  <p class="pickup-hint">Nhận tại cửa hàng • Không thanh toán online</p>
-</aside></div>
+<section class="public-demo" data-checkout-preview>
+  <div class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Thông tin giao hàng và thanh toán</div>
+  <div class="section-title"><div><span class="eyebrow">ĐẶT HÀNG ONLINE</span><h1>Thông tin giao hàng &amp; thanh toán</h1></div><span class="demo-tag">UI DEMO</span></div>
+  <div class="demo-banner"><strong>Bản xem trước giao diện</strong><span>Biểu mẫu minh họa việc nhập thông tin nhận hàng và chọn phương thức thanh toán. Chưa tạo đơn hàng, trừ tồn kho hoặc thực hiện giao dịch.</span></div>
+  {% if not session.get('user_id') %}<p class="notice">Theo Use Case, khách cần <a class="underlined" href="{{ url_for('login', next=request.full_path) }}">đăng nhập</a> trước khi đặt hàng thực tế. Bạn vẫn có thể xem trước biểu mẫu demo.</p>{% endif %}
+  <div id="checkout-selection-error" class="notice notice-warning" role="alert" hidden></div>
+  <div class="checkout-layout">
+    <div>
+      <form id="checkout-demo-form" method="post" action="{{ url_for('checkout') }}" class="panel">
+        <fieldset id="checkout-fields" disabled>
+          <legend class="panel-legend">1. Thông tin người nhận</legend>
+          <p class="muted small">Bản tích hợp sẽ lấy thông tin nhận hàng từ tài khoản. Trong bản demo, bạn nhập thông tin để xem trước.</p>
+          <label for="full_name">Họ và tên người nhận <span aria-hidden="true">*</span></label><input id="full_name" name="full_name" type="text" value="{{ session.get('user_name', '') if session.get('role') == 'Customer' else '' }}" required minlength="2" maxlength="100" autocomplete="shipping name" placeholder="Nhập họ và tên người nhận">
+          <label for="phone">Số điện thoại người nhận <span aria-hidden="true">*</span></label><input id="phone" name="phone" type="tel" required maxlength="20" autocomplete="shipping tel" inputmode="tel" placeholder="Nhập số điện thoại liên hệ khi giao hàng">
+          <label for="delivery_address">Địa chỉ giao hàng <span aria-hidden="true">*</span></label><textarea id="delivery_address" name="delivery_address" rows="3" required minlength="10" maxlength="255" autocomplete="shipping street-address" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></textarea>
+          <label for="note">Ghi chú giao hàng <span class="muted">(không bắt buộc)</span></label><textarea id="note" name="note" rows="2" maxlength="500" placeholder="Ví dụ: gọi trước khi giao"></textarea>
+          <div class="delivery-method"><strong>Hình thức nhận hàng</strong><span>Giao hàng đến địa chỉ của người nhận</span><small>Đơn vị vận chuyển và cách tính phí: chờ nhóm chốt.</small></div>
+          <fieldset class="payment-fieldset"><legend class="panel-legend">2. Thanh toán online</legend>
+            <label class="payment-option"><input type="radio" name="payment_method" value="bank_transfer" required><span><strong>Chuyển khoản trả trước</strong><small>Thanh toán online qua chuyển khoản trước khi nhận hàng.</small></span></label>
+            <label class="payment-option"><input type="radio" name="payment_method" value="bank_transfer_on_delivery" required><span><strong>Chuyển khoản khi nhận hàng (trả sau)</strong><small>Thanh toán online qua chuyển khoản khi nhận hàng.</small></span></label>
+            <p id="payment-instructions" class="notice">Chọn thời điểm chuyển khoản để xem hướng dẫn minh họa.</p>
+          </fieldset>
+          <button id="preview-order" class="action-primary full-width" type="submit" disabled>Kiểm tra thông tin demo</button>
+          <p class="muted small">Nút này chỉ kiểm tra biểu mẫu và hiển thị bản xem trước. Phí vận chuyển và tổng thanh toán cuối cùng đang chờ chốt.</p>
+        </fieldset>
+      </form>
+      <noscript><p class="notice notice-warning">Bật JavaScript để sử dụng biểu mẫu xem trước. Biểu mẫu không gửi thông tin hoặc tạo giao dịch khi JavaScript bị tắt.</p></noscript>
+      <section id="order-preview" class="panel order-preview" hidden tabindex="-1" aria-labelledby="preview-heading">
+        <span class="eyebrow">KẾT QUẢ MINH HỌA</span><h2 id="preview-heading">Thông tin demo đã được kiểm tra</h2><p>Đây là bản xem trước; chưa tạo đơn hàng hoặc xác nhận nhận tiền.</p>
+        <dl class="preview-details"><dt>Người nhận</dt><dd id="preview-name"></dd><dt>Điện thoại</dt><dd id="preview-phone"></dd><dt>Địa chỉ</dt><dd id="preview-address"></dd><dt>Thanh toán</dt><dd id="preview-payment"></dd><dt>Tiền hàng</dt><dd id="preview-subtotal"></dd><dt>Phí vận chuyển</dt><dd>Chờ chốt</dd><dt>Tổng thanh toán</dt><dd>Chờ cập nhật phí giao hàng</dd><dt>Ghi chú</dt><dd id="preview-note"></dd></dl>
+        <p class="notice notice-warning">Xác nhận mua hàng và xác nhận đã thanh toán là hai việc riêng. Bản UI này chưa kiểm tra tiền vào tài khoản.</p>
+      </section>
+    </div>
+    <aside class="panel cart-summary checkout-summary"><span class="eyebrow">BẢNG TIỀN TRƯỚC KHI MUA</span><h2>Sản phẩm được chọn</h2>
+      <div id="checkout-items">
+      {% for item in cart_items %}<div class="checkout-item" data-checkout-row data-variant="{{ item.MaBienThe }}" data-price="{{ item.GiaBan }}" data-stock="{{ item.SoLuongTon }}" data-quantity="{{ item.quantity }}"><strong>{{ item.TenSanPham }}</strong><p>Size {{ item.KichThuoc }} • {{ item.MauSac }} • SL: <span data-checkout-quantity>{{ item.quantity }}</span></p><p class="summary-line"><span>{{ item.GiaBan|vnd }} / sản phẩm</span><strong data-checkout-subtotal>{{ item.subtotal|vnd }}</strong></p></div>{% endfor %}
+      </div>
+      <p class="summary-line"><span>Tiền hàng</span><strong id="checkout-subtotal">{{ total|vnd }}</strong></p><p class="summary-line"><span>Phí vận chuyển</span><span class="pending-label">Chờ chốt</span></p><hr>
+      <p class="summary-line summary-total"><span>Tổng thanh toán</span><strong class="pending-total">Chờ cập nhật phí giao hàng</strong></p><p class="muted small">Tiền hàng chỉ gồm sản phẩm được chọn. Phí vận chuyển chưa xác định; không mặc định miễn phí.</p>
+      <a href="{{ url_for('view_cart') }}" class="underlined">← Quay lại chỉnh giỏ hàng</a>
+      <details class="demo-scenarios"><summary>Minh họa trạng thái thanh toán</summary><p class="muted small">Chỉ thay đổi nội dung mẫu trên màn hình, chưa có giao dịch được thực hiện.</p><div class="scenario-buttons"><button type="button" data-payment-state="pending">Chờ xác minh</button><button type="button" data-payment-state="success">Thành công (mẫu)</button><button type="button" data-payment-state="failure">Thất bại (mẫu)</button><button type="button" data-payment-state="cancel">Khách dừng (mẫu)</button></div><p id="payment-demo-state" class="notice" aria-live="polite">Trạng thái demo: chưa thanh toán.</p></details>
+    </aside>
+  </div>
+</section>
 {% endblock %}

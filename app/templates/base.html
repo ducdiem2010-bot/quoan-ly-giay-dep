@@ -7,6 +7,19 @@
   <!-- Bản CDN Bootstrap 5 dùng khi máy có Internet. CSS nội bộ vẫn hoạt động khi offline. -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% if request.endpoint in ('view_cart', 'checkout') %}
+<style>
+/* Chỉ áp dụng cho giỏ hàng và checkout public; giữ nguyên CSS các phần khác. */
+.public-demo{min-width:0}.public-demo [hidden]{display:none!important}
+.demo-banner{display:flex;gap:14px;align-items:flex-start;padding:16px 19px;background:#f0f5e5;border:1px solid #d5e3bb;border-radius:13px;margin-bottom:24px;font-size:13px;color:#53684c}.demo-banner>strong{flex-shrink:0;color:#294d33}.demo-tag{padding:6px 12px;background:#eaf0df;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:.08em}
+.cart-select-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-bottom:17px;border-bottom:1px solid var(--line);font-size:13px}.check-label{display:inline-flex!important;gap:8px;align-items:center;font-weight:650;font-size:13px!important;margin:0!important;cursor:pointer}.public-demo input[type=checkbox],.public-demo input[type=radio]{width:18px!important;height:18px;min-height:18px;flex:0 0 18px;display:inline-block;accent-color:#315643;padding:0;margin:0}
+.public-demo .cart-item{gap:13px}.public-demo .cart-item img{width:95px}.cart-row-actions{display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:140px;text-align:right;flex-shrink:0}.public-demo .quantity-label{font-size:12px;display:block;margin:9px 0 4px;font-weight:650}.public-demo .preview-quantity{width:85px;min-height:38px;padding:5px 9px}.public-demo .stock-hint{font-size:11px;margin-top:5px}.cart-summary{height:fit-content}.pending-label{background:#fff3db;color:#805c1d;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:750;white-space:nowrap}.pending-total{max-width:170px;text-align:right;font-size:14px;line-height:1.4;color:#805c1d}.payment-hint{font-size:12px;color:var(--muted);line-height:1.7}.muted{color:var(--muted)}.small{font-size:12px}.validation-message{font-size:13px;background:#fff1ec;color:#a33723;border-radius:8px;padding:10px}.underlined{text-decoration:underline;text-underline-offset:3px;font-weight:650}
+.public-demo fieldset{border:0;padding:0;margin:0;min-width:0}.public-demo .panel-legend{font-size:21px;font-weight:800;line-height:1.35;float:none;width:100%;padding:0;margin:0 0 15px}.delivery-method{display:grid;gap:5px;padding:15px;border:1px solid var(--line);border-radius:10px;background:#f8faf4;font-size:13px;margin:21px 0 28px}.delivery-method small{color:var(--muted)}.public-demo .payment-fieldset{margin-top:26px}.public-demo .payment-option{display:flex;gap:12px;align-items:flex-start;padding:15px;border:1px solid var(--line);border-radius:12px;cursor:pointer;margin:10px 0;background:#fff}.payment-option:has(input:checked){background:#f1f7e7;border-color:#8eac66}.public-demo .payment-option input{margin-top:4px}.payment-option span{display:grid;gap:5px}.payment-option small{font-weight:400;color:var(--muted);line-height:1.5}.full-width{width:100%}.public-demo .full-width{margin-top:15px}.checkout-item{border-bottom:1px solid var(--line);padding:13px 0}.checkout-item>strong{font-size:14px}.checkout-item>p{font-size:12px;color:var(--muted);margin:5px 0}.checkout-summary>.summary-line:first-of-type{margin-top:21px}.checkout-item .summary-line strong{font-size:13px;color:var(--ink)}.order-preview{margin-top:22px}.order-preview:focus{outline:2px solid #8fae69;outline-offset:3px}.order-preview h2{margin-top:10px}.preview-details{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;margin:23px 0;font-size:13px}.preview-details dt{color:var(--muted);font-weight:500}.preview-details dd{margin:0;font-weight:650;overflow-wrap:anywhere;white-space:pre-wrap}.demo-scenarios{margin-top:27px;border-top:1px solid var(--line);padding-top:17px}.demo-scenarios>summary{font-size:13px;font-weight:700;cursor:pointer}.scenario-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px}.scenario-buttons button{border:1px solid #d8dfce;background:white;padding:7px 10px;border-radius:7px;font-size:12px;min-height:36px}.scenario-buttons button:hover,.scenario-buttons button[aria-pressed=true]{background:#e5efcf;border-color:#92ad64}
+@media(max-width:1000px){.public-demo .cart-layout{grid-template-columns:minmax(0,1.4fr) minmax(245px,.85fr)}.public-demo .cart-item{flex-wrap:wrap}.cart-row-actions{margin-left:auto}.public-demo .cart-info{min-width:145px}}
+@media(max-width:768px){.public-demo .cart-layout,.public-demo .checkout-layout{grid-template-columns:minmax(0,1fr)}.demo-banner{display:grid;gap:6px}.cart-row-actions{flex-direction:row;max-width:none;align-items:center;gap:15px}.public-demo .cart-item img{max-width:22%;width:85px}.public-demo .cart-info{min-width:0}.public-demo .cart-select-heading{font-size:12px}.public-demo .panel-legend{font-size:20px}.pending-total{max-width:175px}}
+@media(max-width:430px){.public-demo .cart-item{gap:10px}.public-demo .cart-item img{width:64px}.cart-row-actions{padding-left:28px;width:100%;justify-content:space-between}.public-demo .cart-info>a{font-size:13px}.public-demo .cart-row-actions .delete-button{font-size:12px}.demo-banner{padding:13px}.preview-details{grid-template-columns:90px minmax(0,1fr);font-size:12px}.public-demo .summary-total{font-size:16px}.public-demo .section-title h1{font-size:28px}}
+</style>
+{% endif %}
   {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -37,10 +50,214 @@
 </main>
 <footer class="site-footer" id="lien-he">
   <div class="container footer-flex"><div><strong>SHOES STORE</strong><p>Cửa hàng giày dép • Một cửa hàng duy nhất</p></div>
-  <div><strong>Khách hàng</strong><p>Tham khảo online • Đến cửa hàng nhận hàng</p></div>
+  <div><strong>Mua hàng online</strong><p>Giao hàng theo địa chỉ nhận</p><p>Chuyển khoản trả trước hoặc chuyển khoản khi nhận hàng (trả sau)</p></div>
   <div><strong>Liên hệ</strong><p>Điện thoại/Zalo/Facebook: cập nhật theo thông tin cửa hàng</p></div></div>
-  <p class="copyright">© 2026 Nhóm 6 • Demo Tuần 2 • Không giao hàng, không thanh toán online.</p>
+  <p class="copyright">© 2026 Nhóm 6 • UI demo giao hàng và thanh toán online • Chưa tạo đơn hàng hoặc thực hiện giao dịch.</p>
 </footer>
 <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
+{% if request.endpoint in ('view_cart', 'checkout') %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+/* UI demo W2-ERR-008A: chỉ xem trước; không gửi yêu cầu tạo đơn/thanh toán.
+   Giỏ session vẫn do route Flask cũ quản lý. Không lưu thông tin người nhận. */
+(() => {
+  "use strict";
+  const money = value => new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits: 0
+  }).format(value) + " ₫";
+
+  const cartRoot = document.querySelector("[data-cart-preview]");
+  if (cartRoot) {
+    const form = document.getElementById("cart-preview-form");
+    if (!form) return;
+    const rows = Array.from(form.querySelectorAll("[data-cart-row]"));
+    const selectAll = document.getElementById("select-all");
+    const button = document.getElementById("continue-checkout");
+    const error = document.getElementById("cart-preview-error");
+
+    function updateCartPreview() {
+      let total = 0;
+      let selected = 0;
+      let invalid = false;
+      rows.forEach(row => {
+        const check = row.querySelector(".item-select");
+        const quantity = row.querySelector(".preview-quantity");
+        const raw = quantity.value;
+        const count = Number(raw);
+        const max = Math.min(Number(row.dataset.stock), 99);
+        const valid = /^\d+$/.test(raw) && Number.isSafeInteger(count) &&
+          count >= 1 && count <= max;
+        quantity.disabled = !check.checked;
+        quantity.setCustomValidity(valid ? "" :
+          "Nhập số lượng nguyên từ 1 đến " + max + ", không vượt tồn kho.");
+        row.querySelector("[data-row-total]").textContent =
+          valid ? money(Number(row.dataset.price) * count) : "Số lượng chưa hợp lệ";
+        if (check.checked) {
+          selected += 1;
+          if (valid) total += Number(row.dataset.price) * count;
+          else invalid = true;
+        }
+      });
+      document.getElementById("selected-subtotal").textContent = money(total);
+      document.getElementById("selection-count").textContent =
+        selected + " sản phẩm được chọn";
+      selectAll.checked = selected === rows.length;
+      selectAll.indeterminate = selected > 0 && selected < rows.length;
+      button.disabled = selected === 0;
+      error.hidden = selected > 0 && !invalid;
+      error.textContent = selected === 0 ?
+        "Hãy chọn ít nhất một sản phẩm để xem trước đặt hàng." :
+        (invalid ? "Kiểm tra lại số lượng của các sản phẩm đã chọn." : "");
+      return selected > 0 && !invalid;
+    }
+    selectAll.addEventListener("change", () => {
+      rows.forEach(row => { row.querySelector(".item-select").checked = selectAll.checked; });
+      updateCartPreview();
+    });
+    form.addEventListener("input", updateCartPreview);
+    form.addEventListener("change", updateCartPreview);
+    form.addEventListener("submit", event => {
+      if (!updateCartPreview()) {
+        event.preventDefault();
+        button.removeAttribute("aria-busy");
+        form.reportValidity();
+      }
+    });
+    updateCartPreview();
+  }
+
+  const checkoutRoot = document.querySelector("[data-checkout-preview]");
+  if (!checkoutRoot) return;
+  const form = document.getElementById("checkout-demo-form");
+  const fieldset = document.getElementById("checkout-fields");
+  const submit = document.getElementById("preview-order");
+  const selectionError = document.getElementById("checkout-selection-error");
+  const preview = document.getElementById("order-preview");
+  const params = new URLSearchParams(window.location.search);
+  const rows = Array.from(document.querySelectorAll("[data-checkout-row]"));
+  const selectionSpecified = params.get("from_cart") === "1" || params.has("selected");
+  const requested = params.getAll("selected");
+  const selectedIds = new Set(requested);
+  const availableIds = new Set(rows.map(row => row.dataset.variant));
+  let invalidSelection = selectionSpecified && (
+    requested.length === 0 || requested.some(id => !availableIds.has(id))
+  );
+  let subtotal = 0;
+  let visibleCount = 0;
+  rows.forEach(row => {
+    const id = row.dataset.variant;
+    const selected = !selectionSpecified || selectedIds.has(id);
+    row.hidden = !selected;
+    if (!selected) return;
+    visibleCount += 1;
+    const quantities = params.getAll("qty_" + id);
+    const raw = quantities.length ? quantities[0] : row.dataset.quantity;
+    const count = Number(raw);
+    const valid = quantities.length <= 1 && /^\d+$/.test(raw) &&
+      Number.isSafeInteger(count) && count >= 1 &&
+      count <= Math.min(Number(row.dataset.stock), 99);
+    if (!valid) {
+      invalidSelection = true;
+      row.querySelector("[data-checkout-subtotal]").textContent = "Số lượng chưa hợp lệ";
+      return;
+    }
+    row.querySelector("[data-checkout-quantity]").textContent = String(count);
+    const amount = Number(row.dataset.price) * count;
+    row.querySelector("[data-checkout-subtotal]").textContent = money(amount);
+    subtotal += amount;
+  });
+  invalidSelection = invalidSelection || visibleCount === 0;
+  document.getElementById("checkout-subtotal").textContent = money(subtotal);
+  if (invalidSelection) {
+    selectionError.textContent =
+      "Sản phẩm hoặc số lượng xem trước chưa hợp lệ. Hãy quay lại giỏ hàng và chọn lại.";
+    selectionError.hidden = false;
+  }
+
+  function updatePaymentInstructions() {
+    const method = form.querySelector('input[name="payment_method"]:checked');
+    const instructions = document.getElementById("payment-instructions");
+    if (!method) {
+      instructions.textContent = "Chọn thời điểm chuyển khoản để xem hướng dẫn minh họa.";
+    } else if (method.value === "bank_transfer_on_delivery") {
+      instructions.textContent =
+        "Chuyển khoản khi nhận hàng (trả sau): thanh toán online khi nhận hàng. Thông tin tài khoản nhận và cách xác minh đang chờ nhóm chốt; bản demo chưa thu tiền.";
+    } else {
+      instructions.textContent =
+        "Chuyển khoản trả trước: thanh toán online trước khi nhận hàng. Thông tin tài khoản nhận và cách xác minh đang chờ nhóm chốt. Chọn phương thức chưa có nghĩa đã chuyển tiền thành công.";
+    }
+  }
+  form.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+    radio.addEventListener("change", updatePaymentInstructions);
+  });
+  form.addEventListener("input", event => {
+    if (typeof event.target.setCustomValidity === "function") {
+      event.target.setCustomValidity("");
+    }
+    preview.hidden = true;
+  });
+  form.addEventListener("change", () => { preview.hidden = true; });
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    submit.removeAttribute("aria-busy");
+    if (invalidSelection) return;
+    const name = document.getElementById("full_name");
+    const phone = document.getElementById("phone");
+    const address = document.getElementById("delivery_address");
+    const phoneDigits = phone.value.replace(/\D/g, "");
+    name.setCustomValidity(name.value.trim().length >= 2 ? "" :
+      "Nhập họ tên người nhận, tối thiểu 2 ký tự.");
+    phone.setCustomValidity(/^[+]?[\d ().-]+$/.test(phone.value.trim()) &&
+      phoneDigits.length >= 9 && phoneDigits.length <= 15 ? "" :
+      "Nhập số điện thoại hợp lệ, gồm 9 đến 15 chữ số.");
+    address.setCustomValidity(address.value.trim().length >= 10 ? "" :
+      "Nhập địa chỉ giao hàng cụ thể, tối thiểu 10 ký tự.");
+    if (!form.reportValidity()) return;
+    const method = form.querySelector('input[name="payment_method"]:checked');
+    if (!method) return;
+    const payment = method.value === "bank_transfer"
+      ? "Chuyển khoản trả trước (online)"
+      : "Chuyển khoản khi nhận hàng (trả sau, online)";
+    const content = {
+      "preview-name": name.value.trim(),
+      "preview-phone": phone.value.trim(),
+      "preview-address": address.value.trim(),
+      "preview-payment": payment,
+      "preview-subtotal": money(subtotal),
+      "preview-note": document.getElementById("note").value.trim() || "Không có"
+    };
+    Object.entries(content).forEach(([id, value]) => {
+      document.getElementById(id).textContent = value;
+    });
+    preview.hidden = false;
+    preview.focus({ preventScroll: true });
+    preview.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  const scenarioMessages = {
+    pending: "Trạng thái minh họa: chờ xác minh. Bản UI chưa kiểm tra tiền vào tài khoản.",
+    success: "Tình huống mẫu: thanh toán thành công sau khi được xác minh. Đây chỉ là minh họa; chưa có giao dịch thực tế.",
+    failure: "Tình huống mẫu: thanh toán không thành công. Không ghi nhận đã nhận tiền; hướng dẫn khách kiểm tra hoặc thử lại theo quy trình được chốt.",
+    cancel: "Tình huống mẫu: khách dừng thanh toán. Không ghi nhận đã nhận tiền. Trạng thái đơn hàng được xử lý theo quy trình nhóm chốt."
+  };
+  document.querySelectorAll("[data-payment-state]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-payment-state]").forEach(other => {
+        other.setAttribute("aria-pressed", String(other === button));
+      });
+      document.getElementById("payment-demo-state").textContent =
+        scenarioMessages[button.dataset.paymentState];
+    });
+  });
+
+  // Chỉ mở form sau khi đã gắn chặn submit; dữ liệu người nhận không gửi lên server.
+  fieldset.disabled = invalidSelection;
+  submit.disabled = invalidSelection;
+  updatePaymentInstructions();
+})();
+}, { once: true });
+</script>
+{% endif %}
 {% block extra_js %}{% endblock %}
 </body></html>

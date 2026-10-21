@@ -1,11 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}Giỏ hàng - Shoes Store{% endblock %}
 {% block content %}
-<div class="section-title"><div><span class="eyebrow">GIỎ HÀNG</span><h1>Giỏ hàng của bạn</h1></div><a href="{{ url_for('home') }}">← Tiếp tục mua sắm</a></div>
-{% if cart_items %}<div class="cart-layout"><div class="cart-items">
-{% for item in cart_items %}<div class="cart-item"><img src="{{ url_for('static', filename='images/shoe-' ~ ((item.MaSanPham % 3)+1) ~ '.svg') }}" alt="Hình minh họa {{ item.TenSanPham }}">
-<div class="cart-info"><strong>{{ item.TenSanPham }}</strong><p>Size {{ item.KichThuoc }} • {{ item.MauSac }}</p><p>{{ item.GiaBan|vnd }} × {{ item.quantity }}</p><strong>{{ item.subtotal|vnd }}</strong></div>
-<form method="post" action="{{ url_for('remove_from_cart', variant_id=item.MaBienThe) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="text-button delete-button" type="submit">Xóa</button></form></div>
-{% endfor %}</div><aside class="cart-summary"><h2>Tổng đơn hàng</h2><p class="summary-line"><span>Tạm tính</span><strong>{{ total|vnd }}</strong></p><p>Phí giao hàng: không áp dụng.</p><hr><p class="summary-line summary-total"><span>Tổng tiền</span><strong>{{ total|vnd }}</strong></p><a href="{{ url_for('checkout') }}" class="action-primary">Tiếp tục xác nhận →</a></aside></div>
-{% else %}<section class="empty-state"><h2>Giỏ hàng đang trống</h2><p>Hãy chọn sản phẩm và size phù hợp với bạn.</p><a href="{{ url_for('home') }}" class="action-primary">Xem sản phẩm</a></section>{% endif %}
+<section class="public-demo" data-cart-preview>
+  <div class="section-title"><div><span class="eyebrow">GIỎ HÀNG</span><h1>Giỏ hàng của bạn</h1></div><a href="{{ url_for('home') }}">← Tiếp tục mua sắm</a></div>
+  <div class="demo-banner"><strong>Giao diện demo</strong><span>Chọn sản phẩm và điều chỉnh số lượng để xem trước bước đặt hàng. Thay đổi số lượng ở bản xem trước chưa được lưu vào giỏ.</span></div>
+  {% if cart_items %}
+  <form id="cart-preview-form" method="get" action="{{ url_for('checkout') }}">
+    <input type="hidden" name="from_cart" value="1">
+    <div class="cart-layout">
+      <div class="cart-items">
+        <div class="cart-select-heading"><label class="check-label"><input id="select-all" type="checkbox" checked> Chọn tất cả</label><span id="selection-count" aria-live="polite">{{ cart_items|length }} sản phẩm được chọn</span></div>
+        {% for item in cart_items %}
+        <div class="cart-item" data-cart-row data-variant="{{ item.MaBienThe }}" data-price="{{ item.GiaBan }}" data-stock="{{ item.SoLuongTon }}">
+          <input class="item-select" type="checkbox" name="selected" value="{{ item.MaBienThe }}" checked aria-label="Chọn {{ item.TenSanPham }} size {{ item.KichThuoc }} màu {{ item.MauSac }}">
+          <img src="{{ url_for('static', filename='images/shoe-' ~ ((item.MaSanPham % 3)+1) ~ '.svg') }}" alt="Hình minh họa {{ item.TenSanPham }}">
+          <div class="cart-info"><a href="{{ url_for('product_detail', product_id=item.MaSanPham) }}"><strong>{{ item.TenSanPham }}</strong></a><p>Size {{ item.KichThuoc }} • {{ item.MauSac }}</p><p>{{ item.GiaBan|vnd }} / sản phẩm</p>
+            <label class="quantity-label" for="qty-{{ item.MaBienThe }}">Số lượng xem trước</label><input id="qty-{{ item.MaBienThe }}" class="preview-quantity" name="qty_{{ item.MaBienThe }}" type="number" min="1" max="{{ [item.SoLuongTon, 99]|min }}" step="1" value="{{ item.quantity }}" required>
+            <p class="stock-hint">Hiện còn {{ item.SoLuongTon }} sản phẩm</p>
+          </div>
+          <div class="cart-row-actions"><strong data-row-total>{{ item.subtotal|vnd }}</strong><button form="remove-{{ item.MaBienThe }}" class="text-button delete-button" type="submit">Xóa khỏi giỏ</button></div>
+        </div>
+        {% endfor %}
+        <p class="muted small">Chỉ những sản phẩm được chọn sẽ xuất hiện ở bước xem trước tiếp theo.</p>
+      </div>
+      <aside class="cart-summary"><span class="eyebrow">SẢN PHẨM ĐÃ CHỌN</span><h2>Thông tin đặt hàng</h2>
+        <p class="summary-line"><span>Tiền hàng</span><strong id="selected-subtotal">{{ total|vnd }}</strong></p>
+        <p class="summary-line"><span>Phí vận chuyển</span><span class="pending-label">Chờ chốt</span></p>
+        <hr><p class="summary-line summary-total"><span>Tổng thanh toán</span><strong class="pending-total">Chờ cập nhật phí giao hàng</strong></p>
+        <p class="muted small">Tổng thanh toán = tiền hàng + phí vận chuyển. Mức phí sẽ được cập nhật trước khi xác nhận mua thực tế.</p>
+        <p id="cart-preview-error" class="validation-message" role="alert" hidden></p>
+        <button id="continue-checkout" class="action-primary" type="submit">Xem trước đặt hàng →</button>
+        <p class="payment-hint">Giao hàng theo địa chỉ nhận. Chỉ thanh toán online: chuyển khoản trả trước hoặc chuyển khoản khi nhận hàng (trả sau).</p>
+      </aside>
+    </div>
+  </form>
+  {% for item in cart_items %}<form id="remove-{{ item.MaBienThe }}" method="post" action="{{ url_for('remove_from_cart', variant_id=item.MaBienThe) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"></form>{% endfor %}
+  <noscript><p class="notice notice-warning">Bật JavaScript để chọn riêng sản phẩm và xem trước số lượng. Bạn vẫn có thể xem hoặc xóa sản phẩm khỏi giỏ.</p></noscript>
+  {% else %}
+  <section class="empty-state"><h2>Giỏ hàng đang trống</h2><p>Hãy chọn sản phẩm, màu và size phù hợp với bạn.</p><a href="{{ url_for('home') }}" class="action-primary">Xem sản phẩm</a></section>
+  {% endif %}
+</section>
 {% endblock %}
