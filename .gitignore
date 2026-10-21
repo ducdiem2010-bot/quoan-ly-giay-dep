@@ -22,3 +22,8 @@ Thumbs.db
 
 # VS Code (cau hinh ca nhan)
 .vscode/
+# Database chay thu tren may
+instance/
+*.sqlite
+*.sqlite3
+*.db

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}{% block admin_title %}Quản trị{% endblock %} - Shoes Store{% endblock %}
+{% block content %}<div class="admin-layout"><aside class="admin-sidebar"><span class="eyebrow">QUẢN LÝ</span><h2>Dashboard</h2>
+<a href="{{ url_for('admin_dashboard') }}">▦ Danh sách sản phẩm</a><a href="{{ url_for('admin_product_add') }}">＋ Chuẩn bị thêm sản phẩm</a><a href="{{ url_for('home') }}">↗ Xem cửa hàng</a>
+</aside><div class="admin-panel">{% block admin_content %}{% endblock %}</div></div>{% endblock %}

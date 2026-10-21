@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.TenSanPham }} - Chi Tiết Sản Phẩm</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; }
+        .detail-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 25px; max-width: 500px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .category { font-size: 14px; color: #888; text-transform: uppercase; font-weight: bold; }
+        .price { font-size: 20px; color: #d9534f; font-weight: bold; margin: 15px 0; }
+        .btn-back { display: inline-block; padding: 8px 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="detail-card">
+        <span class="category">{{ product.TenDanhMuc }}</span>
+        <h1>{{ product.TenSanPham }}</h1>
+        <p><strong>Thương hiệu:</strong> {{ product.ThuongHieu or 'Khác' }}</p>
+        <p class="price">Giá: {{ "{:,.0f}".format(product.GiaBan) }} VNĐ</p>
+        <p><strong>Mô tả:</strong> {{ product.MoTa or 'Chưa có mô tả cho sản phẩm này.' }}</p>
+        <a href="/" class="btn-back">← Quay lại danh sách</a>
+    </div>
+</body>
+</html>

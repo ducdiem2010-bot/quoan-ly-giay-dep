@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}{{ selected.TenDanhMuc }} - Shoes Store{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Danh mục</div>
+<div class="section-title"><div><span class="eyebrow">DANH MỤC</span><h1>{{ selected.TenDanhMuc }}</h1></div><span>{{ products|length }} sản phẩm</span></div>
+{% if products %}<div class="product-grid">{% for product in products %}{% include '_product_card.html' %}{% endfor %}</div>{% else %}<div class="empty-state">Danh mục chưa có sản phẩm.</div>{% endif %}
+{% endblock %}
