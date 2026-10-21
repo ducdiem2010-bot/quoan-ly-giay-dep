@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm & Biến thể - Shoes Store Admin</title>
+
+    <!-- Kiểm tra phiên đăng nhập Admin hoặc tạo phiên demo dự phòng -->
+    <script>
+        try {
+            let session = JSON.parse(sessionStorage.getItem("shoesAdminSession") || "null");
+            if (!session || session.role !== "admin") {
+                // Tự động khởi tạo phiên demo để mở xem trực tiếp mà không bị gián đoạn
+                session = {
+                    id: 1,
+                    name: "Admin Quản Trị",
+                    email: "admin@gmail.com",
+                    role: "admin"
+                };
+                sessionStorage.setItem("shoesAdminSession", JSON.stringify(session));
+            }
+        } catch (error) {
+            console.warn("Lỗi kiểm tra session:", error);
+        }
+    </script>
+
+    <!-- Stylesheet chuẩn và Script chính -->
+    <link rel="stylesheet" href="./admin_products.css">
+    <script src="./admin_products.js" defer></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="./admin_base.html" class="sidebar-logo">
+            <span class="logo-icon">S</span>
+            <span class="logo-text">
+                <strong>SHOES ADMIN</strong>
+                <small>Hệ thống quản lý giày</small>
+            </span>
+        </a>
+
+        <p class="sidebar-label">MENU CHÍNH</p>
+
+        <nav class="sidebar-nav">
+            <a href="./admin_base.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./admin_products.html" class="nav-item active" aria-current="page">
+                <span class="nav-icon">👟</span>
+                <span>Sản phẩm & Biến thể</span>
+            </a>
+
+            <a href="./admin_orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>Đơn hàng & Vận chuyển</span>
+            </a>
+
+            <a href="./admin_customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Khách hàng</span>
+            </a>
+
+            <a href="./admin_login.html" class="nav-item">
+                <span class="nav-icon">🔐</span>
+                <span>Trang Đăng Nhập</span>
+            </a>>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="admin-profile">
+                <div class="avatar">AD</div>
+                <div class="profile-info">
+                    <strong id="adminName">Admin Quản Trị</strong>
+                    <small>Quản trị viên cấp cao</small>
+                </div>
+            </div>
+
+            <a href="./admin_login.html" class="logout-link" id="logoutLink">
+                <span>↪</span> Đăng xuất
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h1>Quản lý sản phẩm & biến thể</h1>
+                <p>Thêm mới sản phẩm, quản lý kích thước (size), màu sắc và ảnh đại diện</p>
+            </div>
+
+            <div class="topbar-actions">
+                <div id="backendStatus" class="backend-status-badge" title="Trạng thái kết nối hệ thống lưu trữ">
+                    <span class="status-dot" id="backendStatusDot"></span>
+                    <span id="backendStatusText">Đang kết nối backend...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- THỐNG KÊ (STATS GRID) -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👟</div>
+                <div class="stat-info">
+                    <p>Tổng sản phẩm</p>
+                    <h2 id="totalProducts">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <div class="stat-info">
+                    <p>Còn hàng</p>
+                    <h2 id="activeProducts">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">◷</div>
+                <div class="stat-info">
+                    <p>Hết hàng</p>
+                    <h2 id="hiddenProducts">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">📦</div>
+                <div class="stat-info">
+                    <p>Sắp hết hàng</p>
+                    <h2 id="lowStockProducts">0</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL DANH SÁCH SẢN PHẨM -->
+        <section class="content-panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>Danh sách sản phẩm (Dạng ô vuông)</h2>
+                    <p>Mỗi sản phẩm hiển thị dưới dạng ô vuông trực quan kèm ảnh đại diện và giá tiền bên dưới</p>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <!-- Chuyển đổi dạng ô vuông / dạng bảng -->
+                    <div class="view-mode-selector">
+                        <button type="button" class="view-mode-btn active" id="btnViewGrid" title="Xem dạng ô vuông">
+                            🔲 Ô vuông
+                        </button>
+                        <button type="button" class="view-mode-btn" id="btnViewTable" title="Xem dạng bảng dài">
+                            ☰ Dạng bảng
+                        </button>
+                    </div>
+
+                    <button type="button" class="btn-secondary" id="btnSyncBackend" title="Đồng bộ lại dữ liệu">
+                        🔄 Đồng bộ
+                    </button>
+                    <button type="button" class="btn-primary" id="btnAddProduct">
+                        + Thêm sản phẩm mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- TÌM KIẾM VÀ BỘ LỌC -->
+            <div class="toolbar">
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input
+                        id="searchProduct"
+                        type="search"
+                        placeholder="Tìm theo tên sản phẩm, mã SP, size, màu..."
+                        aria-label="Tìm kiếm sản phẩm">
+                </div>
+
+                <select id="filterBrand" aria-label="Lọc theo thương hiệu">
+                    <option value="">Tất cả thương hiệu</option>
+                    <option value="Nike">Nike</option>
+                    <option value="Adidas">Adidas</option>
+                    <option value="Puma">Puma</option>
+                    <option value="Asics">Asics</option>
+                    <option value="Jordan">Jordan</option>
+                    <option value="Converse">Converse</option>
+                    <option value="Vans">Vans</option>
+                    <option value="Lacoste">Lacoste</option>
+                    <option value="Khác">Khác</option>
+                </select>
+
+                <select id="filterCategory" aria-label="Lọc theo danh mục">
+                    <option value="">Tất cả danh mục</option>
+                    <option value="Giày thời trang">Giày thời trang</option>
+                    <option value="Giày chạy bộ">Giày chạy bộ</option>
+                    <option value="Giày thể thao">Giày thể thao</option>
+                    <option value="Giày bóng rổ">Giày bóng rổ</option>
+                    <option value="Giày da">Giày da</option>
+                    <option value="Dép">Dép</option>
+                </select>
+
+                <select id="sortProduct" aria-label="Sắp xếp sản phẩm">
+                    <option value="newest">Mới nhất trước</option>
+                    <option value="nameAsc">Tên sản phẩm A - Z</option>
+                    <option value="priceAsc">Giá tăng dần</option>
+                    <option value="priceDesc">Giá giảm dần</option>
+                    <option value="stockAsc">Tồn kho ít nhất</option>
+                    <option value="stockDesc">Tồn kho nhiều nhất</option>
+                </select>
+            </div>
+
+            <div class="table-info">
+                <span id="resultCount">Đang tải dữ liệu...</span>
+                <button type="button" id="btnResetFilters" class="btn-reset">
+                    Xóa bộ lọc
+                </button>
+            </div>
+
+            <!-- 1. GIAO DIỆN LƯỚI Ô VUÔNG (MẶC ĐỊNH) -->
+            <div id="productGrid" class="product-grid">
+                <!-- Dynamic Square Cards Rendered Here -->
+            </div>
+
+            <!-- 2. GIAO DIỆN BẢNG DÀI (TABLE VIEW) -->
+            <div id="productTableWrapper" class="table-wrapper" style="display: none;">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>ẢNH & TÊN SẢN PHẨM</th>
+                            <th>MÃ SP</th>
+                            <th>THƯƠNG HIỆU</th>
+                            <th>GIÁ BÁN</th>
+                            <th>BIẾN THỂ (SIZE / MÀU)</th>
+                            <th>TỒN KHO</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                Đang tải danh sách sản phẩm...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PHÂN TRANG -->
+            <div class="table-footer">
+                <span id="paginationInfo">Trang 1</span>
+
+                <div class="pagination">
+                    <button type="button" id="btnPrevPage" aria-label="Trang trước">‹</button>
+                    <span id="currentPage" class="current-page-badge">1</span>
+                    <button type="button" id="btnNextPage" aria-label="Trang tiếp theo">›</button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ==========================================================================
+     MODAL 1: THÊM / SỬA SẢN PHẨM, BIẾN THỂ VÀ ẢNH ĐẠI DIỆN
+     ========================================================================== -->
+<div class="modal-overlay" id="productModal" aria-hidden="true">
+
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">Thêm sản phẩm mới</h2>
+                <p>Nhập thông tin sản phẩm, chọn ảnh đại diện và thiết lập các biến thể size/màu</p>
+            </div>
+
+            <button type="button" id="btnCloseModal" class="btn-close" aria-label="Đóng modal">×</button>
+        </div>
+
+        <form id="productForm">
+            <input type="hidden" id="productId">
+
+            <div class="modal-body">
+
+                <!-- PHẦN 1: THÔNG TIN SẢN PHẨM -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-number">1</span>
+                        <div>
+                            <h3>Thông tin cơ bản</h3>
+                            <p>Nhập tên, thương hiệu, danh mục và giá bán gốc</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="productName">Tên sản phẩm *</label>
+                            <input
+                                id="productName"
+                                type="text"
+                                maxlength="150"
+                                placeholder="Ví dụ: Nike Air Force 1 '07"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCode">Mã sản phẩm (SKU) *</label>
+                            <input
+                                id="productCode"
+                                type="text"
+                                maxlength="50"
+                                placeholder="Tự động tạo hoặc nhập (VD: SP1001)"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productBrand">Thương hiệu *</label>
+                            <select id="productBrand" required>
+                                <option value="">-- Chọn thương hiệu --</option>
+                                <option value="Nike">Nike</option>
+                                <option value="Adidas">Adidas</option>
+                                <option value="Puma">Puma</option>
+                                <option value="Asics">Asics</option>
+                                <option value="Jordan">Jordan</option>
+                                <option value="Converse">Converse</option>
+                                <option value="Vans">Vans</option>
+                                <option value="Lacoste">Lacoste</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCategory">Danh mục *</label>
+                            <select id="productCategory" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option value="Giày thời trang">Giày thời trang</option>
+                                <option value="Giày chạy bộ">Giày chạy bộ</option>
+                                <option value="Giày thể thao">Giày thể thao</option>
+                                <option value="Giày bóng rổ">Giày bóng rổ</option>
+                                <option value="Giày da">Giày da</option>
+                                <option value="Dép">Dép</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productGender">Đối tượng *</label>
+                            <select id="productGender" required>
+                                <option value="Unisex">Unisex (Cả nam và nữ)</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Trẻ em">Trẻ em</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productPrice">Giá bán (VNĐ) *</label>
+                            <input
+                                id="productPrice"
+                                type="number"
+                                min="1000"
+                                max="1000000000"
+                                step="1000"
+                                placeholder="Ví dụ: 2500000"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productStatus">Trạng thái hàng</label>
+                            <select id="productStatus">
+                                <option value="active">Còn hàng (Hiển thị)</option>
+                                <option value="hidden">Hết hàng (Tạm ngừng)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="productDescription">Mô tả sản phẩm</label>
+                            <textarea
+                                id="productDescription"
+                                rows="3"
+                                maxlength="2000"
+                                placeholder="Nhập mô tả chất liệu, thiết kế, công nghệ đệm..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHẦN 2: ẢNH ĐẠI DIỆN SẢN PHẨM -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-number">2</span>
+                        <div>
+                            <h3>Ảnh đại diện sản phẩm</h3>
+                            <p>Tải ảnh đại diện từ máy tính hoặc dán liên kết URL ảnh chính</p>
+                        </div>
+                    </div>
+
+                    <div class="avatar-upload-box">
+                        <!-- Preview Box -->
+                        <div class="avatar-preview-wrapper" id="avatarPreviewBox">
+                            <span class="avatar-badge-tag">Ảnh đại diện</span>
+                            <div id="imagePreviewContent" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                                <div style="color:var(--text-light); text-align:center;">
+                                    <div style="font-size:32px; margin-bottom:4px;">👟</div>
+                                    <span style="font-size:12px;">Chưa chọn ảnh</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inputs -->
+                        <div class="avatar-inputs">
+                            <div class="form-group">
+                                <label for="productImageFile">Tải ảnh đại diện từ máy tính</label>
+                                <input
+                                    id="productImageFile"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                                <small>Hỗ trợ định dạng JPG, PNG, WebP (Tự động lưu dữ liệu an toàn).</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productImageUrl">Hoặc dán URL ảnh đại diện trực tiếp</label>
+                                <input
+                                    id="productImageUrl"
+                                    type="url"
+                                    placeholder="https://images.unsplash.com/photo-...">
+                            </div>
+
+                            <div>
+                                <p class="preset-avatars-label">⚡ Chọn nhanh ảnh mẫu giày đẹp:</p>
+                                <div class="preset-avatars-grid">
+                                    <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80">
+                                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=100&q=80" alt="Nike AF1">
+                                        Nike Trắng
+                                    </button>
+                                    <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80">
+                                        <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=100&q=80" alt="Adidas Ultraboost">
+                                        Adidas Đen
+                                    </button>
+                                    <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80">
+                                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80" alt="Nike Red">
+                                        Nike Đỏ
+                                    </button>
+                                    <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80">
+                                        <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=100&q=80" alt="Jordan 1">
+                                        Jordan 1 High
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHẦN 3: QUẢN LÝ BIẾN THỂ (SIZE & MÀU SẮC) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-number">3</span>
+                        <div>
+                            <h3>Quản lý biến thể (Size & Màu sắc)</h3>
+                            <p>Thiết lập danh sách các kích cỡ (size), màu sắc và số lượng tồn kho từng loại</p>
+                        </div>
+                    </div>
+
+                    <div class="variants-container">
+                        <div class="variants-header-bar">
+                            <span style="font-weight: 600; color: var(--text-secondary); font-size: 13px;">
+                                Danh sách các phiên bản màu và kích cỡ
+                            </span>
+
+                            <div class="variants-tools">
+                                <button type="button" class="btn-sm btn-outline" id="btnOpenQuickVariants">
+                                    ⚡ Tạo nhanh biến thể
+                                </button>
+                                <button type="button" class="btn-sm btn-primary" id="btnAddVariantRow">
+                                    + Thêm 1 biến thể
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="variants-table-wrapper">
+                            <table class="variants-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 26%;">MÀU SẮC</th>
+                                        <th style="width: 18%;">SIZE (KÍCH CỠ)</th>
+                                        <th style="width: 18%;">TỒN KHO</th>
+                                        <th style="width: 22%;">GIÁ BÁN (VNĐ)</th>
+                                        <th style="width: 16%; text-align: center;">XÓA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="variantTableBody">
+                                    <!-- Dynamic Variant Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="variants-summary-bar">
+                            <span>Tổng số biến thể: <strong id="totalVariantsCount">0</strong></span>
+                            <span>Tổng tồn kho: <strong id="totalVariantsStock">0</strong> đôi (Tự động tính)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MODAL ACTIONS -->
+            <div class="modal-actions">
+                <button type="button" id="btnCancelModal" class="btn-secondary">Hủy bỏ</button>
+                <button type="submit" id="btnSaveProduct" class="btn-primary">
+                    💾 Lưu sản phẩm & biến thể
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
+
+<!-- ==========================================================================
+     MODAL 2: TẠO NHANH BIẾN THỂ (QUICK VARIANT GENERATOR)
+     ========================================================================== -->
+<div class="modal-overlay" id="quickVariantModal" aria-hidden="true" style="z-index: 1100;">
+    <div class="modal-card" style="max-width: 600px;">
+        <div class="modal-header">
+            <div>
+                <h2>Tạo nhanh biến thể giày</h2>
+                <p>Chọn các kích thước và màu sắc để tự động sinh ra danh sách biến thể</p>
+            </div>
+            <button type="button" id="btnCloseQuickModal" class="btn-close">×</button>
+        </div>
+
+        <div class="modal-body quick-variant-box">
+            <div>
+                <label style="font-weight:700; font-size:13px; display:block; margin-bottom:6px;">
+                    1. Chọn các kích cỡ (Size):
+                </label>
+                <div class="chips-selector" id="sizeChips">
+                    <label class="chip-checkbox"><input type="checkbox" value="38"><span>Size 38</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="39" checked><span>Size 39</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="40" checked><span>Size 40</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="41" checked><span>Size 41</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="42" checked><span>Size 42</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="43"><span>Size 43</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="44"><span>Size 44</span></label>
+                </div>
+            </div>
+
+            <div>
+                <label style="font-weight:700; font-size:13px; display:block; margin-bottom:6px;">
+                    2. Chọn hoặc nhập màu sắc:
+                </label>
+                <div class="chips-selector" id="colorChips">
+                    <label class="chip-checkbox"><input type="checkbox" value="Trắng" checked><span>Trắng</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="Đen"><span>Đen</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="Xanh dương"><span>Xanh dương</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="Đỏ"><span>Đỏ</span></label>
+                    <label class="chip-checkbox"><input type="checkbox" value="Xám"><span>Xám</span></label>
+                </div>
+                <input type="text" id="customColorInput" placeholder="Hoặc nhập màu tùy chỉnh (VD: Đen/Trắng, Phối màu...)" style="margin-top:8px; width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:var(--radius-sm);">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="defaultStockInput">Số lượng tồn kho mỗi loại</label>
+                    <input id="defaultStockInput" type="number" min="0" value="10">
+                </div>
+                <div class="form-group">
+                    <label for="defaultPriceInput">Giá bán riêng (nếu có)</label>
+                    <input id="defaultPriceInput" type="number" min="0" placeholder="Mặc định theo giá SP">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" id="btnCancelQuickModal" class="btn-secondary">Đóng</button>
+            <button type="button" id="btnGenerateVariants" class="btn-primary">
+                ⚡ Tạo biến thể tự động
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     MODAL 3: XEM CHI TIẾT BIẾN THỂ (QUICK VIEW)
+     ========================================================================== -->
+<div class="modal-overlay" id="viewVariantsModal" aria-hidden="true" style="z-index: 1050;">
+    <div class="modal-card" style="max-width: 650px;">
+        <div class="modal-header">
+            <div>
+                <h2 id="viewVariantsTitle">Chi tiết biến thể</h2>
+                <p id="viewVariantsSubtitle">Danh sách tất cả kích cỡ và màu sắc của sản phẩm</p>
+            </div>
+            <button type="button" id="btnCloseViewVariants" class="btn-close">×</button>
+        </div>
+
+        <div class="modal-body" id="viewVariantsBody">
+            <!-- Dynamic Variants List -->
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" id="btnCloseViewVariantsBtn" class="btn-secondary">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONTAINER TOAST THÔNG BÁO -->
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+</body>
+</html>

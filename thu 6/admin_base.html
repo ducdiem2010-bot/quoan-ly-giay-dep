@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Tổng Quan - Shoes Store Admin</title>
+
+    <!-- Kiểm tra phiên đăng nhập Admin hoặc tạo phiên demo dự phòng -->
+    <script>
+        try {
+            let session = JSON.parse(sessionStorage.getItem("shoesAdminSession") || "null");
+            if (!session || session.role !== "admin") {
+                session = {
+                    id: 1,
+                    name: "Admin Quản Trị",
+                    email: "admin@gmail.com",
+                    role: "admin"
+                };
+                sessionStorage.setItem("shoesAdminSession", JSON.stringify(session));
+            }
+        } catch (error) {
+            console.warn("Lỗi kiểm tra session:", error);
+        }
+    </script>
+
+    <link rel="stylesheet" href="./admin_products.css">
+
+    <style>
+        /* Tinh chỉnh riêng cho Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .dashboard-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dashboard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dashboard-card-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-all-link {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .view-all-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .quick-actions-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .quick-action-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+
+        .quick-action-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-border);
+        }
+
+        .quick-action-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .quick-action-text strong {
+            display: block;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .quick-action-text small {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .quick-actions-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR ĐỒNG BỘ -->
+    <aside class="sidebar">
+
+        <a href="./admin_base.html" class="sidebar-logo">
+            <span class="logo-icon">S</span>
+            <span class="logo-text">
+                <strong>SHOES ADMIN</strong>
+                <small>Hệ thống quản lý giày</small>
+            </span>
+        </a>
+
+        <p class="sidebar-label">MENU CHÍNH</p>
+
+        <nav class="sidebar-nav">
+            <a href="./admin_base.html" class="nav-item active" aria-current="page">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./admin_products.html" class="nav-item">
+                <span class="nav-icon">👟</span>
+                <span>Sản phẩm & Biến thể</span>
+            </a>
+
+            <a href="./admin_orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>Đơn hàng & Vận chuyển</span>
+            </a>
+
+            <a href="./admin_customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Khách hàng</span>
+            </a>
+
+            <a href="./admin_login.html" class="nav-item">
+                <span class="nav-icon">🔐</span>
+                <span>Trang Đăng Nhập</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="admin-profile">
+                <div class="avatar">AD</div>
+                <div class="profile-info">
+                    <strong id="adminName">Admin Quản Trị</strong>
+                    <small>Quản trị viên cấp cao</small>
+                </div>
+            </div>
+
+            <a href="./admin_login.html" class="logout-link" id="logoutLink">
+                <span>↪</span> Đăng xuất
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h1>Dashboard Tổng quan</h1>
+                <p>Báo cáo tình hình hoạt động cửa hàng, sản phẩm, đơn hàng và khách hàng</p>
+            </div>
+
+            <div class="topbar-actions">
+                <div class="backend-status-badge">
+                    <span class="status-dot"></span>
+                    <span>Hệ thống quản trị trực tuyến</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CÁC THAO TÁC NHANH (QUICK ACTIONS) -->
+        <div class="quick-actions-bar">
+            <a href="./admin_products.html" class="quick-action-item">
+                <div class="quick-action-icon">👟</div>
+                <div class="quick-action-text">
+                    <strong>+ Thêm sản phẩm mới</strong>
+                    <small>Cập nhật size, màu sắc & ảnh đại diện</small>
+                </div>
+            </a>
+
+            <a href="./admin_orders.html" class="quick-action-item">
+                <div class="quick-action-icon" style="background:#fef3c7; color:#b45309;">📦</div>
+                <div class="quick-action-text">
+                    <strong>Đơn hàng & Vận chuyển</strong>
+                    <small>Thanh toán trực tuyến & giao hàng</small>
+                </div>
+            </a>
+
+            <a href="./admin_customers.html" class="quick-action-item">
+                <div class="quick-action-icon" style="background:#e0f2fe; color:#0369a1;">👥</div>
+                <div class="quick-action-text">
+                    <strong>Chăm sóc khách hàng</strong>
+                    <small>Theo dõi thành viên VIP & tích điểm</small>
+                </div>
+            </a>
+        </div>
+
+        <!-- 4 THẺ THỐNG KÊ (STATS GRID) -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👟</div>
+                <div class="stat-info">
+                    <p>Tổng sản phẩm</p>
+                    <h2 id="totalProducts">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">👥</div>
+                <div class="stat-info">
+                    <p>Tổng khách hàng</p>
+                    <h2 id="totalCustomers">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">📦</div>
+                <div class="stat-info">     
+                    <p>Tổng đơn hàng</p>
+                    <h2 id="totalOrders">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">💰</div>
+                <div class="stat-info">
+                    <p>Doanh thu ghi nhận</p>
+                    <h2 id="totalRevenue">0 ₫</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD GRID: SẢN PHẨM & ĐƠN HÀNG GẦN ĐÂY -->
+        <div class="dashboard-grid">
+
+            <!-- BẢNG SẢN PHẨM MỚI NHẤT -->
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <h2>👟 Sản phẩm gần đây</h2>
+                    <a href="./admin_products.html" class="view-all-link">
+                        Xem tất cả sản phẩm →
+                    </a>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>SẢN PHẨM</th>
+                                <th>GIÁ BÁN</th>
+                                <th>TỒN KHO</th>
+                                <th>TRẠNG THÁI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentProductTable">
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">
+                                    Đang tải sản phẩm...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BẢNG ĐƠN HÀNG MỚI NHẤT -->
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <h2>📦 Đơn hàng mới nhất</h2>
+                    <a href="./admin_orders.html" class="view-all-link">
+                        Xem tất cả đơn hàng →
+                    </a>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>MÃ ĐƠN</th>
+                                <th>KHÁCH HÀNG</th>
+                                <th>TỔNG TIỀN</th>
+                                <th>TRẠNG THÁI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrderTable">
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">
+                                    Đang tải đơn hàng...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+    const SESSION_KEY = "shoesAdminSession";
+
+    function readStorage(key) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || "[]");
+            return Array.isArray(value) ? value : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function formatMoney(value) {
+        const amount = Number(value);
+        return (Number.isFinite(amount) ? amount : 0).toLocaleString("vi-VN") + " ₫";
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+    function isHidden(item) {
+        const status = String(item.status || "").toLowerCase().trim();
+        return ["hết hàng", "đang ẩn", "đã xóa", "ẩn", "hidden"].includes(status);
+    }
+
+    function renderDashboard() {
+        // Đồng bộ đọc linh hoạt giữa các key
+        const storeProducts = readStorage("shoesStoreProducts");
+        const products = storeProducts.length ? storeProducts : readStorage("shoesProducts");
+
+        const customers = readStorage("shoesCustomers");
+        const customerList = customers.length ? customers : readStorage("shoesUsers");
+
+        const orders = readStorage("shoesOrders");
+
+        // Sản phẩm hiển thị
+        const visibleProducts = products.filter(item => !isHidden(item));
+
+        // Doanh thu (không tính đơn hủy)
+        const validOrders = orders.filter(order =>
+            String(order.status || "").toLowerCase() !== "đã hủy"
+        );
+
+        const totalRevenue = validOrders.reduce((sum, order) => {
+            const total = Number(order.total ?? order.totalAmount ?? order.tongTien ?? 0);
+            return sum + (Number.isFinite(total) ? total : 0);
+        }, 0);
+
+        // Render Stats
+        document.getElementById("totalProducts").textContent = visibleProducts.length;
+        document.getElementById("totalCustomers").textContent = customerList.length;
+        document.getElementById("totalOrders").textContent = orders.length;
+        document.getElementById("totalRevenue").textContent = formatMoney(totalRevenue);
+
+        // Render 5 sản phẩm gần nhất
+        const recentProductTbody = document.getElementById("recentProductTable");
+        if (visibleProducts.length === 0) {
+            recentProductTbody.innerHTML = `
+                <tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">
+                    Chưa có sản phẩm. <a href="./admin_products.html" style="color:var(--primary); font-weight:600;">Thêm sản phẩm ngay →</a>
+                </td></tr>
+            `;
+        } else {
+            recentProductTbody.innerHTML = visibleProducts.slice(0, 5).map(p => {
+                const imgTag = p.image
+                    ? `<img src="${escapeHTML(p.image)}" alt="" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">`
+                    : `<span style="font-size:20px;">👟</span>`;
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:36px; height:36px; border-radius:6px; background:#f8fafc; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+                                    ${imgTag}
+                                </div>
+                                <div>
+                                    <strong style="display:block; font-size:13px; color:var(--text-primary); max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(p.name)}</strong>
+                                    <small style="color:var(--text-muted);">${escapeHTML(p.brand || "—")}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span style="font-weight:700; color:var(--primary);">${formatMoney(p.price)}</span></td>
+                        <td><strong>${p.stock || 0}</strong> đôi</td>
+                        <td>
+                            <span class="status-badge active"><span style="font-size:8px;">●</span> Còn hàng</span>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        // Render 5 đơn hàng gần nhất
+        const recentOrderTbody = document.getElementById("recentOrderTable");
+        if (orders.length === 0) {
+            recentOrderTbody.innerHTML = `
+                <tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">
+                    Chưa có đơn hàng nào được ghi nhận.
+                </td></tr>
+            `;
+        } else {
+            recentOrderTbody.innerHTML = orders.slice(0, 5).map(o => {
+                let statusBadgeClass = "badge-info";
+                if (o.status === "Hoàn thành") statusBadgeClass = "status-badge active";
+                else if (o.status === "Đã hủy") statusBadgeClass = "status-badge inactive";
+                else statusBadgeClass = "tier-badge tier-gold";
+
+                return `
+                    <tr>
+                        <td><strong style="font-family:monospace; color:var(--text-secondary);">#${escapeHTML(o.id)}</strong></td>
+                        <td>
+                            <div style="font-weight:600; font-size:13px;">${escapeHTML(o.customer || "Khách hàng")}</div>
+                            <small style="color:var(--text-muted);">${escapeHTML(o.product || "")}</small>
+                        </td>
+                        <td><strong style="color:var(--primary);">${formatMoney(o.total)}</strong></td>
+                        <td>
+                            <span class="${statusBadgeClass}">${escapeHTML(o.status || "Chờ xử lý")}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+    }
+
+    // Hiển thị tên Admin
+    try {
+        const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
+        if (session && session.name) {
+            document.getElementById("adminName").textContent = session.name;
+        }
+    } catch {
+        sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    document.getElementById("logoutLink").addEventListener("click", e => {
+        e.preventDefault();
+        sessionStorage.removeItem(SESSION_KEY);
+        window.location.replace("./admin_login.html");
+    });
+
+    renderDashboard();
+
+    // Tự cập nhật khi dữ liệu localStorage thay đổi ở tab khác
+    window.addEventListener("storage", renderDashboard);
+</script>
+
+</body>
+</html>

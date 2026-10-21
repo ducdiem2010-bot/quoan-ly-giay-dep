@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý ảnh sản phẩm - Shoes Store</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div>
+                <h1>SHOES ADMIN</h1>
+                <p>Quản lý hình ảnh sản phẩm giày dép</p>
+            </div>
+            <span class="badge">Quản lý ảnh</span>
+        </header>
+
+        <main>
+            <!-- CHỌN SẢN PHẨM -->
+            <section class="panel">
+                <h2>Chọn sản phẩm</h2>
+                <p class="description">
+                    Chọn sản phẩm trước khi thêm hoặc quản lý hình ảnh.
+                </p>
+
+                <label for="productSelect">Sản phẩm giày dép</label>
+                <select id="productSelect">
+                    <option value="">Đang tải danh sách sản phẩm...</option>
+                </select>
+
+                <div id="selectedProductInfo" class="selected-product-info">
+                    Vui lòng chọn sản phẩm.
+                </div>
+            </section>
+
+            <!-- TẢI ẢNH -->
+            <section class="panel">
+                <h2>Thêm ảnh sản phẩm</h2>
+                <p class="description">
+                    Chọn một hoặc nhiều ảnh JPEG, PNG, WebP.
+                    Dung lượng tối đa 5 MB mỗi ảnh.
+                </p>
+
+                <label for="imageInput" class="upload-area" id="uploadArea">
+                    <span class="upload-icon">＋</span>
+                    <strong>Nhấn để chọn ảnh</strong>
+                    <span>Hoặc kéo và thả ảnh vào đây</span>
+                    <span class="formats">JPEG · PNG · WebP</span>
+                </label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    hidden
+                >
+
+                <div class="upload-actions">
+                    <button type="button" id="chooseBtn" class="btn primary">
+                        Chọn ảnh
+                    </button>
+                    <button type="button" id="clearBtn" class="btn danger">
+                        Xóa tất cả ảnh của sản phẩm
+                    </button>
+                </div>
+
+                <div id="message" class="message"
+                     role="status" aria-live="polite"></div>
+            </section>
+
+            <!-- DANH SÁCH ẢNH -->
+            <section class="panel">
+                <div class="section-heading">
+                    <div>
+                        <h2>Danh sách ảnh</h2>
+                        <p class="description">
+                            Chọn ảnh đại diện hoặc xóa ảnh không cần thiết.
+                        </p>
+                    </div>
+                    <span id="imageCount" class="count">0 ảnh</span>
+                </div>
+
+                <div id="imageList" class="image-grid">
+                    <div class="empty">
+                        Hãy chọn sản phẩm để xem danh sách ảnh.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ẢNH ĐẠI DIỆN -->
+            <section class="panel">
+                <h2>Thông tin ảnh đại diện</h2>
+                <div id="featuredInfo" class="featured-info">
+                    Chưa chọn ảnh đại diện.
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            Shoes Store · Quản lý hình ảnh sản phẩm
+        </footer>
+    </div>
+</body>
+</html>

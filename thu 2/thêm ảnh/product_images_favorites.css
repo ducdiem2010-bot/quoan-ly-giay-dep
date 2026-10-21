@@ -1,0 +1,455 @@
+
+/* =========================================
+   1. CẤU HÌNH MÀU SHOES STORE
+========================================= */
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --sidebar: #172033;
+    --background: #f4f6f9;
+    --white: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --shadow: 0 4px 15px rgba(23, 32, 51, 0.08);
+}
+
+/* =========================================
+   2. RESET VÀ GIAO DIỆN CHUNG
+========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   3. HEADER
+========================================= */
+.header {
+    background: var(--sidebar);
+    color: var(--white);
+    padding: 25px 30px;
+    border-bottom: 4px solid var(--primary);
+}
+
+.header h1 {
+    font-size: 27px;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+/* =========================================
+   4. KHU VỰC NỘI DUNG
+========================================= */
+.container {
+    width: min(1400px, 94%);
+    margin: 30px auto;
+}
+
+.container > h2,
+.favorites-section h2 {
+    font-size: 22px;
+    color: var(--sidebar);
+    margin-bottom: 16px;
+}
+
+.note {
+    background: #eff6ff;
+    color: #1e40af;
+    border-left: 4px solid var(--primary);
+    padding: 13px 16px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+/* =========================================
+   5. DANH SÁCH SẢN PHẨM
+========================================= */
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.product-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    min-width: 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(23, 32, 51, 0.12);
+}
+
+.product-info {
+    padding: 18px;
+}
+
+.product-info h3 {
+    font-size: 18px;
+    color: var(--sidebar);
+    margin-bottom: 8px;
+    overflow-wrap: anywhere;
+}
+
+.product-brand {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.product-price {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 14px;
+}
+
+/* =========================================
+   6. ẢNH ĐẠI DIỆN
+========================================= */
+.main-image-wrapper {
+    position: relative;
+    background: #f8fafc;
+    padding: 12px;
+}
+
+.main-image {
+    width: 100%;
+    height: 235px;
+    display: block;
+    object-fit: contain;
+    background: var(--white);
+    border-radius: 8px;
+}
+
+.image-count {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background: rgba(23, 32, 51, 0.85);
+    color: var(--white);
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* =========================================
+   7. THƯ VIỆN ẢNH NHỎ
+========================================= */
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 14px 0;
+}
+
+.thumbnail-item {
+    position: relative;
+    width: 65px;
+    height: 65px;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    background: #f8fafc;
+    padding: 3px;
+}
+
+.thumbnail-item:hover {
+    border-color: #93c5fd;
+}
+
+.thumbnail-item.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px #dbeafe;
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.thumbnail-item:focus-visible,
+button:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+}
+
+/* =========================================
+   8. NÚT THAO TÁC
+========================================= */
+.product-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: var(--sidebar);
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.btn-danger {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+.btn-danger:hover {
+    background: #fecaca;
+}
+
+.btn-dark {
+    background: var(--sidebar);
+    color: var(--white);
+}
+
+.btn-dark:hover {
+    background: #263449;
+}
+
+.favorite-btn {
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px;
+    border-radius: 7px;
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+.favorite-btn:hover {
+    background: #fff1f2;
+    border-color: #fda4af;
+}
+
+.favorite-btn.is-favorite {
+    color: #e11d48;
+    background: #fff1f2;
+    border-color: #fda4af;
+}
+
+/* =========================================
+   9. FORM THÊM ẢNH
+========================================= */
+.add-image-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.add-image-form input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    outline: none;
+}
+
+.add-image-form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.image-management-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 14px;
+    color: var(--sidebar);
+}
+
+/* =========================================
+   10. DANH SÁCH YÊU THÍCH
+========================================= */
+.favorites-section {
+    margin-top: 35px;
+    padding: 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.favorites-section h2 {
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.favorites-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.favorite-card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 12px;
+    background: #fff;
+}
+
+.favorite-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.favorite-card h3 {
+    font-size: 15px;
+    margin: 10px 0 5px;
+    overflow-wrap: anywhere;
+}
+
+.favorite-card .product-price {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.empty-message {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    text-align: center;
+    padding: 30px 15px;
+    background: #f8fafc;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+}
+
+/* =========================================
+   11. FOOTER
+========================================= */
+.footer {
+    margin-top: 40px;
+    padding: 22px;
+    text-align: center;
+    background: var(--sidebar);
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+/* =========================================
+   12. RESPONSIVE
+========================================= */
+@media (max-width: 1050px) {
+    .product-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .favorites-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .header {
+        padding: 20px 16px;
+    }
+
+    .header h1 {
+        font-size: 23px;
+    }
+
+    .container {
+        width: 94%;
+        margin: 20px auto;
+    }
+
+    .product-container {
+        grid-template-columns: 1fr;
+    }
+
+    .favorites-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .favorites-section {
+        padding: 15px;
+    }
+
+    .main-image {
+        height: 220px;
+    }
+
+    .add-image-form {
+        flex-direction: column;
+    }
+
+    .add-image-form .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .favorites-list {
+        grid-template-columns: 1fr;
+    }
+
+    .product-actions .btn {
+        flex: 1;
+    }
+}

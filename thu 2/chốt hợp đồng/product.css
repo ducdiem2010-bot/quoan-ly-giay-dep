@@ -1,0 +1,345 @@
+
+/* ==============================
+   1. THIẾT LẬP CHUNG
+============================== */
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --sidebar: #172033;
+    --background: #f4f6f9;
+    --white: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --danger: #dc2626;
+    --success: #16a34a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ==============================
+   2. KHU VỰC NỘI DUNG
+============================== */
+.container {
+    width: calc(100% - 48px);
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(23, 32, 51, 0.06);
+}
+
+/* ==============================
+   3. TIÊU ĐỀ
+============================== */
+h1 {
+    background: var(--sidebar);
+    color: var(--white);
+    font-size: 25px;
+    font-weight: 700;
+    padding: 22px 25px;
+    margin: -28px -28px 28px;
+    border-radius: 12px 12px 0 0;
+}
+
+h2 {
+    color: var(--sidebar);
+    font-size: 21px;
+    margin: 30px 0 15px;
+    padding-left: 12px;
+    border-left: 4px solid var(--primary);
+}
+
+/* ==============================
+   4. FORM SẢN PHẨM
+============================== */
+#productForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+    padding: 22px;
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+#productForm label {
+    align-self: end;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+#productForm input,
+#productForm select {
+    width: 100%;
+    min-width: 0;
+    height: 43px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--white);
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#productForm input:focus,
+#productForm select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Ẩn input mã sản phẩm */
+#productId {
+    display: none;
+}
+
+/* ==============================
+   5. NÚT BẤM
+============================== */
+button {
+    min-height: 40px;
+    padding: 10px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#saveButton {
+    color: var(--white);
+    background: var(--primary);
+    margin-top: 10px;
+}
+
+#saveButton:hover {
+    background: var(--primary-hover);
+}
+
+#cancelButton {
+    color: #374151;
+    background: #e5e7eb;
+    margin-top: 10px;
+}
+
+#cancelButton:hover {
+    background: #d1d5db;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==============================
+   6. THÔNG BÁO
+============================== */
+#message {
+    min-height: 24px;
+    margin-top: 12px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* Có thể dùng các class này trong product.js */
+#message.success {
+    color: var(--success);
+}
+
+#message.error {
+    color: var(--danger);
+}
+
+/* ==============================
+   7. TÌM KIẾM SẢN PHẨM
+============================== */
+#search {
+    width: 100%;
+    max-width: 420px;
+    height: 42px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--white);
+    color: var(--text);
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#search:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ==============================
+   8. BẢNG SẢN PHẨM
+============================== */
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+thead {
+    background: var(--sidebar);
+    color: var(--white);
+}
+
+th {
+    padding: 14px 12px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: background 0.2s;
+}
+
+tbody tr:hover {
+    background: #eff6ff;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Giá sản phẩm */
+td:nth-child(6) {
+    color: var(--primary);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ==============================
+   9. NÚT THAO TÁC TRONG BẢNG
+============================== */
+td button {
+    min-height: 32px;
+    padding: 7px 10px;
+    margin: 2px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* Nút sửa */
+td button:first-child {
+    color: var(--white);
+    background: var(--primary);
+}
+
+td button:first-child:hover {
+    background: var(--primary-hover);
+}
+
+/* Nút xóa / ẩn nếu có */
+td button:last-child {
+    color: var(--white);
+    background: var(--danger);
+}
+
+td button:last-child:hover {
+    background: #b91c1c;
+}
+
+/* ==============================
+   10. RESPONSIVE
+============================== */
+@media (max-width: 768px) {
+    .container {
+        width: calc(100% - 24px);
+        margin: 12px auto;
+        padding: 16px;
+    }
+
+    h1 {
+        font-size: 20px;
+        padding: 18px 16px;
+        margin: -16px -16px 22px;
+    }
+
+    h2 {
+        font-size: 19px;
+    }
+
+    #productForm {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 8px;
+    }
+
+    #productForm label {
+        margin-top: 5px;
+    }
+
+    #saveButton,
+    #cancelButton {
+        width: 100%;
+    }
+
+    #search {
+        max-width: 100%;
+    }
+
+    .table-wrap {
+        border-radius: 7px;
+    }
+}
+
+@media (max-width: 400px) {
+    .container {
+        width: calc(100% - 16px);
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 18px;
+        margin: -12px -12px 18px;
+    }
+
+    #productForm {
+        padding: 12px;
+    }
+}

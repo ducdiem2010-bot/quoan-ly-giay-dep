@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý khách hàng - Shoes Store Admin</title>
+
+    <!-- Kiểm tra phiên đăng nhập Admin hoặc tạo phiên demo dự phòng -->
+    <script>
+        try {
+            let session = JSON.parse(sessionStorage.getItem("shoesAdminSession") || "null");
+            if (!session || session.role !== "admin") {
+                session = {
+                    id: 1,
+                    name: "Admin Quản Trị",
+                    email: "admin@gmail.com",
+                    role: "admin"
+                };
+                sessionStorage.setItem("shoesAdminSession", JSON.stringify(session));
+            }
+        } catch (error) {
+            console.warn("Lỗi kiểm tra session:", error);
+        }
+    </script>
+
+    <link rel="stylesheet" href="./admin_customers.css">
+    <script src="./admin_customers.js" defer></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="./admin_base.html" class="sidebar-logo">
+            <span class="logo-icon">S</span>
+            <span class="logo-text">
+                <strong>SHOES ADMIN</strong>
+                <small>Hệ thống quản lý giày</small>
+            </span>
+        </a>
+
+        <p class="sidebar-label">MENU CHÍNH</p>
+
+        <nav class="sidebar-nav">
+            <a href="./admin_base.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./admin_products.html" class="nav-item">
+                <span class="nav-icon">👟</span>
+                <span>Sản phẩm & Biến thể</span>
+            </a>
+
+            <a href="./admin_orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>Đơn hàng & Vận chuyển</span>
+            </a>
+
+            <a href="./admin_customers.html" class="nav-item active" aria-current="page">
+                <span class="nav-icon">👥</span>
+                <span>Khách hàng</span>
+            </a>
+
+            <a href="./admin_login.html" class="nav-item">
+                <span class="nav-icon">🔐</span>
+                <span>Trang Đăng Nhập</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="admin-profile">
+                <div class="avatar">AD</div>
+                <div class="profile-info">
+                    <strong id="adminName">Admin Quản Trị</strong>
+                    <small>Quản trị viên cấp cao</small>
+                </div>
+            </div>
+
+            <a href="./admin_login.html" class="logout-link" id="logoutLink">
+                <span>↪</span> Đăng xuất
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h1>Quản lý khách hàng</h1>
+                <p>Theo dõi hồ sơ khách hàng, lịch sử mua sắm, phân hạng thành viên và thông tin liên hệ</p>
+            </div>
+
+            <div class="topbar-actions">
+                <button type="button" class="btn-primary" id="btnAddCustomer">
+                    + Thêm khách hàng mới
+                </button>
+            </div>
+        </header>
+
+        <!-- THỐNG KÊ (STATS GRID) -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-info">
+                    <p>Tổng khách hàng</p>
+                    <h2 id="totalCustomers">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">💎</div>
+                <div class="stat-info">
+                    <p>Khách hàng VIP</p>
+                    <h2 id="vipCustomers">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">🟢</div>
+                <div class="stat-info">
+                    <p>Đang hoạt động</p>
+                    <h2 id="activeCustomers">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">💰</div>
+                <div class="stat-info">
+                    <p>Tổng chi tiêu</p>
+                    <h2 id="totalSpent">0 ₫</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTENT PANEL -->
+        <section class="content-panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>Danh sách khách hàng</h2>
+                    <p>Xem thông tin liên lạc, hạng thẻ, địa chỉ giao hàng và trạng thái tài khoản</p>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn-secondary" id="btnResetDemo">
+                        🔄 Dữ liệu mẫu
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOOLBAR & FILTERS -->
+            <div class="toolbar">
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input
+                        id="searchCustomer"
+                        type="search"
+                        placeholder="Tìm theo tên, SĐT, email, mã KH, địa chỉ..."
+                        aria-label="Tìm kiếm khách hàng">
+                </div>
+
+                <select id="filterTier" aria-label="Lọc theo hạng thành viên">
+                    <option value="">Tất cả hạng thành viên</option>
+                    <option value="Kim cương">💎 Kim cương (Diamond)</option>
+                    <option value="Vàng">🥇 Vàng (Gold)</option>
+                    <option value="Bạc">🥈 Bạc (Silver)</option>
+                    <option value="Đồng">🥉 Thành viên mới (Đồng)</option>
+                </select>
+
+                <select id="filterStatus" aria-label="Lọc theo trạng thái">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Đang hoạt động</option>
+                    <option value="inactive">Tạm khóa</option>
+                </select>
+
+                <select id="sortCustomer" aria-label="Sắp xếp danh sách">
+                    <option value="newest">Mới nhất trước</option>
+                    <option value="spentDesc">Chi tiêu nhiều nhất</option>
+                    <option value="ordersDesc">Mua nhiều đơn nhất</option>
+                    <option value="nameAsc">Tên khách hàng A - Z</option>
+                </select>
+            </div>
+
+            <div class="table-info">
+                <span id="resultCount">Đang tải danh sách...</span>
+                <button type="button" id="btnResetFilters" class="btn-reset">
+                    Xóa bộ lọc
+                </button>
+            </div>
+
+            <!-- BẢNG DỮ LIỆU KHÁCH HÀNG -->
+            <div class="table-wrapper">
+                <table class="customer-table">
+                    <thead>
+                        <tr>
+                            <th>KHÁCH HÀNG</th>
+                            <th>MÃ KH</th>
+                            <th>SỐ ĐIỆN THOẠI</th>
+                            <th>ĐỊA CHỈ</th>
+                            <th>HẠNG THÀNH VIÊN</th>
+                            <th>ĐƠN HÀNG</th>
+                            <th>TỔNG CHI TIÊU</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                        <tr>
+                            <td colspan="9" style="text-align:center; padding:30px; color:var(--text-muted);">
+                                Đang tải danh sách khách hàng...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PHÂN TRANG -->
+            <div class="table-footer">
+                <span id="paginationInfo">Trang 1</span>
+
+                <div class="pagination">
+                    <button type="button" id="btnPrevPage" aria-label="Trang trước">‹</button>
+                    <span id="currentPage" class="current-page-badge">1</span>
+                    <button type="button" id="btnNextPage" aria-label="Trang tiếp theo">›</button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ==========================================================================
+     MODAL: THÊM / CẬP NHẬT THÔNG TIN KHÁCH HÀNG
+     ========================================================================== -->
+<div class="modal-overlay" id="customerModal" aria-hidden="true">
+
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">Thêm khách hàng mới</h2>
+                <p>Nhập thông tin cá nhân, liên hệ, địa chỉ và phân hạng thành viên</p>
+            </div>
+
+            <button type="button" id="btnCloseModal" class="btn-close" aria-label="Đóng modal">×</button>
+        </div>
+
+        <form id="customerForm">
+            <input type="hidden" id="customerId">
+
+            <div class="modal-body">
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+                        <label for="customerName">Họ và tên khách hàng *</label>
+                        <input
+                            id="customerName"
+                            type="text"
+                            maxlength="100"
+                            placeholder="Ví dụ: Nguyễn Văn An"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerCode">Mã khách hàng (ID) *</label>
+                        <input
+                            id="customerCode"
+                            type="text"
+                            maxlength="30"
+                            placeholder="Tự động sinh hoặc nhập (VD: KH1001)"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerPhone">Số điện thoại *</label>
+                        <input
+                            id="customerPhone"
+                            type="tel"
+                            maxlength="20"
+                            placeholder="Ví dụ: 0901234567"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerEmail">Địa chỉ Email *</label>
+                        <input
+                            id="customerEmail"
+                            type="email"
+                            maxlength="100"
+                            placeholder="Ví dụ: an.nguyen@gmail.com"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerTier">Hạng thành viên</label>
+                        <select id="customerTier">
+                            <option value="Đồng">🥉 Đồng (Thành viên mới)</option>
+                            <option value="Bạc">🥈 Bạc (Silver)</option>
+                            <option value="Vàng">🥇 Vàng (Gold)</option>
+                            <option value="Kim cương">💎 Kim cương (Diamond)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerStatus">Trạng thái tài khoản</label>
+                        <select id="customerStatus">
+                            <option value="active">Đang hoạt động</option>
+                            <option value="inactive">Tạm khóa</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerOrdersCount">Số đơn hàng đã mua</label>
+                        <input
+                            id="customerOrdersCount"
+                            type="number"
+                            min="0"
+                            value="0"
+                            placeholder="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerSpent">Tổng chi tiêu (VNĐ)</label>
+                        <input
+                            id="customerSpent"
+                            type="number"
+                            min="0"
+                            step="1000"
+                            value="0"
+                            placeholder="Ví dụ: 2500000">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="customerAddress">Địa chỉ giao hàng</label>
+                        <textarea
+                            id="customerAddress"
+                            rows="2"
+                            maxlength="250"
+                            placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Ảnh đại diện khách hàng</label>
+                        <div class="avatar-field-box">
+                            <div class="avatar-field-preview" id="customerAvatarPreview">
+                                <span>👤</span>
+                            </div>
+                            <div style="flex:1;">
+                                <input
+                                    id="customerAvatarFile"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                    style="margin-bottom:8px;">
+                                <input
+                                    id="customerAvatarUrl"
+                                    type="url"
+                                    placeholder="Hoặc dán URL ảnh đại diện...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="customerNotes">Ghi chú khách hàng</label>
+                        <input
+                            id="customerNotes"
+                            type="text"
+                            maxlength="200"
+                            placeholder="Ví dụ: Thường đi size 41, thích giày thể thao Nike...">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="btnCancelModal" class="btn-secondary">Hủy bỏ</button>
+                <button type="submit" id="btnSaveCustomer" class="btn-primary">
+                    💾 Lưu thông tin khách hàng
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
+
+<!-- ==========================================================================
+     MODAL: XEM HỒ SƠ CHI TIẾT KHÁCH HÀNG
+     ========================================================================== -->
+<div class="modal-overlay" id="viewCustomerModal" aria-hidden="true" style="z-index: 1050;">
+    <div class="modal-card" style="max-width: 600px;">
+        <div class="modal-header">
+            <div>
+                <h2 id="viewCustomerTitle">Hồ sơ khách hàng</h2>
+                <p id="viewCustomerSubtitle">Chi tiết lịch sử chi tiêu và liên lạc</p>
+            </div>
+            <button type="button" id="btnCloseViewCustomer" class="btn-close">×</button>
+        </div>
+
+        <div class="modal-body" id="viewCustomerBody">
+            <!-- Dynamic Customer Detail -->
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" id="btnCloseViewCustomerBtn" class="btn-secondary">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+</body>
+</html>
