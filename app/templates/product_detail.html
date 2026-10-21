@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.TenSanPham }} - Shoes Store{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / <a href="{{ url_for('category', category_id=product.MaDanhMuc) }}">{{ product.TenDanhMuc }}</a> / Chi tiết</div>
+<div class="product-detail"><div class="detail-visual"><img src="{{ url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') }}" alt="Ảnh minh họa {{ product.TenSanPham }}"></div>
+<div class="detail-content"><span class="eyebrow">{{ product.ThuongHieu }} • {{ product.TenDanhMuc }}</span><h1>{{ product.TenSanPham }}</h1>
+  <p class="product-code">Mã sản phẩm: SP{{ '%03d' % product.MaSanPham }} | Còn {{ product.TongTon }} sản phẩm</p>
+  <p class="price-detail">{{ product.GiaBan|vnd }}</p><p class="desc">{{ product.MoTa }}</p>
+  <form method="post" action="{{ url_for('add_to_cart', product_id=product.MaSanPham) }}" class="buy-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="variant_id">Chọn size và màu sắc</label><select name="variant_id" id="variant_id" required>
+      <option value="" selected disabled>-- Chọn size/màu --</option>
+      {% for v in variants %}<option value="{{ v.MaBienThe }}" {% if v.SoLuongTon == 0 %}disabled{% endif %}>Size {{ v.KichThuoc }} • {{ v.MauSac }} (còn {{ v.SoLuongTon }})</option>{% endfor %}
+    </select>
+    <label for="quantity">Số lượng</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="99" step="1" required>
+    <button type="submit" class="action-primary" {% if product.TongTon < 1 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
+    <p class="pickup-hint">Không giao hàng • Thanh toán khi nhận tại cửa hàng</p>
+  </form>
+</div></div>
+{% endblock %}

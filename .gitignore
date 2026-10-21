@@ -1,0 +1,29 @@
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Moi truong ao Python
+.venv/
+venv/
+env/
+
+# Cau hinh bi mat
+.env
+.env.*
+!.env.example
+
+# File tam
+*.log
+.DS_Store
+Thumbs.db
+
+# VS Code (cau hinh ca nhan)
+.vscode/
+# Database chay thu tren may
+instance/
+*.sqlite
+*.sqlite3
+*.db

@@ -1,0 +1,9 @@
+<article class="product-card">
+  <a class="product-visual" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Xem {{ product.TenSanPham }}">
+    <img src="{{ url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') }}" alt="Ảnh minh họa {{ product.TenSanPham }}" loading="lazy">
+  </a>
+  <div class="product-meta"><span class="eyebrow">{{ product.ThuongHieu }}</span><span class="stock-label">Còn {{ product.TongTon }}</span></div>
+  <h3><a href="{{ url_for('product_detail', product_id=product.MaSanPham) }}">{{ product.TenSanPham }}</a></h3>
+  <p class="category-label">{{ product.TenDanhMuc }}</p>
+  <div class="card-bottom"><strong>{{ product.GiaBan|vnd }}</strong><a class="circle-arrow" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Chi tiết">↗</a></div>
+</article>
