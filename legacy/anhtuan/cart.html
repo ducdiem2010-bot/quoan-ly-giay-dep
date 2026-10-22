@@ -4,50 +4,369 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng - Shoes Store</title>
-    <link rel="stylesheet" href="cart.css">
-    <link rel="stylesheet" href="common.css">
+    <meta name="description" content="Xem và quản lý giỏ hàng của bạn tại Shoes Store - Giày thể thao chính hãng">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cart_new.css">
 </head>
+<body>
 
-<body data-page="cart">
-
-<header class="header">
-    <h2><a href="user.html">SHOES STORE</a></h2>
-
-    <nav>
-        <a href="user.html">Trang chủ</a>
-        <a href="cart.html">Giỏ hàng (<span data-cart-count aria-live="polite">0</span>)</a>
-        <a href="user.html#san-pham">Sản phẩm</a>
-    </nav>
+<!-- HEADER -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="../../thu 6/customer_shop.html" class="header-logo">
+            <span class="logo-icon">👟</span>
+            <span>SHOES STORE</span>
+        </a>
+        <nav class="header-nav">
+            <a href="../../thu 6/customer_shop.html">🏠 Trang chủ</a>
+            <a href="cart.html" class="active">🛒 Giỏ hàng (<span id="cartCountNav">0</span>)</a>
+            <a href="checkout.html">💳 Thanh toán</a>
+        </nav>
+    </div>
 </header>
 
-<main class="container">
-    <h1>Giỏ hàng</h1>
-    <a class="secondary-link" href="user.html#san-pham">Tiếp tục xem sản phẩm</a>
-    <p id="cartMessage" class="status-message" role="status" aria-live="polite" hidden></p>
-    <noscript><p class="status-message is-error">Vui lòng bật JavaScript để xem giỏ hàng.</p></noscript>
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+    <div class="breadcrumb-inner">
+        <a href="../../thu 6/customer_shop.html">Trang chủ</a>
+        <span>›</span>
+        <span class="active">Giỏ hàng</span>
+    </div>
+</div>
 
-    <section id="cartEmpty" class="empty-state" hidden aria-labelledby="emptyCartTitle">
-        <h2 id="emptyCartTitle">Giỏ hàng đang trống</h2>
-        <p>Chọn sản phẩm và size để thêm vào giỏ.</p>
-        <a class="secondary-link" href="user.html#san-pham">Xem sản phẩm</a>
+<!-- MAIN -->
+<main class="page-container">
+    <div class="page-title-row">
+        <h1>🛒 Giỏ hàng của bạn</h1>
+        <a href="../../thu 6/customer_shop.html" class="continue-shopping-link">← Tiếp tục mua sắm</a>
+    </div>
+
+    <!-- Trạng thái giỏ trống -->
+    <section id="cartEmpty" class="empty-state" hidden>
+        <div class="empty-icon">🛒</div>
+        <h2>Giỏ hàng của bạn đang trống</h2>
+        <p>Hãy chọn những đôi giày yêu thích và thêm vào giỏ để tiến hành mua sắm.</p>
+        <a href="../../thu 6/customer_shop.html" class="btn-primary">Mua sắm ngay</a>
     </section>
 
-    <div id="cartContent" class="cart-layout">
-        <section id="cartItems" class="cart-items" aria-label="Danh sách sản phẩm trong giỏ"></section>
-        <aside class="cart-summary">
-            <h2>Tổng đơn hàng</h2>
-            <div class="summary-row"><span>Tạm tính</span><span id="subtotal">0 VNĐ</span></div>
-            <p class="pickup-note">Nhận hàng và thanh toán tại cửa hàng.</p>
-            <hr>
-            <div class="summary-row total"><span>Tổng cộng</span><span id="total">0 VNĐ</span></div>
-            <a id="checkoutLink" href="checkout.html" class="checkout-btn">Tiến hành thanh toán</a>
+    <!-- Nội dung giỏ hàng -->
+    <div id="cartContent" class="cart-layout" hidden>
+
+        <!-- Danh sách sản phẩm -->
+        <section class="cart-items-panel">
+            <div class="panel-header">
+                <h2>Sản phẩm trong giỏ</h2>
+                <button type="button" id="btnClearCart" class="btn-clear-cart">🗑️ Xóa tất cả</button>
+            </div>
+
+            <div id="cartItemsList">
+                <!-- Render by JS -->
+            </div>
+        </section>
+
+        <!-- Tóm tắt đơn hàng -->
+        <aside class="cart-summary-panel">
+            <h2>Tóm tắt đơn hàng</h2>
+
+            <div class="summary-line">
+                <span>Tạm tính (<span id="totalQty">0</span> sản phẩm)</span>
+                <span id="subtotalAmt">0 đ</span>
+            </div>
+
+            <!-- Mã giảm giá -->
+            <div class="voucher-section">
+                <label class="voucher-label">🎟️ Mã giảm giá</label>
+                <div class="voucher-row">
+                    <input type="text" id="voucherInput" class="voucher-input" placeholder="VD: CHAOBANMOI" maxlength="30">
+                    <button type="button" id="btnApplyVoucher" class="btn-apply-voucher">Áp dụng</button>
+                </div>
+                <div id="voucherMsg" class="voucher-msg"></div>
+            </div>
+
+            <div class="summary-line discount-line" id="discountLine" style="display:none;">
+                <span>Giảm giá voucher</span>
+                <span id="discountAmt" style="color:#16a34a;">- 0 đ</span>
+            </div>
+
+            <div class="summary-line shipping-line">
+                <span>Phí vận chuyển</span>
+                <span id="shippingFee" style="color:#16a34a;">Miễn phí</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total-row">
+                <span>Tổng thanh toán</span>
+                <span id="totalAmt" class="total-price">0 đ</span>
+            </div>
+
+            <div class="free-ship-notice" id="freeShipNotice">
+                🚚 Miễn phí vận chuyển cho đơn từ 500.000 đ
+            </div>
+
+            <a href="checkout.html" id="checkoutLink" class="btn-checkout">
+                💳 Tiến hành thanh toán
+            </a>
+
+            <div class="security-badges">
+                <span>🔒 Thanh toán bảo mật</span>
+                <span>🛡️ Chính hãng 100%</span>
+                <span>🔄 Đổi trả 7 ngày</span>
+            </div>
         </aside>
     </div>
 </main>
 
+<!-- FOOTER -->
+<footer class="site-footer">
+    <p>© 2026 Shoes Store Vietnam · <a href="../../thu 6/admin_login.html">Cổng Admin</a></p>
+</footer>
 
+<!-- TOAST -->
+<div id="cartToast" class="cart-toast"></div>
 
+<script>
+(function() {
+    "use strict";
 
-    <script src="shop.js"></script>
+    const CART_KEY   = "shoesCart";
+    const COMPAT_KEY = "shoes_store_lien_ket_v1";
+    const PRODUCTS_KEY = "shoesProducts";
+    const VOUCHER_CODES = { "CHAOBANMOI": 0.10, "SALE20": 0.20, "VIP15": 0.15 };
+    const FREE_SHIP_THRESHOLD = 500000;
+
+    let cart = [];
+    let products = [];
+    let discount = 0;
+    let appliedCode = "";
+
+    // ── Danh mục mặc định để fallback khi không có ảnh/tên từ localStorage
+    const DEFAULT_CATALOG = {
+        "SP1001": { name: "Nike Air Force 1 '07", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" },
+        "SP1002": { name: "Adidas Ultraboost Light", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80" },
+        "SP1003": { name: "Puma RS-X Reinvention", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" },
+        "SP001":  { name: "Nike Air Force 1", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" },
+        "SP002":  { name: "Adidas Superstar", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80" },
+        "SP003":  { name: "Puma Suede", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" },
+    };
+
+    function fmt(n) { return Number(n||0).toLocaleString("vi-VN") + " đ"; }
+
+    function loadData() {
+        // Đọc giỏ hàng chính
+        try {
+            const raw = localStorage.getItem(CART_KEY) || sessionStorage.getItem(CART_KEY);
+            const parsed = raw ? JSON.parse(raw) : null;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                cart = parsed;
+            } else {
+                // Fallback: đọc định dạng compat (legacy/shop.js)
+                const compat = localStorage.getItem(COMPAT_KEY);
+                if (compat) {
+                    const compatParsed = JSON.parse(compat);
+                    if (Array.isArray(compatParsed)) {
+                        // Chuyển đổi từ format compat sang format mới
+                        cart = compatParsed.map(i => ({
+                            productId: i.productId,
+                            name: DEFAULT_CATALOG[i.productId]?.name || "Sản phẩm",
+                            brand: "Shoes Store",
+                            price: 2000000,
+                            image: DEFAULT_CATALOG[i.productId]?.image || "",
+                            size: i.size,
+                            quantity: i.quantity
+                        }));
+                    }
+                }
+            }
+        } catch(e) { cart = []; }
+
+        // Đọc danh mục sản phẩm
+        try {
+            const raw = localStorage.getItem(PRODUCTS_KEY);
+            if (raw) products = JSON.parse(raw) || [];
+        } catch(e) { products = []; }
+
+        // Bổ sung thông tin sản phẩm nếu thiếu trong giỏ
+        cart = cart.map(item => {
+            const prod = products.find(p => p.id === item.productId || p.id === item.productId);
+            if (prod) {
+                return {
+                    ...item,
+                    name:  item.name  || prod.name,
+                    brand: item.brand || prod.brand,
+                    price: item.price || Number(prod.price),
+                    image: (item.image && item.image.startsWith("http")) ? item.image : (prod.image || ""),
+                };
+            }
+            return item;
+        });
+    }
+
+    function saveCart() {
+        try {
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
+            sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
+            // Sync compat format
+            const compat = cart.map(i => ({ productId: i.productId, size: Number(i.size), quantity: Number(i.quantity) }));
+            localStorage.setItem(COMPAT_KEY, JSON.stringify(compat));
+        } catch(e) {}
+    }
+
+    function calcTotals() {
+        const qty      = cart.reduce((s, i) => s + i.quantity, 0);
+        const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+        const disc     = Math.round(subtotal * discount);
+        const shipping = subtotal >= FREE_SHIP_THRESHOLD ? 0 : 30000;
+        const total    = Math.max(0, subtotal - disc) + shipping;
+        return { qty, subtotal, disc, shipping, total };
+    }
+
+    function render() {
+        const { qty, subtotal, disc, shipping, total } = calcTotals();
+
+        document.getElementById("cartEmpty").hidden   = cart.length > 0;
+        document.getElementById("cartContent").hidden = cart.length === 0;
+        document.getElementById("cartCountNav").textContent = qty;
+        document.getElementById("totalQty").textContent = qty;
+        document.getElementById("subtotalAmt").textContent = fmt(subtotal);
+        document.getElementById("totalAmt").textContent    = fmt(total);
+
+        // Phí ship
+        const feeEl = document.getElementById("shippingFee");
+        const noticeEl = document.getElementById("freeShipNotice");
+        if (shipping === 0) {
+            feeEl.textContent = "Miễn phí";
+            feeEl.style.color = "#16a34a";
+            noticeEl.style.display = "none";
+        } else {
+            feeEl.textContent = fmt(shipping);
+            feeEl.style.color = "#374151";
+            const remain = FREE_SHIP_THRESHOLD - subtotal;
+            noticeEl.style.display = "block";
+            noticeEl.textContent = `🚚 Mua thêm ${fmt(remain)} để được miễn phí vận chuyển`;
+        }
+
+        // Giảm giá
+        const discLine = document.getElementById("discountLine");
+        const discAmtEl = document.getElementById("discountAmt");
+        if (disc > 0) {
+            discLine.style.display = "flex";
+            discAmtEl.textContent = `- ${fmt(disc)} (${Math.round(discount*100)}%)`;
+        } else {
+            discLine.style.display = "none";
+        }
+
+        // Render danh sách items
+        const list = document.getElementById("cartItemsList");
+        if (cart.length === 0) { list.innerHTML = ""; return; }
+
+        list.innerHTML = cart.map((item, idx) => `
+            <article class="cart-item" data-idx="${idx}">
+                <a href="#" class="item-image-wrap">
+                    <img src="${item.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=200&q=60'}"
+                        alt="${item.name}"
+                        onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=200&q=60'">
+                </a>
+                <div class="item-info">
+                    <div class="item-brand">${item.brand || "Shoes Store"}</div>
+                    <h3 class="item-name">${item.name}</h3>
+                    <div class="item-meta">
+                        <span class="item-size-tag">Size ${item.size}</span>
+                    </div>
+                    <div class="item-price-row">
+                        <span class="item-unit-price">${fmt(item.price)}</span>
+                        <span class="item-subtotal">= ${fmt(item.price * item.quantity)}</span>
+                    </div>
+                </div>
+                <div class="item-controls">
+                    <div class="qty-control">
+                        <button type="button" class="qty-btn" data-action="minus" data-idx="${idx}" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+                        <span class="qty-val">${item.quantity}</span>
+                        <button type="button" class="qty-btn" data-action="plus" data-idx="${idx}" ${item.quantity >= 99 ? 'disabled' : ''}>+</button>
+                    </div>
+                    <button type="button" class="btn-remove-item" data-idx="${idx}" title="Xóa khỏi giỏ">🗑️</button>
+                </div>
+            </article>
+        `).join('');
+
+        // Bind events
+        list.querySelectorAll(".qty-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const i   = parseInt(this.dataset.idx);
+                const act = this.dataset.action;
+                if (act === "plus"  && cart[i].quantity < 99) cart[i].quantity++;
+                if (act === "minus" && cart[i].quantity > 1)  cart[i].quantity--;
+                if (act === "minus" && cart[i].quantity === 0) {
+                    cart.splice(i, 1);
+                }
+                saveCart();
+                render();
+            });
+        });
+
+        list.querySelectorAll(".btn-remove-item").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const i = parseInt(this.dataset.idx);
+                const name = cart[i].name;
+                cart.splice(i, 1);
+                saveCart();
+                render();
+                showToast(`🗑️ Đã xóa "${name}" khỏi giỏ hàng`);
+            });
+        });
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById("cartToast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    // Xóa tất cả
+    document.getElementById("btnClearCart").addEventListener("click", function() {
+        if (!cart.length) return;
+        if (!confirm("Bạn có chắc muốn xóa tất cả sản phẩm khỏi giỏ hàng?")) return;
+        cart = [];
+        discount = 0;
+        appliedCode = "";
+        saveCart();
+        render();
+        showToast("🗑️ Đã xóa toàn bộ giỏ hàng");
+    });
+
+    // Áp dụng voucher
+    document.getElementById("btnApplyVoucher").addEventListener("click", applyVoucher);
+    document.getElementById("voucherInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") applyVoucher();
+    });
+
+    function applyVoucher() {
+        const code = (document.getElementById("voucherInput").value || "").trim().toUpperCase();
+        const msgEl = document.getElementById("voucherMsg");
+        if (!code) {
+            msgEl.textContent = "⚠️ Vui lòng nhập mã giảm giá";
+            msgEl.className = "voucher-msg error";
+            return;
+        }
+        if (VOUCHER_CODES[code]) {
+            discount    = VOUCHER_CODES[code];
+            appliedCode = code;
+            msgEl.textContent = `✅ Áp dụng mã "${code}" thành công! Giảm ${Math.round(discount*100)}%`;
+            msgEl.className = "voucher-msg success";
+            render();
+        } else {
+            msgEl.textContent = "❌ Mã giảm giá không hợp lệ hoặc đã hết hạn";
+            msgEl.className = "voucher-msg error";
+        }
+    }
+
+    // Init
+    loadData();
+    render();
+})();
+</script>
 </body>
 </html>

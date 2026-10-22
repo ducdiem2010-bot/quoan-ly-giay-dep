@@ -1,186 +1,111 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Shoes Store</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #111827, #2563eb);
-        }
-
-        .login-box {
-            width: 90%;
-            max-width: 400px;
-            padding: 35px;
-            border-radius: 15px;
-            background: white;
-            box-shadow: 0 10px 35px #0004;
-        }
-
-        .logo {
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 27px;
-            font-weight: bold;
-            color: #111827;
-        }
-
-        .subtitle {
-            margin-bottom: 25px;
-            text-align: center;
-            color: #64748b;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 7px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: #2563eb;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 22px;
-            padding: 13px;
-            border: none;
-            border-radius: 7px;
-            background: #2563eb;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        #message {
-            margin-top: 15px;
-            text-align: center;
-            color: #dc2626;
-        }
-
-        .demo {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 7px;
-            background: #eff6ff;
-            color: #1e40af;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-    </style>
+    <link rel="stylesheet" href="./admin_auth.css">
+    <script src="./admin_auth.js" defer></script>
 </head>
-
 <body>
-    <div class="login-box">
-        <div class="logo">👟 SHOES STORE</div>
-        <p class="subtitle">Đăng nhập quản trị viên</p>
+    <main class="auth-container">
+        <section class="auth-card">
+            <header class="auth-header">
+                <div class="brand-badge">👟 SHOES STORE ADMIN</div>
+                <h1>Đăng nhập Quản trị</h1>
+                <p class="subtitle">Đăng nhập để quản lý sản phẩm, đơn hàng và khách hàng</p>
+            </header>
 
-        <form id="loginForm">
-            <label for="email">Email Admin</label>
-            <input
-                type="email"
-                id="email"
-                placeholder="Nhập email"
-                value="admin@gmail.com"
-                required
-            >
+            <!-- Thanh chuyển đổi nhanh Liên kết giữa Đăng nhập & Đăng ký -->
+            <nav class="auth-tabs" aria-label="Lựa chọn phương thức xác thực">
+                <span class="auth-tab active">
+                    <span>🔑</span> Đăng nhập
+                </span>
+                <a href="./admin_register.html" class="auth-tab">
+                    <span>📝</span> Đăng ký
+                </a>
+            </nav>
 
-            <label for="password">Mật khẩu</label>
-            <input
-                type="password"
-                id="password"
-                placeholder="Nhập mật khẩu"
-                value="admin123"
-                required
-            >
+            <!-- Thông báo trạng thái (Lỗi, Thành công sau khi đăng ký, v.v.) -->
+            <div id="loginMessage" class="message" role="alert"></div>
 
-            <button type="submit" id="loginButton">
-                Đăng nhập
-            </button>
+            <form id="loginForm" novalidate>
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email Quản trị <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="admin@gmail.com"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+                </div>
 
-            <p id="message"></p>
-        </form>
+                <!-- Mật khẩu -->
+                <div class="form-group">
+                    <label for="password">Mật khẩu <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Nhập mật khẩu của bạn"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            data-target="password"
+                            title="Hiện/Ẩn mật khẩu"
+                            aria-label="Hiện/Ẩn mật khẩu"
+                        >👁️</button>
+                    </div>
+                </div>
 
-        <div class="demo">
-            <strong>Tài khoản demo</strong><br>
-            Email: admin@gmail.com<br>
-            Mật khẩu: admin123
-        </div>
-    </div>
+                <!-- Tuỳ chọn: Ghi nhớ & Quên mật khẩu -->
+                <div class="form-options">
+                    <label class="checkbox-label" for="rememberMe">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <a href="javascript:void(0)" class="forgot-link" onclick="alert('Vui lòng liên hệ quản trị viên cấp cao hoặc sử dụng tài khoản demo bên dưới!')">Quên mật khẩu?</a>
+                </div>
 
-    <script>
-        const SESSION_KEY = "shoesAdminSession";
+                <!-- Nút Đăng nhập -->
+                <button type="submit" id="loginButton" class="auth-button">
+                    <span>🔑</span> Đăng nhập vào hệ thống
+                </button>
+            </form>
 
-        document.getElementById("loginForm").addEventListener(
-            "submit",
-            function (event) {
-                event.preventDefault();
+            <!-- Chuyển sang Đăng ký -->
+            <p class="auth-switch">
+                Chưa có tài khoản quản trị?
+                <a href="./admin_register.html">Đăng ký tài khoản mới</a>
+            </p>
 
-                const email = document.getElementById("email")
-                    .value.trim().toLowerCase();
+            <!-- Khối thông tin Demo bấm 1 chạm để điền -->
+            <div class="demo-box" id="demoBox" title="Nhấn vào để tự động điền tài khoản demo">
+                <div class="demo-box-header">
+                    <span>💡 Tài khoản Admin có sẵn</span>
+                    <span class="demo-badge">Nhấn để điền</span>
+                </div>
+                <p><strong>Email:</strong> admin@gmail.com</p>
+                <p><strong>Mật khẩu:</strong> admin123</p>
+            </div>
+        </section>
 
-                const password = document.getElementById("password").value;
-                const message = document.getElementById("message");
-                const button = document.getElementById("loginButton");
-
-                // Kiểm tra tài khoản demo
-                if (
-                    email === "admin@gmail.com" &&
-                    password === "admin123"
-                ) {
-                    sessionStorage.setItem(
-                        SESSION_KEY,
-                        JSON.stringify({
-                            id: 1,
-                            name: "Admin Demo",
-                            email: email,
-                            role: "admin"
-                        })
-                    );
-
-                    message.style.color = "#16a34a";
-                    message.textContent =
-                        "Đăng nhập thành công! Đang chuyển trang...";
-
-                    button.disabled = true;
-
-                    // Tự động chuyển đến Dashboard Admin
-                    window.location.href = "./admin_base.html";
-                } else {
-                    message.style.color = "#dc2626";
-                    message.textContent =
-                        "Email hoặc mật khẩu không chính xác!";
-                }
-            }
-        );
-    </script>
+        <footer class="auth-footer">
+            <a href="./admin_base.html">← Tiếp tục với phiên quản trị hiện tại (Dashboard)</a>
+        </footer>
+    </main>
 </body>
 </html>

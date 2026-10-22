@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký Thành viên - Mua sắm Shoes Store</title>
+    <link rel="stylesheet" href="./customer_auth.css">
+    <script src="./customer_auth.js" defer></script>
+</head>
+<body>
+
+    <!-- TOPBAR THƯƠNG HIỆU -->
+    <header class="portal-topbar">
+        <a href="../legacy/anhtuan/user.html" class="portal-logo" title="Trang chủ Shoes Store">
+            <span class="logo-badge">👟</span>
+            <span>SHOES STORE</span>
+        </a>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="./customer_shop.html" class="back-to-shop">
+                <span>←</span> Về trang mua hàng
+            </a>
+            <a href="./admin_login.html" class="back-to-shop" style="background: rgba(37, 99, 235, 0.2); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd;">
+                <span>🔐</span> Kênh Admin
+            </a>
+        </div>
+    </header>
+
+    <!-- KHUNG CHÍNH CHIA 2 CỘT -->
+    <main class="customer-auth-wrapper">
+
+        <!-- CỘT TRÁI: ĐẶC QUYỀN MUA SẮM DÀNH CHO THÀNH VIÊN -->
+        <aside class="benefits-sidebar">
+            <div class="benefits-content">
+                <span class="benefit-badge">🎁 QUÀ TẶNG THÀNH VIÊN MỚI</span>
+                <h1 class="benefits-title">Tạo Tài Khoản<br><span>Nhận Ngay 100 Điểm</span></h1>
+                <p class="benefits-desc">
+                    Đăng ký tài khoản miễn phí để nhận mã giảm giá 10%, tích lũy điểm thưởng và lưu thông tin nhận hàng nhanh chóng cho các lần mua sắm sau.
+                </p>
+
+                <ul class="benefits-list">
+                    <li class="benefit-item">
+                        <div class="benefit-icon">🎁</div>
+                        <div class="benefit-text">
+                            <strong>Mã giảm giá 10% CHAOBANMOI</strong>
+                            <p>Áp dụng ngay cho đơn hàng giày thể thao đầu tiên.</p>
+                        </div>
+                    </li>
+
+                    <li class="benefit-item">
+                        <div class="benefit-icon">🚚</div>
+                        <div class="benefit-text">
+                            <strong>Giao hàng hỏa tốc</strong>
+                            <p>Miễn phí vận chuyển cho đơn hàng từ 500k toàn quốc.</p>
+                        </div>
+                    </li>
+
+                    <li class="benefit-item">
+                        <div class="benefit-icon">⭐</div>
+                        <div class="benefit-text">
+                            <strong>Tích điểm & Thăng hạng</strong>
+                            <p>Tự động tích lũy điểm thưởng theo mỗi đơn hàng thành công.</p>
+                        </div>
+                    </li>
+
+                    <li class="benefit-item">
+                        <div class="benefit-icon">🛡️</div>
+                        <div class="benefit-text">
+                            <strong>Bảo hành chính hãng 12 tháng</strong>
+                            <p>Cam kết 100% giày chính hãng, đổi size 7 ngày tại nhà.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Thẻ thành viên mô phỏng -->
+            <div class="member-card-preview">
+                <div class="member-card-header">
+                    <span class="member-brand">SHOES STORE CLUB</span>
+                    <span class="member-tier-pill">Thành Viên Mới</span>
+                </div>
+                <div class="member-card-body">
+                    <div>
+                        <div class="member-name">Thành viên Mới</div>
+                        <div class="member-id">Đăng ký để kích hoạt</div>
+                    </div>
+                    <div class="member-points">+100 điểm thưởng</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CỘT PHẢI: FORM ĐĂNG KÝ -->
+        <section class="auth-form-column">
+
+            <!-- THANH TAB CHUYỂN ĐỔI NHANH -->
+            <nav class="auth-nav-tabs" aria-label="Lựa chọn đăng nhập hoặc đăng ký">
+                <a href="./customer_login.html" class="auth-nav-tab">
+                    <span>🔑</span> Đăng nhập mua hàng
+                </a>
+                <span class="auth-nav-tab active">
+                    <span>✨</span> Tạo tài khoản mới
+                </span>
+            </nav>
+
+            <div id="registerSection">
+                <header class="form-header">
+                    <h2>Đăng ký tài khoản mua hàng</h2>
+                    <p>Nhập thông tin nhận hàng để đặt mua giày nhanh chóng</p>
+                </header>
+
+                <!-- Hộp thông báo phản hồi đăng ký -->
+                <div id="registerAlert" class="auth-alert" role="alert"></div>
+
+                <form id="customerRegisterForm" novalidate>
+                    <!-- Hàng 1: Họ tên & Số điện thoại -->
+                    <div class="form-row">
+                        <div class="cust-group">
+                            <label for="custName">Họ và tên người nhận <span class="req">*</span></label>
+                            <div class="cust-input-box">
+                                <span class="cust-icon">👤</span>
+                                <input
+                                    type="text"
+                                    id="custName"
+                                    name="name"
+                                    class="cust-input"
+                                    placeholder="Ví dụ: Hoàng Minh Tuấn"
+                                    required
+                                    minlength="2"
+                                    autocomplete="name"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="cust-group">
+                            <label for="custPhone">Số điện thoại nhận hàng <span class="req">*</span></label>
+                            <div class="cust-input-box">
+                                <span class="cust-icon">📞</span>
+                                <input
+                                    type="tel"
+                                    id="custPhone"
+                                    name="phone"
+                                    class="cust-input"
+                                    placeholder="10 số (Ví dụ: 0912345678)"
+                                    required
+                                    autocomplete="tel"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hàng 2: Email -->
+                    <div class="cust-group">
+                        <label for="custEmail">Email nhận hóa đơn & vận đơn <span class="req">*</span></label>
+                        <div class="cust-input-box">
+                            <span class="cust-icon">✉️</span>
+                            <input
+                                type="email"
+                                id="custEmail"
+                                name="email"
+                                class="cust-input"
+                                placeholder="customer@example.com"
+                                required
+                                autocomplete="email"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Hàng 3: Địa chỉ giao hàng mặc định -->
+                    <div class="cust-group">
+                        <label for="custAddress">Địa chỉ nhận giày (Số nhà, đường, phường, quận/huyện) <span class="req">*</span></label>
+                        <div class="cust-input-box">
+                            <span class="cust-icon">📍</span>
+                            <input
+                                type="text"
+                                id="custAddress"
+                                name="address"
+                                class="cust-input"
+                                placeholder="Ví dụ: 124 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. HCM"
+                                required
+                                autocomplete="street-address"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Hàng 4: Mật khẩu & Xác nhận mật khẩu -->
+                    <div class="form-row">
+                        <div class="cust-group">
+                            <label for="custPassword">Mật khẩu <span class="req">*</span></label>
+                            <div class="cust-input-box">
+                                <span class="cust-icon">🔒</span>
+                                <input
+                                    type="password"
+                                    id="custPassword"
+                                    name="password"
+                                    class="cust-input"
+                                    placeholder="Tối thiểu 6 ký tự"
+                                    required
+                                    minlength="6"
+                                    autocomplete="new-password"
+                                >
+                                <button
+                                    type="button"
+                                    class="toggle-eye"
+                                    data-target="custPassword"
+                                    title="Hiện/Ẩn mật khẩu"
+                                    aria-label="Hiện/Ẩn mật khẩu"
+                                >👁️</button>
+                            </div>
+
+                            <!-- Thước đo độ mạnh mật khẩu -->
+                            <div class="cust-meter-track">
+                                <div id="custMeterFill" class="cust-meter-fill"></div>
+                            </div>
+                            <div class="cust-meter-info">
+                                <span id="custMeterLabel">Độ an toàn mật khẩu</span>
+                                <span>Chữ & số</span>
+                            </div>
+                        </div>
+
+                        <div class="cust-group">
+                            <label for="custConfirmPassword">Xác nhận mật khẩu <span class="req">*</span></label>
+                            <div class="cust-input-box">
+                                <span class="cust-icon">🛡️</span>
+                                <input
+                                    type="password"
+                                    id="custConfirmPassword"
+                                    name="confirmPassword"
+                                    class="cust-input"
+                                    placeholder="Nhập lại mật khẩu"
+                                    required
+                                    minlength="6"
+                                    autocomplete="new-password"
+                                >
+                                <button
+                                    type="button"
+                                    class="toggle-eye"
+                                    data-target="custConfirmPassword"
+                                    title="Hiện/Ẩn mật khẩu"
+                                    aria-label="Hiện/Ẩn mật khẩu"
+                                >👁️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Đồng ý điều khoản -->
+                    <div class="cust-group" style="margin-top: 4px;">
+                        <label class="cust-checkbox-wrap" for="custAgreeTerms">
+                            <input type="checkbox" id="custAgreeTerms" name="agree" checked required>
+                            <span style="font-size: 13px; color: #475569;">
+                                Tôi đồng ý với <a href="javascript:void(0)" class="cust-link">Điều khoản mua hàng</a> và <a href="javascript:void(0)" class="cust-link">Chính sách đổi trả 7 ngày</a> của Shoes Store.
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Nút Đăng ký -->
+                    <button type="submit" id="btnCustRegister" class="cust-submit-btn" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                        <span>✨</span> Hoàn tất đăng ký & Nhận 100 điểm thưởng
+                    </button>
+                </form>
+
+                <p class="auth-footer-switch">
+                    Đã có tài khoản thành viên?
+                    <a href="./customer_login.html">Đăng nhập mua hàng ngay</a>
+                </p>
+            </div>
+
+            <!-- Khối hiển thị khi đã đăng nhập -->
+            <div id="custLoggedCard" class="cust-logged-card">
+                <div class="logged-avatar">👟</div>
+                <h2 class="logged-name" id="loggedName">Khách hàng</h2>
+                <div class="logged-tier" id="loggedTier">Hạng Thành viên</div>
+
+                <div class="logged-stats">
+                    <div class="logged-stat-box">
+                        <div class="logged-stat-val" id="loggedPoints">0 đ</div>
+                        <div class="logged-stat-lbl">Điểm thưởng tích luỹ</div>
+                    </div>
+                    <div class="logged-stat-box">
+                        <div class="logged-stat-val" id="loggedOrders">0 đơn</div>
+                        <div class="logged-stat-lbl">Đơn hàng đã mua</div>
+                    </div>
+                </div>
+
+                <div class="logged-actions">
+                    <a href="./customer_shop.html" class="cust-submit-btn" style="text-decoration: none;">
+                        <span>🛒</span> Tiếp tục mua sắm giày
+                    </a>
+                    <a href="../legacy/anhtuan/cart.html" class="btn-secondary">
+                        <span>📦</span> Xem giỏ hàng của bạn
+                    </a>
+                    <button type="button" class="btn-secondary" id="btnCustLogout" style="color: #dc2626; border-color: #fecaca; background: #fff5f5; cursor: pointer;">
+                        <span>🚪</span> Đăng xuất tài khoản
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

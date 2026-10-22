@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài Khoản Khách Hàng - Shoes Store (Black & White)</title>
+    <link rel="stylesheet" href="./monochrome.css">
+    <script src="./customer_auth.js" defer></script>
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <div class="mono-topbar">
+        <span>SHOES STORE • TÀI KHOẢN KHÁCH HÀNG</span>
+        <a href="./customer_shop.html">← QUAY LẠI CỬA HÀNG GIÀY</a>
+    </div>
+
+    <main class="mono-auth-container">
+        <section class="mono-auth-card">
+            <h1 id="authTitle">ĐĂNG NHẬP TÀI KHOẢN</h1>
+            <p class="subtitle" id="authSubtitle">NHẬP EMAIL HOẶC SỐ ĐIỆN THOẠI ĐỂ TIẾP TỤC MUA HÀNG</p>
+
+            <!-- THANH CHUYỂN ĐỔI TAB ĐEN TRẮNG -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px;">
+                <button type="button" class="mono-btn mono-btn-sm" id="btnTabLogin" onclick="switchAuthTab('login')">ĐĂNG NHẬP</button>
+                <button type="button" class="mono-btn mono-btn-outline mono-btn-sm" id="btnTabRegister" onclick="switchAuthTab('register')">ĐĂNG KÝ</button>
+            </div>
+
+            <!-- THÔNG BÁO -->
+            <div id="monoAlert" style="display: none; padding: 12px; border: 1px solid #ffffff; font-size: 12px; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px;"></div>
+
+            <!-- FORM ĐĂNG NHẬP -->
+            <form id="monoLoginForm">
+                <div class="mono-form-group">
+                    <label for="monoIdentity">EMAIL HOẶC SỐ ĐIỆN THOẠI *</label>
+                    <input type="text" id="monoIdentity" class="mono-input" placeholder="0901234567 hoặc email@domain.com" required>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="monoPassword">MẬT KHẨU *</label>
+                    <input type="password" id="monoPassword" class="mono-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="mono-btn" style="width: 100%; margin-top: 10px;">
+                    ĐĂNG NHẬP VÀO HỆ THỐNG
+                </button>
+            </form>
+
+            <!-- FORM ĐĂNG KÝ (ẨN MẶC ĐỊNH) -->
+            <form id="monoRegisterForm" style="display: none;">
+                <div class="mono-form-group">
+                    <label for="regName">HỌ VÀ TÊN NGƯỜI NHẬN *</label>
+                    <input type="text" id="regName" class="mono-input" placeholder="NGUYỄN VĂN AN" required>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="regPhone">SỐ ĐIỆN THOẠI NHẬN HÀNG *</label>
+                    <input type="tel" id="regPhone" class="mono-input" placeholder="0901234567" required>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="regEmail">ĐỊA CHỈ EMAIL *</label>
+                    <input type="email" id="regEmail" class="mono-input" placeholder="customer@domain.com" required>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="regAddress">ĐỊA CHỈ GIAO HÀNG *</label>
+                    <input type="text" id="regAddress" class="mono-input" placeholder="SỐ NHÀ, ĐƯỜNG, QUẬN/HUYỆN, TỈNH/THÀNH" required>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="regPassword">MẬT KHẨU *</label>
+                    <input type="password" id="regPassword" class="mono-input" placeholder="TỐI THIỂU 6 KÝ TỰ" required minlength="6">
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="regConfirm">XÁC NHẬN MẬT KHẨU *</label>
+                    <input type="password" id="regConfirm" class="mono-input" placeholder="NHẬP LẠI MẬT KHẨU" required minlength="6">
+                </div>
+
+                <button type="submit" class="mono-btn" style="width: 100%; margin-top: 10px;">
+                    HOÀN TẤT ĐĂNG KÝ THÀNH VIÊN
+                </button>
+            </form>
+
+            <!-- TÀI KHOẢN MẪU BẤM NHANH -->
+            <div style="margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border-color); font-size: 11px; text-transform: uppercase; color: var(--text-muted);">
+                <div style="font-weight: 800; margin-bottom: 8px;">TÀI KHOẢN MẪU TEST NHANH:</div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="mono-btn mono-btn-outline mono-btn-sm" style="font-size: 10px;" onclick="fillDemo('0901234567', '123456')">VIP AN NGUYỄN</button>
+                    <button type="button" class="mono-btn mono-btn-outline mono-btn-sm" style="font-size: 10px;" onclick="fillDemo('duc.tran@gmail.com', '123456')">VÀNG MINH ĐỨC</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById("monoLoginForm");
+            const regForm = document.getElementById("monoRegisterForm");
+            const btnLogin = document.getElementById("btnTabLogin");
+            const btnReg = document.getElementById("btnTabRegister");
+            const title = document.getElementById("authTitle");
+            const subtitle = document.getElementById("authSubtitle");
+
+            if (tab === "register") {
+                loginForm.style.display = "none";
+                regForm.style.display = "block";
+                btnLogin.className = "mono-btn mono-btn-outline mono-btn-sm";
+                btnReg.className = "mono-btn mono-btn-sm";
+                title.textContent = "TẠO TÀI KHOẢN MUA HÀNG";
+                subtitle.textContent = "ĐĂNG KÝ ĐỂ LƯU ĐỊA CHỈ NHẬN GIÀY VÀ TÍCH ĐIỂM THÀNH VIÊN";
+            } else {
+                loginForm.style.display = "block";
+                regForm.style.display = "none";
+                btnLogin.className = "mono-btn mono-btn-sm";
+                btnReg.className = "mono-btn mono-btn-outline mono-btn-sm";
+                title.textContent = "ĐĂNG NHẬP TÀI KHOẢN";
+                subtitle.textContent = "NHẬP EMAIL HOẶC SỐ ĐIỆN THOẠI ĐỂ TIẾP TỤC MUA HÀNG";
+            }
+        }
+
+        function fillDemo(identity, pass) {
+            document.getElementById("monoIdentity").value = identity;
+            document.getElementById("monoPassword").value = pass;
+        }
+    </script>
+</body>
+</html>

@@ -18,12 +18,16 @@
     const MAX_QUANTITY = 99;
     const CATALOG = [
         { id: 'SP001', name: 'Nike Air Force 1', brand: 'Nike', price: 2500000,
+          image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80',
           description: 'Giày Nike Air Force 1 thiết kế trẻ trung, phù hợp sử dụng hàng ngày.' },
         { id: 'SP002', name: 'Adidas Superstar', brand: 'Adidas', price: 2000000,
+          image: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80',
           description: 'Mẫu Adidas Superstar trong danh sách sản phẩm của SHOES STORE.' },
         { id: 'SP003', name: 'Puma Suede', brand: 'Puma', price: 1800000,
+          image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80',
           description: 'Mẫu Puma Suede trong danh sách sản phẩm của SHOES STORE.' },
         { id: 'SP004', name: 'Asics Gel', brand: 'Asics', price: 2300000,
+          image: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=400&q=80',
           description: 'Mẫu Asics Gel trong danh sách sản phẩm của SHOES STORE.' }
     ];
     const SAMPLE_CART = [
@@ -179,9 +183,17 @@
             const product = productById(item.productId);
             const row = element('article', 'cart-item');
             row.dataset.key = itemKey(item);
-            const photo = element('a', 'product-image', 'Ảnh giày');
+            const photo = element('a', 'product-image');
             photo.href = detailPath(product.id);
             photo.setAttribute('aria-label', 'Xem ' + product.name);
+            const img = doc.createElement('img');
+            img.src = product.image || 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80';
+            img.alt = product.name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '6px';
+            photo.append(img);
             const info = element('div', 'product-info');
             const heading = element('h3');
             const link = element('a', '', product.name);

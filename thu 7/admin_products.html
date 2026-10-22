@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sản Phẩm Giày - Shoes Admin (Black & White)</title>
+    <link rel="stylesheet" href="./monochrome.css">
+    <script src="./admin_portal.js" defer></script>
+</head>
+<body>
+
+    <div class="admin-mono-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="admin-mono-sidebar">
+            <a href="./admin_dashboard.html" class="admin-sidebar-brand">
+                <span>SHOES ADMIN</span>
+                <span class="admin-sidebar-tag">B&W</span>
+            </a>
+
+            <ul class="admin-sidebar-nav">
+                <li class="admin-nav-item">
+                    <a href="./admin_dashboard.html">
+                        <span>DASHBOARD</span>
+                        <span>→</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="./admin_products.html" class="active">
+                        <span>SẢN PHẨM GIÀY</span>
+                        <span>→</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="./admin_orders.html">
+                        <span>ĐƠN HÀNG</span>
+                        <span>→</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="./admin_customers.html">
+                        <span>KHÁCH HÀNG</span>
+                        <span>→</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="admin-sidebar-bottom">
+                <a href="./customer_shop.html" target="_blank" class="mono-btn mono-btn-outline mono-btn-sm" style="text-align: center; width: 100%;">
+                    XEM CỬA HÀNG KHÁCH →
+                </a>
+                <button type="button" id="adminLogoutBtn" class="mono-btn mono-btn-sm" style="width: 100%;">
+                    ĐĂNG XUẤT
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-mono-main">
+            <header class="admin-page-header">
+                <div>
+                    <h1>QUẢN LÝ SẢN PHẨM GIÀY</h1>
+                    <p>DANH SÁCH MẪU GIÀY, THƯƠNG HIỆU, GIÁ BÁN VÀ TỒN KHO</p>
+                </div>
+
+                <div>
+                    <button type="button" id="btnOpenAddProduct" class="mono-btn mono-btn-sm">
+                        + THÊM MẪU GIÀY MỚI
+                    </button>
+                </div>
+            </header>
+
+            <!-- BẢNG SẢN PHẨM KÈM HÌNH GIÀY THẬT -->
+            <div class="mono-table-wrap">
+                <table class="mono-table">
+                    <thead>
+                        <tr>
+                            <th>MÃ SP</th>
+                            <th>MẪU GIÀY & THƯƠNG HIỆU</th>
+                            <th>PHÂN LOẠI</th>
+                            <th>GIÁ BÁN</th>
+                            <th>TỒN KHO</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminProductsBody">
+                        <!-- Render bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- MODAL THÊM SẢN PHẨM ĐEN TRẮNG -->
+    <div id="addProductModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); width: 100%; max-width: 520px; border-radius: var(--radius-md); padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <h3 style="font-size: 16px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">THÊM MẪU GIÀY MỚI</h3>
+                <button type="button" id="btnCloseProductModal" style="background: none; border: none; color: var(--text-primary); font-size: 18px; cursor: pointer;">✕</button>
+            </div>
+
+            <form id="addProductForm">
+                <div class="mono-form-group">
+                    <label for="prodName">TÊN MẪU GIÀY *</label>
+                    <input type="text" id="prodName" class="mono-input" placeholder="VÍ DỤ: NIKE DUNK LOW RETRO" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="mono-form-group">
+                        <label for="prodBrand">THƯƠNG HIỆU *</label>
+                        <input type="text" id="prodBrand" class="mono-input" placeholder="NIKE / ADIDAS" required>
+                    </div>
+
+                    <div class="mono-form-group">
+                        <label for="prodCategory">PHÂN LOẠI *</label>
+                        <input type="text" id="prodCategory" class="mono-input" placeholder="THỜI TRANG / CHẠY BỘ" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="mono-form-group">
+                        <label for="prodPrice">GIÁ BÁN (VNĐ) *</label>
+                        <input type="number" id="prodPrice" class="mono-input" placeholder="2500000" required>
+                    </div>
+
+                    <div class="mono-form-group">
+                        <label for="prodStock">SỐ LƯỢNG KHO *</label>
+                        <input type="number" id="prodStock" class="mono-input" placeholder="20" required>
+                    </div>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="prodImage">ĐƯỜNG DẪN ẢNH GIÀY (URL) *</label>
+                    <input type="url" id="prodImage" class="mono-input" placeholder="https://images.unsplash.com/photo-..." value="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80" required>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                    <button type="button" class="mono-btn mono-btn-outline" onclick="document.getElementById('addProductModal').style.display='none'">HỦY BỎ</button>
+                    <button type="submit" class="mono-btn">LƯU MẪU GIÀY</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

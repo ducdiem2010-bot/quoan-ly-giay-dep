@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Khách Hàng - Shoes Admin (Black & White)</title>
+    <link rel="stylesheet" href="./monochrome.css">
+    <script src="./admin_portal.js" defer></script>
+</head>
+<body>
+
+    <div class="admin-mono-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="admin-mono-sidebar">
+            <a href="./admin_dashboard.html" class="admin-sidebar-brand">
+                <span>SHOES ADMIN</span>
+                <span class="admin-sidebar-tag">B&W</span>
+            </a>
+
+            <ul class="admin-sidebar-nav">
+                <li class="admin-nav-item">
+                    <a href="./admin_dashboard.html">
+                        <span>DASHBOARD</span>
+                        <span>→</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="./admin_products.html">
+                        <span>SẢN PHẨM GIÀY</span>
+                        <span>→</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="./admin_orders.html">
+                        <span>ĐƠN HÀNG</span>
+                        <span>→</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="./admin_customers.html" class="active">
+                        <span>KHÁCH HÀNG</span>
+                        <span>→</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="admin-sidebar-bottom">
+                <a href="./customer_shop.html" target="_blank" class="mono-btn mono-btn-outline mono-btn-sm" style="text-align: center; width: 100%;">
+                    XEM CỬA HÀNG KHÁCH →
+                </a>
+                <button type="button" id="adminLogoutBtn" class="mono-btn mono-btn-sm" style="width: 100%;">
+                    ĐĂNG XUẤT
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-mono-main">
+            <header class="admin-page-header">
+                <div>
+                    <h1>QUẢN LÝ THÀNH VIÊN KHÁCH HÀNG</h1>
+                    <p>DANH SÁCH KHÁCH MUA HÀNG, PHÂN HẠNG THÀNH VIÊN VÀ TỔNG CHI TIÊU</p>
+                </div>
+            </header>
+
+            <!-- BẢNG KHÁCH HÀNG -->
+            <div class="mono-table-wrap">
+                <table class="mono-table">
+                    <thead>
+                        <tr>
+                            <th>MÃ KH</th>
+                            <th>HỌ VÀ TÊN</th>
+                            <th>SỐ ĐIỆN THOẠI</th>
+                            <th>EMAIL</th>
+                            <th>HẠNG THÀNH VIÊN</th>
+                            <th>SỐ ĐƠN MUA</th>
+                            <th>TỔNG CHI TIÊU</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminCustomersBody">
+                        <!-- Render bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+</html>

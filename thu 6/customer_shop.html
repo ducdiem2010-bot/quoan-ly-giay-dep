@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoes Store - Cửa Hàng Giày Thể Thao Chính Hãng</title>
+    <link rel="stylesheet" href="./customer_shop.css">
+    <script src="./customer_shop.js" defer></script>
+</head>
+<body>
+
+    <!-- 1. THANH THÔNG BÁO ƯU ĐÃI ĐẦU TRANG -->
+    <aside class="top-announcement" aria-label="Thông báo ưu đãi">
+        <span>🎉 Chào mừng bạn đến với Shoes Store! Nhập mã <strong>CHAOBANMOI</strong> giảm ngay 10% đơn đầu tiên.</span>
+        <a href="./customer_auth.html">Đăng ký thành viên nhận 100 điểm thưởng →</a>
+    </aside>
+
+    <!-- 2. HEADER CHÍNH & THANH TÌM KIẾM -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo Thương hiệu -->
+            <a href="./customer_shop.html" class="header-brand" title="Shoes Store - Giày Chính Hãng">
+                <span class="brand-icon">👟</span>
+                <span>SHOES STORE</span>
+            </a>
+
+            <!-- Thanh tìm kiếm Real-time -->
+            <div class="header-search">
+                <div class="search-input-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input
+                        type="search"
+                        id="shopSearchInput"
+                        class="search-field"
+                        placeholder="Tìm tên giày, thương hiệu (Nike, Adidas, Puma...)"
+                        autocomplete="off"
+                    >
+                    <button type="button" id="searchClearBtn" class="search-clear" title="Xóa tìm kiếm">✕</button>
+                </div>
+            </div>
+
+            <!-- Nút Đăng nhập / Tài khoản & Giỏ hàng -->
+            <div class="header-actions">
+                <!-- Khi CHƯA đăng nhập -->
+                <a href="./customer_auth.html" id="headerAuthBtn" class="user-auth-btn" title="Đăng nhập hoặc đăng ký thành viên mua hàng">
+                    <span>👤</span>
+                    <span>Đăng nhập / Đăng ký</span>
+                </a>
+
+                <!-- Khi ĐÃ đăng nhập (Tự động cập nhật qua JS) -->
+                <div id="headerLoggedPill" class="cust-logged-pill" style="display: none;" tabindex="0">
+                    <div class="pill-avatar" id="headerCustAvatar">K</div>
+                    <div class="pill-info">
+                        <div class="pill-name" id="headerCustName">Khách hàng</div>
+                        <div class="pill-tier" id="headerCustTier">VIP Kim Cương</div>
+                    </div>
+
+                    <!-- Dropdown Menu khách hàng -->
+                    <div class="user-dropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-name" id="dropCustName">Khách hàng</div>
+                            <div class="dropdown-points" id="dropCustPoints">⭐ 100 điểm thưởng</div>
+                        </div>
+                        <a href="./customer_auth.html" class="dropdown-link">
+                            <span>💳</span> Thẻ thành viên & Ưu đãi
+                        </a>
+                        <a href="../legacy/anhtuan/cart.html" class="dropdown-link">
+                            <span>📦</span> Giỏ hàng của tôi
+                        </a>
+                        <a href="./admin_login.html" class="dropdown-link" style="color: #64748b;">
+                            <span>🔐</span> Cổng Quản trị Admin
+                        </a>
+                        <a href="javascript:void(0)" id="dropLogoutBtn" class="dropdown-link logout">
+                            <span>🚪</span> Đăng xuất
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Badge đồng bộ backend -->
+                <div id="syncStatusBadge" class="sync-status-badge" title="Trạng thái đồng bộ sản phẩm">
+                    <span class="sync-dot offline"></span> Đang đồng bộ...
+                </div>
+
+                <!-- Nút Wishlist / Yêu thích -->
+                <button type="button" id="headerWishlistBtn" class="header-wishlist-btn" aria-label="Sản phẩm yêu thích" title="Danh sách yêu thích">
+                    <span>❤️</span>
+                    <span class="cart-badge" id="wishlistCount" style="background:#ef4444;">0</span>
+                </button>
+
+                <!-- Nút Mở Giỏ Hàng -->
+                <button type="button" id="headerCartBtn" class="header-cart-btn" aria-label="Xem giỏ hàng">
+                    <span>🛒</span>
+                    <span>Giỏ hàng</span>
+                    <span class="cart-badge" id="headerCartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. HERO PROMOTION BANNER -->
+    <section class="hero-banner">
+        <div class="hero-card">
+            <div class="hero-content">
+                <div class="hero-pill">🔥 BST MÙA MỚI 2026</div>
+                <h1 class="hero-title">Đẳng Cấp Từng Bước Chạy<br><span>Giày Chính Hãng 100%</span></h1>
+                <p class="hero-desc">
+                    Khám phá hơn 100+ mẫu sneaker và giày chạy bộ đỉnh cao từ Nike, Adidas, Puma, Jordan. Hỗ trợ giao hỏa tốc và đổi size tận nhà trong 7 ngày.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#danh-sach-giay" class="hero-btn-primary">
+                        <span>🛒</span> Mua Sắm Ngay
+                    </a>
+
+                    <div class="hero-voucher-box">
+                        <span>Mã giảm 10%:</span>
+                        <span class="voucher-code">CHAOBANMOI</span>
+                        <button type="button" id="btnCopyVoucher" style="background:none; border:none; color:#fdba74; font-weight:700; cursor:pointer; font-size:12px;" title="Sao chép mã">
+                            Sao chép
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 4 TIÊU CHÍ CAM KẾT CHẤT LƯỢNG -->
+    <section class="trust-badges" aria-label="Cam kết dịch vụ">
+        <div class="trust-item">
+            <div class="trust-icon">🛡️</div>
+            <div class="trust-text">
+                <strong>100% Chính Hãng</strong>
+                <small>Cam kết hoàn tiền 200% nếu phát hiện hàng giả</small>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <div class="trust-icon">🚚</div>
+            <div class="trust-text">
+                <strong>Miễn Phí Giao Hàng</strong>
+                <small>Freeship toàn quốc cho mọi đơn hàng từ 500k</small>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <div class="trust-icon">🔄</div>
+            <div class="trust-text">
+                <strong>Đổi Trả 7 Ngày</strong>
+                <small>Đổi size tận nơi nếu mang không vừa chân</small>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <div class="trust-icon">⭐</div>
+            <div class="trust-text">
+                <strong>Tích Điểm Đổi Quà</strong>
+                <small>Thăng hạng VIP và nhận quà sinh nhật đặc biệt</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. DANH MỤC SẢN PHẨM & BỘ LỌC TƯƠNG TÁC -->
+    <main class="catalog-section" id="danh-sach-giay">
+        <!-- Tiêu đề & Tab Thương hiệu -->
+        <div class="catalog-header">
+            <div class="catalog-title">
+                <h2>Khám Phá Bộ Sưu Tập Giày</h2>
+                <p>Chọn kích cỡ và mẫu giày phù hợp với phong cách của bạn</p>
+            </div>
+
+            <nav class="brand-tabs" aria-label="Lọc theo thương hiệu">
+                <button type="button" class="brand-tab active" data-brand="all">Tất cả thương hiệu</button>
+                <button type="button" class="brand-tab" data-brand="Nike">Nike</button>
+                <button type="button" class="brand-tab" data-brand="Adidas">Adidas</button>
+                <button type="button" class="brand-tab" data-brand="Puma">Puma</button>
+                <button type="button" class="brand-tab" data-brand="Asics">Asics</button>
+                <button type="button" class="brand-tab" data-brand="New Balance">New Balance</button>
+                <button type="button" class="brand-tab" data-brand="Converse">Converse</button>
+                <button type="button" class="brand-tab" data-brand="Vans">Vans</button>
+            </nav>
+        </div>
+
+        <!-- Thanh công cụ lọc phụ -->
+        <div class="filter-toolbar">
+            <div class="filter-left">
+                <!-- Lọc danh mục -->
+                <select id="filterCategory" class="filter-select" aria-label="Lọc theo phân loại">
+                    <option value="all">Tất cả phân loại</option>
+                    <option value="Giày thời trang">Giày thời trang</option>
+                    <option value="Giày chạy bộ">Giày chạy bộ</option>
+                    <option value="Giày thể thao">Giày thể thao</option>
+                </select>
+
+                <!-- Lọc mức giá -->
+                <select id="filterPrice" class="filter-select" aria-label="Lọc theo khoảng giá">
+                    <option value="all">Mọi mức giá</option>
+                    <option value="under2m">Dưới 2.000.000 đ</option>
+                    <option value="2to3m">2.000.000 đ - 3.000.000 đ</option>
+                    <option value="over3m">Trên 3.000.000 đ</option>
+                </select>
+
+                <!-- Sắp xếp -->
+                <select id="filterSort" class="filter-select" aria-label="Sắp xếp kết quả">
+                    <option value="popular">Bán chạy nhất</option>
+                    <option value="price-asc">Giá: Thấp đến cao</option>
+                    <option value="price-desc">Giá: Cao đến thấp</option>
+                    <option value="rating">Đánh giá tốt nhất</option>
+                </select>
+
+                <button type="button" class="btn-reset-filters" onclick="window.ShoesShop.resetFilters()">
+                    ↺ Đặt lại bộ lọc
+                </button>
+            </div>
+
+            <div class="filter-count-badge" id="filterCountBadge">
+                Đang tải danh sách giày...
+            </div>
+        </div>
+
+        <!-- Lưới hiển thị danh sách sản phẩm -->
+        <section class="products-grid" id="productsGrid" aria-label="Danh sách sản phẩm">
+            <!-- Render qua JavaScript -->
+        </section>
+    </main>
+
+    <!-- 6. CART DRAWER (GIỎ HÀNG TRƯỢT TỪ BÊN PHẢI) -->
+    <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Giỏ hàng mua sắm">
+        <header class="cart-drawer-header">
+            <h3><span>🛒</span> Giỏ hàng của bạn</h3>
+            <button type="button" class="btn-close-drawer" id="btnCloseCartDrawer" title="Đóng giỏ hàng">✕</button>
+        </header>
+
+        <div class="cart-drawer-body" id="cartDrawerBody">
+            <!-- Danh sách hàng trong giỏ -->
+        </div>
+
+        <footer class="cart-drawer-footer">
+            <div class="drawer-summary-row">
+                <span>Tạm tính:</span>
+                <strong id="drawerSubtotal">0 đ</strong>
+            </div>
+
+            <div class="drawer-summary-row" id="drawerDiscountRow" style="display: none; color: #16a34a;">
+                <span>Giảm giá voucher:</span>
+                <strong id="drawerDiscountVal">- 0 đ</strong>
+            </div>
+
+            <div class="drawer-summary-row total">
+                <span>Tổng thanh toán:</span>
+                <span id="drawerTotal">0 đ</span>
+            </div>
+
+            <!-- Nhập mã voucher trong footer -->
+            <div class="drawer-voucher-wrap" id="drawerVoucherWrap">
+                <input type="text" id="drawerVoucherInput" class="drawer-voucher-field"
+                    placeholder="Mã giảm giá (VD: CHAOBANMOI)" maxlength="30">
+                <button type="button" class="drawer-voucher-btn"
+                    onclick="window.ShoesShop.applyVoucherCode(document.getElementById('drawerVoucherInput').value)">
+                    Áp dụng
+                </button>
+            </div>
+
+            <a href="../legacy/anhtuan/checkout.html" class="drawer-checkout-btn">
+                <span>💳</span> Tiến hành đặt hàng ngay
+            </a>
+        </footer>
+    </aside>
+
+    <!-- 7. QUICK VIEW MODAL (XEM NHANH SẢN PHẨM) -->
+    <div class="quickview-modal-overlay" id="quickViewModal" role="dialog" aria-modal="true">
+        <div class="quickview-card">
+            <button type="button" class="btn-close-quickview" id="btnCloseQuickView" title="Đóng xem nhanh">✕</button>
+
+            <div class="qv-image-side">
+                <img id="qvImage" src="" alt="Ảnh sản phẩm">
+            </div>
+
+            <div class="qv-info-side">
+                <span class="qv-brand" id="qvBrand">NIKE</span>
+                <h2 class="qv-title" id="qvTitle">Tên sản phẩm</h2>
+                <div class="qv-price" id="qvPrice">0 đ</div>
+                <div class="qv-rating-row" id="qvRating">⭐ 4.9 · 0 đã bán</div>
+                <div class="qv-stock-row" id="qvStock"></div>
+                <p class="qv-desc" id="qvDesc">Mô tả sản phẩm</p>
+
+                <span class="qv-option-label">Chọn kích cỡ (Size):</span>
+                <div class="qv-sizes-row" id="qvSizes">
+                    <!-- Size pills -->
+                </div>
+
+                <div style="margin-top: auto; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" id="qvBtnAddCart" class="hero-btn-primary" style="flex: 1; justify-content: center; cursor: pointer;">
+                        <span>🛒</span> Thêm vào giỏ hàng
+                    </button>
+                    <button type="button" id="qvWishlistBtn" class="qv-wishlist-btn">
+                        🤍 Lưu yêu thích
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. FOOTER THƯƠNG HIỆU -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>👟 SHOES STORE VIỆT NAM</h4>
+                <p>Hệ thống phân phối giày thể thao, sneaker chính hãng hàng đầu Việt Nam. Cam kết chất lượng, bảo hành 12 tháng và đồng hành cùng mọi bước chân của bạn.</p>
+                <p><strong>Hotline:</strong> 1900 8888 (8:00 - 21:00 hàng ngày)</p>
+                <p><strong>Địa chỉ:</strong> 123 Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>THƯƠNG HIỆU NỔI BẬT</h4>
+                <ul class="footer-links">
+                    <li><a href="javascript:void(0)" onclick="document.querySelector('[data-brand=Nike]').click()">Giày Nike Air Force & Jordan</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.querySelector('[data-brand=Adidas]').click()">Giày Adidas Ultraboost & Superstar</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.querySelector('[data-brand=Puma]').click()">Giày Puma Chunky Sneaker</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.querySelector('[data-brand=Asics]').click()">Giày chạy bộ Asics Gel</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.querySelector('[data-brand=Converse]').click()">Giày Converse & Vans Classic</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>CHÍNH SÁCH MUA HÀNG</h4>
+                <ul class="footer-links">
+                    <li><a href="./customer_auth.html">Chính sách thành viên & Tích điểm</a></li>
+                    <li><a href="javascript:void(0)">Chính sách vận chuyển & Giao nhận</a></li>
+                    <li><a href="javascript:void(0)">Chính sách bảo hành 12 tháng</a></li>
+                    <li><a href="javascript:void(0)">Chính sách đổi hàng trong 7 ngày</a></li>
+                    <li><a href="./admin_login.html">Đăng nhập Quản trị viên (Admin)</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>PHƯƠNG THỨC THANH TOÁN</h4>
+                <p>Hỗ trợ thanh toán linh hoạt bằng Tiền mặt khi nhận hàng (COD), VietQR, VNPay, MoMo và chuyển khoản ngân hàng 24/7.</p>
+                <div style="font-size: 24px; display: flex; gap: 12px; margin-top: 10px;">
+                    <span>💵</span>
+                    <span>💳</span>
+                    <span>📱</span>
+                    <span>🏦</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2026 Shoes Store Vietnam. Tất cả quyền được bảo lưu.</span>
+            <span>Thiết kế & Phát triển cho trải nghiệm mua sắm hoàn hảo.</span>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="shopToast" class="shop-toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>

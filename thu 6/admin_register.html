@@ -1,59 +1,163 @@
-```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký Admin - Shoes Store</title>
-    <link rel="stylesheet" href="admin_auth.css">
-    <script src="admin_auth.js" defer></script>
+    <title>Đăng ký Quản trị - Shoes Store Admin</title>
+    <link rel="stylesheet" href="./admin_auth.css">
+    <script src="./admin_auth.js" defer></script>
 </head>
 <body>
     <main class="auth-container">
         <section class="auth-card">
-            <div class="brand">SHOES STORE</div>
+            <header class="auth-header">
+                <div class="brand-badge">👟 SHOES STORE ADMIN</div>
+                <h1>Tạo tài khoản Quản trị</h1>
+                <p class="subtitle">Đăng ký thành viên quản trị để quản lý hệ thống giày dép</p>
+            </header>
 
-            <h1>Tạo tài khoản Admin</h1>
-            <p class="subtitle">Đăng ký để truy cập hệ thống quản trị</p>
+            <!-- Thanh chuyển đổi nhanh Liên kết giữa Đăng nhập & Đăng ký -->
+            <nav class="auth-tabs" aria-label="Lựa chọn phương thức xác thực">
+                <a href="./admin_login.html" class="auth-tab">
+                    <span>🔑</span> Đăng nhập
+                </a>
+                <span class="auth-tab active">
+                    <span>📝</span> Đăng ký
+                </span>
+            </nav>
 
-            <form id="registerForm">
+            <!-- Thông báo phản hồi trực tiếp -->
+            <div id="registerMessage" class="message" role="alert"></div>
+
+            <form id="registerForm" novalidate>
+                <!-- Họ và tên -->
                 <div class="form-group">
-                    <label for="registerName">Họ và tên</label>
-                    <input id="registerName" type="text"
-                           placeholder="Nhập họ và tên" required minlength="2">
+                    <label for="registerName">Họ và tên <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input
+                            type="text"
+                            id="registerName"
+                            name="name"
+                            class="form-input"
+                            placeholder="Ví dụ: Nguyễn Văn Quản Trị"
+                            required
+                            minlength="2"
+                            autocomplete="name"
+                        >
+                    </div>
                 </div>
 
+                <!-- Email -->
                 <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input id="registerEmail" type="email"
-                           placeholder="admin@example.com" required>
+                    <label for="registerEmail">Email quản trị <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input
+                            type="email"
+                            id="registerEmail"
+                            name="email"
+                            class="form-input"
+                            placeholder="admin@example.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
                 </div>
 
+                <!-- Số điện thoại -->
                 <div class="form-group">
-                    <label for="registerPassword">Mật khẩu</label>
-                    <input id="registerPassword" type="password"
-                           placeholder="Ít nhất 6 ký tự" required minlength="6">
+                    <label for="registerPhone">Số điện thoại liên hệ</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📞</span>
+                        <input
+                            type="tel"
+                            id="registerPhone"
+                            name="phone"
+                            class="form-input"
+                            placeholder="Ví dụ: 0912345678"
+                            autocomplete="tel"
+                        >
+                    </div>
                 </div>
 
+                <!-- Mật khẩu -->
                 <div class="form-group">
-                    <label for="confirmPassword">Xác nhận mật khẩu</label>
-                    <input id="confirmPassword" type="password"
-                           placeholder="Nhập lại mật khẩu" required minlength="6">
+                    <label for="registerPassword">Mật khẩu <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input
+                            type="password"
+                            id="registerPassword"
+                            name="password"
+                            class="form-input"
+                            placeholder="Tối thiểu 6 ký tự"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            data-target="registerPassword"
+                            title="Hiện/Ẩn mật khẩu"
+                            aria-label="Hiện/Ẩn mật khẩu"
+                        >👁️</button>
+                    </div>
+
+                    <!-- Thanh đo độ mạnh mật khẩu -->
+                    <div class="password-meter">
+                        <div class="meter-track">
+                            <div id="meterFill" class="meter-fill"></div>
+                        </div>
+                        <div class="meter-text">
+                            <span id="meterText">Độ mạnh mật khẩu</span>
+                            <small>Nên dùng chữ hoa, số & ký tự đặc biệt</small>
+                        </div>
+                    </div>
                 </div>
 
-                <p id="registerMessage" class="message" role="alert"></p>
+                <!-- Xác nhận mật khẩu -->
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🛡️</span>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            class="form-input"
+                            placeholder="Nhập lại chính xác mật khẩu trên"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            data-target="confirmPassword"
+                            title="Hiện/Ẩn mật khẩu"
+                            aria-label="Hiện/Ẩn mật khẩu"
+                        >👁️</button>
+                    </div>
+                </div>
 
-                <button class="auth-button" type="submit">
-                    Đăng ký tài khoản
+                <!-- Nút đăng ký -->
+                <button type="submit" id="registerButton" class="auth-button">
+                    <span>🚀</span> Đăng ký tài khoản Admin
                 </button>
             </form>
 
+            <!-- Chuyển sang Đăng nhập -->
             <p class="auth-switch">
-                Đã có tài khoản?
-                <a href="./admin_login.html">Đăng nhập</a>
+                Đã có tài khoản quản trị?
+                <a href="./admin_login.html">Đăng nhập ngay</a>
             </p>
         </section>
+
+        <footer class="auth-footer">
+            <a href="./admin_base.html">← Quay lại trang tổng quan (Dashboard)</a>
+        </footer>
     </main>
 </body>
 </html>
-```

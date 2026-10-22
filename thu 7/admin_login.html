@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Shoes Store (Black & White)</title>
+    <link rel="stylesheet" href="./monochrome.css">
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <div class="mono-topbar">
+        <span>SHOES STORE • KÊNH ĐĂNG NHẬP QUẢN TRỊ VIÊN</span>
+        <a href="./customer_shop.html">← VỀ CỬA HÀNG KHÁCH HÀNG</a>
+    </div>
+
+    <main class="mono-auth-container">
+        <section class="mono-auth-card">
+            <h1>ĐĂNG NHẬP QUẢN TRỊ</h1>
+            <p class="subtitle">TRUY CẬP HỆ THỐNG QUẢN LÝ SẢN PHẨM & ĐƠN HÀNG</p>
+
+            <div id="loginMsg" style="display: none; padding: 12px; border: 1px solid #ffffff; font-size: 12px; margin-bottom: 18px; text-transform: uppercase;"></div>
+
+            <form id="adminLoginForm">
+                <div class="mono-form-group">
+                    <label for="adminEmail">EMAIL QUẢN TRỊ *</label>
+                    <input type="email" id="adminEmail" class="mono-input" placeholder="admin@gmail.com" value="admin@gmail.com" required>
+                </div>
+
+                <div class="mono-form-group">
+                    <label for="adminPassword">MẬT KHẨU *</label>
+                    <input type="password" id="adminPassword" class="mono-input" placeholder="••••••••" value="admin123" required>
+                </div>
+
+                <button type="submit" class="mono-btn" style="width: 100%; margin-top: 10px;">
+                    ĐĂNG NHẬP DASHBOARD
+                </button>
+            </form>
+
+            <div style="margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border-color); font-size: 11px; text-transform: uppercase; color: var(--text-muted);">
+                <div style="font-weight: 800; margin-bottom: 6px;">TÀI KHOẢN QUẢN TRỊ MẪU:</div>
+                <p>EMAIL: <strong>admin@gmail.com</strong></p>
+                <p>MẬT KHẨU: <strong>admin123</strong></p>
+                <button type="button" class="mono-btn mono-btn-outline mono-btn-sm" style="margin-top: 10px; width: 100%;" onclick="quickFill()">
+                    ĐIỀN TỰ ĐỘNG
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function quickFill() {
+            document.getElementById("adminEmail").value = "admin@gmail.com";
+            document.getElementById("adminPassword").value = "admin123";
+        }
+
+        document.getElementById("adminLoginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+            const pass = document.getElementById("adminPassword").value;
+            const msg = document.getElementById("loginMsg");
+
+            if (email === "admin@gmail.com" && pass === "admin123") {
+                sessionStorage.setItem("shoesAdminSession", JSON.stringify({
+                    id: 1,
+                    name: "Admin Quản Trị",
+                    email: email,
+                    role: "admin"
+                }));
+                msg.style.display = "block";
+                msg.textContent = "ĐĂNG NHẬP THÀNH CÔNG! ĐANG VÀO HỆ THỐNG...";
+                setTimeout(() => {
+                    window.location.href = "./admin_dashboard.html";
+                }, 600);
+            } else {
+                msg.style.display = "block";
+                msg.textContent = "EMAIL HOẶC MẬT KHẨU KHÔNG CHÍNH XÁC!";
+            }
+        });
+    </script>
+</body>
+</html>

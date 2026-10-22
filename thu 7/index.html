@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoes Store - Cổng Trải Nghiệm Đen Trắng (Black & White Edition)</title>
+    <link rel="stylesheet" href="./monochrome.css">
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
+
+    <!-- TOPBAR -->
+    <div class="mono-topbar">
+        <span>SHOES STORE • PHIÊN BẢN ĐEN TRẮNG (BLACK & WHITE EDITION) - MỤC THỨ 7</span>
+        <button type="button" id="themeToggleBtn" style="background: none; border: 1px solid var(--border-light); color: var(--text-primary); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 2px; cursor: pointer;">NỀN TRẮNG</button>
+    </div>
+
+    <!-- MAIN PORTAL HUB -->
+    <main style="max-width: 1200px; margin: 40px auto; padding: 0 24px; width: 100%;">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <p style="font-size: 12px; font-weight: 800; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">HỆ THỐNG QUẢN LÝ & MUA SẮM GIÀY</p>
+            <h1 style="font-size: 44px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; margin-bottom: 14px;">BỘ SƯU TẬP ĐEN TRẮNG</h1>
+            <p style="font-size: 15px; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                Thiết kế tối giản nguyên bản: nền đen trắng tương phản cao, chỉ bao gồm chữ và hình ảnh sản phẩm giày chân thực sắc nét.
+            </p>
+        </div>
+
+        <!-- 2 KHỐI LỰA CHỌN: KHÁCH HÀNG & ADMIN -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+
+            <!-- KHỐI 1: GIAO DIỆN KHÁCH HÀNG -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 36px 30px; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transition);" onmouseover="this.style.borderColor='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <span class="mono-badge active">KHÁCH HÀNG</span>
+                        <span style="font-size: 11px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px;">E-COMMERCE STORE</span>
+                    </div>
+
+                    <div style="width: 100%; height: 220px; overflow: hidden; border-radius: var(--radius-sm); margin-bottom: 20px; background: #000; border: 1px solid var(--border-color);">
+                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80" alt="Nike Sneaker" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+
+                    <h2 style="font-size: 22px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;">CỬA HÀNG MUA SẮM</h2>
+                    <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+                        Khám phá các mẫu giày Nike, Adidas, Puma, Jordan chính hãng. Bộ lọc thương hiệu, chọn size giày, giỏ hàng trượt và đăng nhập thành viên tích điểm.
+                    </p>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="./customer_shop.html" class="mono-btn" style="width: 100%; text-align: center;">
+                        VÀO TRANG MUA HÀNG KHÁCH HÀNG →
+                    </a>
+                    <a href="./customer_auth.html" class="mono-btn mono-btn-outline" style="width: 100%; text-align: center;">
+                        ĐĂNG NHẬP / ĐĂNG KÝ KHÁCH HÀNG
+                    </a>
+                </div>
+            </div>
+
+            <!-- KHỐI 2: GIAO DIỆN QUẢN TRỊ ADMIN -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 36px 30px; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transition);" onmouseover="this.style.borderColor='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <span class="mono-badge active">QUẢN TRỊ VIÊN</span>
+                        <span style="font-size: 11px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px;">ADMIN DASHBOARD</span>
+                    </div>
+
+                    <div style="width: 100%; height: 220px; overflow: hidden; border-radius: var(--radius-sm); margin-bottom: 20px; background: #000; border: 1px solid var(--border-color);">
+                        <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80" alt="Jordan High" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+
+                    <h2 style="font-size: 22px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;">BẢNG ĐIỀU KHIỂN QUẢN TRỊ</h2>
+                    <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+                        Quản lý toàn bộ danh mục sản phẩm giày kèm hình ảnh, thêm mới mẫu giày, quản lý tiến độ đơn hàng và danh sách khách hàng thân thiết.
+                    </p>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="./admin_dashboard.html" class="mono-btn" style="width: 100%; text-align: center;">
+                        VÀO TRANG QUẢN TRỊ DASHBOARD →
+                    </a>
+                    <a href="./admin_login.html" class="mono-btn mono-btn-outline" style="width: 100%; text-align: center;">
+                        ĐĂNG NHẬP TÀI KHOẢN ADMIN
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer style="border-top: 1px solid var(--border-color); padding: 24px; text-align: center; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;">
+        © 2026 SHOES STORE • PHIÊN BẢN ĐEN TRẮNG (B&W EDITION) • THƯ MỤC THU 7
+    </footer>
+
+    <script>
+        const themeBtn = document.getElementById("themeToggleBtn");
+        if (themeBtn) {
+            themeBtn.addEventListener("click", () => {
+                document.body.classList.toggle("theme-white");
+                const isWhite = document.body.classList.contains("theme-white");
+                themeBtn.textContent = isWhite ? "NỀN ĐEN" : "NỀN TRẮNG";
+            });
+        }
+    </script>
+</body>
+</html>
