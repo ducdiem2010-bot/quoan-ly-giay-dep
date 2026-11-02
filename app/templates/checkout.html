@@ -1,19 +1,51 @@
 {% extends 'base.html' %}
-{% block title %}Xác nhận thông tin - Shoes Store{% endblock %}
+{% block title %}Thông tin giao hàng và thanh toán - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">{% endblock %}
 {% block content %}
-<div class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Xác nhận thông tin</div>
-<div class="section-title"><div><span class="eyebrow">MẪU GIAO DIỆN TUẦN 2</span><h1>Thông tin nhận tại cửa hàng</h1></div></div>
-<div class="checkout-layout"><div class="panel"><h2>Thông tin liên hệ</h2>
-  <p class="notice notice-warning">Đây là biểu mẫu giao diện Tuần 2. Chưa tạo đơn hàng thật và chưa thu tiền.</p>
-  <label for="full_name">Họ tên</label><input id="full_name" name="full_name" type="text" placeholder="Nhập họ tên" autocomplete="name">
-  <label for="phone">Số điện thoại</label><input id="phone" name="phone" type="tel" placeholder="09xxxxxxxx" autocomplete="tel-national">
-  <label for="email">Email (không bắt buộc)</label><input id="email" name="email" type="email" autocomplete="email">
-  <label for="note">Ghi chú</label><textarea id="note" name="note" rows="3"></textarea>
-  <p><strong>Phương thức thanh toán:</strong> tại cửa hàng khi nhận hàng.</p>
-</div><aside class="panel cart-summary"><h2>Thông tin giỏ hàng</h2>
-  {% for item in cart_items %}<p class="summary-line"><span>{{ item.TenSanPham }} × {{ item.quantity }}</span><strong>{{ item.subtotal|vnd }}</strong></p>{% endfor %}
-  <hr><p class="summary-line summary-total"><span>Tổng cộng</span><strong>{{ total|vnd }}</strong></p>
-  <button disabled class="action-primary" type="button">Xác nhận đơn (chưa triển khai)</button>
-  <p class="pickup-hint">Nhận tại cửa hàng • Không thanh toán online</p>
-</aside></div>
+<section class="w4-checkout" aria-labelledby="checkout-title">
+  <nav class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Giao hàng &amp; thanh toán</nav>
+  <header class="checkout-heading"><div><span class="eyebrow">HOÀN TẤT YÊU CẦU ĐẶT HÀNG</span><h1 id="checkout-title">Giao hàng và thanh toán</h1><p>Kiểm tra sản phẩm và thông tin trước khi gửi đến cửa hàng.</p></div><a href="{{ url_for('view_cart') }}" class="checkout-back">← Sửa giỏ hàng</a></header>
+  <ol class="checkout-steps" aria-label="Các bước đặt hàng"><li>1. Giỏ hàng</li><li aria-current="step">2. Thông tin nhận hàng</li><li>3. Ghi nhận yêu cầu</li></ol>
+  <div class="notice notice-warning" role="note"><strong>Bản thử nghiệm — chưa thu tiền trực tuyến.</strong> Đơn được lưu ở trạng thái chờ xác nhận; bản backend hiện tại chưa trừ tồn kho. Phí giao hàng sẽ được cửa hàng xác nhận.</div>
+  <div class="checkout-layout checkout-updated">
+    <form id="checkout-form" class="panel checkout-form" method="post" action="{{ url_for('checkout') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div id="checkout-errors" class="checkout-error-summary" role="alert" tabindex="-1" hidden></div>
+      <section aria-labelledby="receiver-title"><h2 id="receiver-title"><span class="checkout-section-number" aria-hidden="true">01</span> Thông tin người nhận</h2><p class="checkout-help">Các trường có dấu * là bắt buộc.</p>
+        <div class="checkout-fields">
+          <div class="checkout-field"><label for="full_name">Họ và tên *</label><input id="full_name" name="full_name" type="text" minlength="2" maxlength="100" required autocomplete="name" aria-describedby="full_name-error" value="{{ form_data.get('full_name','') }}" placeholder="Nhập họ và tên"><p id="full_name-error" class="checkout-field-error" hidden></p></div>
+          <div class="checkout-field"><label for="phone">Số điện thoại *</label><input id="phone" name="phone" type="tel" maxlength="20" required autocomplete="tel-national" aria-describedby="phone-help phone-error" value="{{ form_data.get('phone','') }}" placeholder="09xxxxxxxx"><p id="phone-help" class="checkout-help">Nhập số liên hệ gồm 9–12 chữ số.</p><p id="phone-error" class="checkout-field-error" hidden></p></div>
+          <div class="checkout-field checkout-field-wide"><label for="email">Email (không bắt buộc)</label><input id="email" name="email" type="email" maxlength="150" autocomplete="email" aria-describedby="email-error" value="{{ form_data.get('email','') }}" placeholder="ban@example.com"><p id="email-error" class="checkout-field-error" hidden></p></div>
+        </div>
+      </section>
+      <section aria-labelledby="fulfillment-title"><h2 id="fulfillment-title"><span class="checkout-section-number" aria-hidden="true">02</span> Hình thức nhận hàng</h2>
+        <fieldset class="checkout-choice"><legend class="sr-only">Chọn hình thức nhận hàng *</legend>
+          <label class="choice-line"><input type="radio" name="fulfillment" value="delivery" required {{ 'checked' if form_data.get('fulfillment', 'delivery') == 'delivery' else '' }}><span><strong>Giao hàng tận nơi</strong><small>Nhập địa chỉ để cửa hàng liên hệ xác nhận.</small></span></label>
+          <label class="choice-line"><input type="radio" name="fulfillment" value="pickup" required {{ 'checked' if form_data.get('fulfillment') == 'pickup' else '' }}><span><strong>Nhận tại cửa hàng</strong><small>Không tính phí vận chuyển.</small></span></label>
+        </fieldset>
+        <p id="fulfillment-error" class="checkout-field-error" hidden></p>
+        <div id="delivery-fields"><label for="address">Địa chỉ giao hàng *</label><textarea id="address" name="address" minlength="8" maxlength="255" rows="3" autocomplete="street-address" aria-describedby="address-help address-error" {% if form_data.get('fulfillment','delivery') != 'pickup' %}required{% endif %} placeholder="Số nhà, đường, phường/xã, tỉnh/thành phố">{{ form_data.get('address','') }}</textarea><p id="address-help" class="checkout-help">Từ 8–255 ký tự. Phí vận chuyển chưa được tính vào tạm tính sản phẩm.</p><p id="address-error" class="checkout-field-error" hidden></p></div>
+      </section>
+      <section aria-labelledby="payment-title"><h2 id="payment-title"><span class="checkout-section-number" aria-hidden="true">03</span> Phương thức thanh toán</h2>
+        <fieldset class="checkout-choice"><legend class="sr-only">Chọn phương thức thanh toán *</legend>
+          <label class="choice-line"><input type="radio" name="payment_method" value="cod" required {{ 'checked' if form_data.get('payment_method','cod') == 'cod' else '' }}><span><strong>Thanh toán khi nhận hàng (COD) / tại cửa hàng</strong><small>Chưa ghi nhận đã thu tiền ở bước gửi yêu cầu.</small></span></label>
+          <label class="choice-line"><input type="radio" name="payment_method" value="bank_transfer" required {{ 'checked' if form_data.get('payment_method') == 'bank_transfer' else '' }}><span><strong>Chuyển khoản ngân hàng (chờ xác nhận thủ công)</strong><small>Chờ hướng dẫn và xác nhận của cửa hàng.</small></span></label>
+          <label class="choice-line disabled-choice"><input type="radio" name="payment_method" value="gateway" disabled><span><strong>Thanh toán qua cổng trực tuyến</strong><small>Chưa kết nối trong bản hiện tại.</small></span></label>
+        </fieldset>
+        <p id="payment_method-error" class="checkout-field-error" hidden></p><p id="payment-explain" class="checkout-payment-note" role="status" aria-live="polite">Chọn phương thức phù hợp; gửi yêu cầu không có nghĩa đã thanh toán.</p>
+        <label for="note">Ghi chú (không bắt buộc)</label><textarea id="note" name="note" rows="3" maxlength="500" aria-describedby="note-error" placeholder="Yêu cầu khác, tối đa 500 ký tự">{{ form_data.get('note','') }}</textarea><p id="note-error" class="checkout-field-error" hidden></p>
+      </section>
+      <button class="action-primary checkout-submit" type="submit" data-idle-label="Gửi yêu cầu đặt hàng">Gửi yêu cầu đặt hàng</button>
+      <p id="checkout-submit-status" class="checkout-help" role="status" aria-live="polite"></p>
+      <p class="checkout-help">Cửa hàng cần xác nhận đơn và phí giao hàng trước khi hoàn tất. Không có giao dịch thanh toán online nào được thực hiện ở bước này.</p>
+    </form>
+    <aside class="panel cart-summary checkout-summary" aria-labelledby="basket-title"><span class="eyebrow">KIỂM TRA LẦN CUỐI</span><h2 id="basket-title">Thông tin giỏ hàng</h2>
+      {% for item in cart_items %}<div class="checkout-summary-item"><div><strong>{{ item.TenSanPham }}</strong><small>{{ item.MauSac }} · Size {{ item.KichThuoc }} · SL {{ item.quantity }}</small></div><strong>{{ item.subtotal|vnd }}</strong></div>{% endfor %}
+      <dl class="checkout-totals"><div><dt>Tạm tính sản phẩm</dt><dd>{{ total|vnd }}</dd></div><div><dt>Phí vận chuyển</dt><dd id="shipping-summary">Chờ xác nhận</dd></div><div class="checkout-total"><dt>Tổng tạm tính</dt><dd>{{ total|vnd }}</dd></div></dl>
+      <p class="checkout-help" id="shipping-help">Tổng tạm tính chưa bao gồm phí vận chuyển nếu chọn giao hàng.</p>
+      <div class="checkout-summary-note"><strong>Bạn cần thay đổi sản phẩm?</strong><p>Quay lại giỏ để kiểm tra màu, size và số lượng trước khi gửi.</p><a href="{{ url_for('view_cart') }}">Xem lại giỏ hàng →</a></div>
+    </aside>
+  </div>
+</section>
 {% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/checkout.js') }}" defer></script>{% endblock %}

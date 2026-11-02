@@ -1,0 +1,15 @@
+test_admin_guard_and_login (test_smoke.Week2SmokeTest.test_admin_guard_and_login) ... ok
+test_cart_guard (test_smoke.Week2SmokeTest.test_cart_guard) ... ok
+test_cart_session_and_remove (test_smoke.Week2SmokeTest.test_cart_session_and_remove) ... ok
+test_category_filter (test_smoke.Week2SmokeTest.test_category_filter) ... ok
+test_custom_500 (test_smoke.Week2SmokeTest.test_custom_500) ... ok
+test_details_404_and_static (test_smoke.Week2SmokeTest.test_details_404_and_static) ... ok
+test_home_db_and_search (test_smoke.Week2SmokeTest.test_home_db_and_search) ... ok
+test_register_and_login (test_smoke.Week2SmokeTest.test_register_and_login) ... ok
+test_seed_and_integrity (test_smoke.Week2SmokeTest.test_seed_and_integrity) ... ok
+test_seller_cannot_admin (test_smoke.Week2SmokeTest.test_seller_cannot_admin) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.490s
+
+OK

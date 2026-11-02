@@ -1,0 +1,76 @@
+{# Tuấn – W3-038. Dùng base.html, products/pagination và route /products của nhóm. Phân trang SQL Server cần backend W3-018. #}
+{% extends "base.html" %}
+{% from "empty_state.html" import empty_state %}
+{% block title %}Danh sách sản phẩm - Shoes Store{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_feedback.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_filters.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/favorite.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/empty_states.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_responsive.css') }}">
+{% endblock %}
+{% block content %}
+<section class="catalog-page" aria-labelledby="catalog-title">
+  <div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Sản phẩm</div>
+  <header class="catalog-heading">
+    <div>
+      <span class="eyebrow">SHOES STORE</span>
+      <h1 id="catalog-title">Danh sách sản phẩm</h1>
+      <p>Khám phá các mẫu giày dép và chọn sản phẩm để xem chi tiết.</p>
+    </div>
+    {% if session.get('role') == 'Customer' and favorite_list_url|default('') %}<a class="favorite-login" href="{{ favorite_list_url }}">Xem yêu thích</a>{% endif %}
+    <span class="catalog-total">{{ pagination.total }} sản phẩm</span>
+  </header>
+
+  {% include "product_filters.html" %}
+
+  {% if keyword %}
+  <p class="catalog-search-note">Kết quả tìm kiếm cho <strong>“{{ keyword }}”</strong>.
+    <a href="{{ url_for('w3_catalog.product_list') }}">Xem tất cả sản phẩm</a>
+  </p>
+  {% endif %}
+
+  <div id="catalog-products" class="catalog-products">
+    {% if products %}
+    <p class="catalog-range">Hiển thị {{ pagination.first_item }}–{{ pagination.last_item }} trong {{ pagination.total }} sản phẩm</p>
+    <div class="product-grid">
+      {% for product in products %}
+        {% include "product_card.html" %}
+      {% endfor %}
+    </div>
+    {% else %}
+    {{ empty_state('Không tìm thấy sản phẩm' if keyword or filter_ui.chosen else 'Chưa có sản phẩm', 'Chưa có sản phẩm phù hợp với điều kiện bạn đã chọn.' if keyword or filter_ui.chosen else 'Cửa hàng đang cập nhật sản phẩm. Bạn vui lòng quay lại sau.', url_for('w3_catalog.product_list'), 'Bỏ lọc và xem tất cả sản phẩm') }}
+    {% endif %}
+  </div>
+
+  <nav class="catalog-pagination" aria-label="Phân trang sản phẩm">
+    <ul class="pagination">
+      <li class="page-item{% if not pagination.prev_url %} disabled{% endif %}">
+        {% if pagination.prev_url %}
+        <a class="page-link" href="{{ pagination.prev_url }}" rel="prev" aria-label="Trang trước">← Trước</a>
+        {% else %}
+        <span class="page-link" aria-disabled="true">← Trước</span>
+        {% endif %}
+      </li>
+      <li class="page-item active"><span class="page-link catalog-current" aria-current="page">Trang {{ pagination.page }} / {{ pagination.page_count }}</span></li>
+      <li class="page-item{% if not pagination.next_url %} disabled{% endif %}">
+        {% if pagination.next_url %}
+        <a class="page-link" href="{{ pagination.next_url }}" rel="next" aria-label="Trang sau">Sau →</a>
+        {% else %}
+        <span class="page-link" aria-disabled="true">Sau →</span>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/product_list.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/product_filters.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/product_sort.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/favorite.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/empty_states.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/product_responsive.js') }}" defer></script>
+{% endblock %}

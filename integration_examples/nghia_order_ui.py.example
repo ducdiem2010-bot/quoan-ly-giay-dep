@@ -1,0 +1,35 @@
+"""MẪU BÀN GIAO, không được nạp khi chạy mặc định.
+
+Nghĩa chép file này thành app/nghia_order_ui.py, sửa import bên dưới thành
+hàm thật của nhánh mình. Tên module/hàm đang là ví dụ, chưa có trong ZIP.
+Đầu ra phải khớp docs/TUAN_W4_ORDER_UI_CONTRACT.md.
+"""
+from .tuan_w4_connection import OrderUIAdapter
+
+
+def create_provider(app):
+    # ĐỔI IMPORT NÀY theo module backend thật Nghĩa đã triển khai.
+    from .nghia_order_service import (
+        list_orders_for_customer,
+        get_order_for_customer,
+        cancel_order_for_customer,
+    )
+
+    return OrderUIAdapter(
+        list_orders=list_orders_for_customer,
+        get_order=get_order_for_customer,
+        cancel_order=cancel_order_for_customer,
+        # Nếu DB/service trả tên cột khác OrderView, bổ sung:
+        # to_order_view=map_order_to_view,
+    )
+
+# Chữ ký backend cần nối:
+# list_orders_for_customer(*, user_id) -> list[OrderView]
+# get_order_for_customer(*, user_id, order_id) -> OrderView | None
+# cancel_order_for_customer(*, user_id, order_id) -> {"ok": bool}
+#
+# Chưa có cancel thật: bỏ dòng import/callback cancel, truyền cancel_order=None.
+# Khi đó chỉ bật danh sách/chi tiết; UI không hiển thị nút hủy.
+# Backend phải dùng user_id từ server để kiểm quyền, kiểm lại state trong
+# transaction hủy và chỉ trả ok=True sau commit. Không dùng preview làm backend.
+

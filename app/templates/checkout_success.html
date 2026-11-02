@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Yêu cầu đặt hàng đã ghi nhận - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">{% endblock %}
+{% block content %}
+<section class="checkout-result">
+  <span class="eyebrow">ĐÃ NHẬN YÊU CẦU</span>
+  <h1>Đã ghi nhận yêu cầu đặt hàng #{{ order_id }}</h1>
+  <p class="notice notice-success">Yêu cầu đã được lưu. <strong>Trạng thái tại thời điểm gửi: chờ xác nhận.</strong></p>
+  <div class="checkout-result-facts"><p><strong>Hình thức nhận:</strong> {{ 'Giao hàng tận nơi' if fulfillment == 'delivery' else 'Nhận tại cửa hàng' }}</p><p><strong>Phương thức thanh toán:</strong> {{ 'Chuyển khoản ngân hàng – chờ hướng dẫn/xác nhận' if payment_method == 'bank_transfer' else 'Thanh toán khi nhận hàng' }}</p><p><strong>Thanh toán tại thời điểm gửi:</strong> Chưa thanh toán.</p></div>
+  <p>Trang này là phản hồi sau khi gửi, không phải thông tin trạng thái trực tiếp từ cơ sở dữ liệu.</p>
+  <p>Phí giao hàng (nếu có) chưa được tính; cửa hàng cần xác nhận trước khi hoàn tất. <strong>Không có giao dịch thanh toán online nào được thực hiện.</strong></p>
+  {% if not order_ui_connected %}<p class="notice notice-warning">Bản hiện tại chưa kết nối backend theo dõi/hủy đơn. Hãy giữ mã đơn để đối chiếu với cửa hàng.</p>{% endif %}
+  {% if not session.get('user_id') %}<p class="checkout-help">Bạn gửi đơn khi chưa đăng nhập. Bản này chưa có chức năng tra cứu bảo mật dành cho đơn khách vãng lai.</p>{% endif %}
+  <div class="checkout-result-actions">{% if session.get('role') == 'Customer' %}<a class="action-primary" href="{{ url_for('tuan_w4_ui.my_orders') }}">Đơn của tôi</a>{% endif %}<a href="{{ url_for('w3_catalog.product_list') }}" class="checkout-result-secondary">Tiếp tục xem sản phẩm</a></div>
+</section>
+{% endblock %}

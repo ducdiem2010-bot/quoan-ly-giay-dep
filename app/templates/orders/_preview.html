@@ -1,0 +1,11 @@
+{% if preview_mode|default(false) %}
+<aside class="w4-preview-banner" role="note">
+  <strong>DỮ LIỆU MẪU — CHƯA TÍCH HỢP BACKEND</strong>
+  <p>Chỉ xem giao diện. Không tạo, hủy đơn, thu tiền hoặc thay đổi tồn kho.</p>
+  <nav aria-label="Các màn hình xem thử">
+    {% for key, label in [('orders','Danh sách'),('detail','Chi tiết'),('shipping','Đang giao'),('completed','Hoàn thành'),('failed','Thanh toán lỗi'),('cancelled','Đã hủy'),('empty','Rỗng'),('unavailable','Chưa kết nối'),('forbidden','Không có quyền'),('not-found','Không tồn tại')] %}
+    <a href="{{ url_for('tuan_w4_ui.preview', scenario=key) }}" {% if preview_scenario == key %}aria-current="page"{% endif %}>{{ label }}</a>
+    {% endfor %}
+  </nav>
+</aside>
+{% endif %}

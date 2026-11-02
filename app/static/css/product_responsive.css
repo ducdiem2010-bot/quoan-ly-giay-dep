@@ -1,0 +1,37 @@
+/* Tuấn – W3-053: chuẩn bị bố cục 375px/768px/desktop.
+   Cần chụp và nghiệm thu thật trên trình duyệt sau khi ghép backend. */
+.catalog-page, .detail-page, .favorite-page, .catalog-filters, .catalog-products { min-width: 0; }
+.shell-header > *, .product-grid > *, .filter-bottom > * { min-width: 0; }
+.filter-mobile-toggle { min-height: 44px; width: 100%; margin: 0 0 16px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: #eef5df; color: var(--ink); font-weight: 700; }
+.filter-mobile-toggle[hidden], #catalog-filter-form[hidden] { display: none; }
+.favorite-form .favorite-toggle, .product-card .favorite-login { width: 100%; }
+@media (max-width: 768px) {
+  .catalog-heading { flex-wrap: wrap; }
+  .catalog-page .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .detail-page { grid-template-columns: minmax(0, 1fr); }
+  .catalog-filters .filter-attributes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-filters .filter-bottom { grid-template-columns: minmax(0, 1fr); }
+  .catalog-filters .filter-submit { width: 100%; justify-self: stretch; }
+  .account-actions { white-space: normal; }
+  .catalog-page .product-card h3 { font-size: 15px; }
+}
+@media (max-width: 430px) {
+  .catalog-heading { padding: 20px 16px; }
+  .catalog-filters { padding: 16px; }
+  .catalog-filters .filter-attributes, .filter-price-inputs { grid-template-columns: minmax(0, 1fr); }
+  .catalog-page .product-grid { gap: 10px; }
+  .catalog-page .product-card { padding: 10px; }
+  .catalog-page .card-bottom { flex-wrap: wrap; gap: 8px; }
+  .favorite-toggle, .favorite-login { padding: 9px 8px; font-size: 12px; }
+  .catalog-pagination .page-item .page-link { padding: 10px; font-size: 12px; }
+  .detail-attributes > div { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* W3-066: vùng bấm và input ở 375px, không che nội dung bằng overflow-x:hidden. */
+@media (max-width: 600px) {
+  .catalog-filters input:not([type="hidden"]), .catalog-filters select, .buy-form input, .buy-form select { font-size: 16px; }
+  .filter-remove-one { min-width: 44px; min-height: 44px; }
+  .favorite-unavailable .favorite-toggle { width: 100%; }
+  .detail-thumbnail { min-height: 44px; }
+}

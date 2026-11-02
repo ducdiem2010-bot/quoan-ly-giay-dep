@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from .data import (get_all_products, get_categories, get_product_by_id,
                    get_products_by_category, get_variants)
 from .db import get_db_connection, query_one
+from .checkout_service import create_pending_order, validate_checkout, CheckoutValidationError
 
 
 def register_routes(app):
@@ -107,12 +108,35 @@ def register_routes(app):
         session["cart"] = cart
         return redirect(url_for("view_cart"))
 
-    @app.get("/checkout")
+    @app.route("/checkout", methods=["GET", "POST"])
     def checkout():
         items, total = build_cart()
         if not items:
             return redirect(url_for("view_cart"))
-        return render_template("checkout.html", cart_items=items, total=total)
+        form_data = request.form if request.method == "POST" else {}
+        if request.method == "POST":
+            try:
+                validated = validate_checkout(request.form)
+                order_id = create_pending_order(validated, session.get("cart", {}), session.get("user_id"))
+            except CheckoutValidationError as exc:
+                flash(str(exc), "warning")
+            except Exception:
+                app.logger.exception("Không lưu được yêu cầu đặt hàng")
+                flash("Chưa lưu được yêu cầu đặt hàng. Kiểm tra database và migration checkout trước khi thử lại.", "warning")
+            else:
+                session["cart"] = {}
+                session["last_checkout_order"] = {
+                    "order_id": int(order_id), "fulfillment": validated["fulfillment"],
+                    "payment_method": validated["payment_method"]}
+                return redirect(url_for("checkout_success"))
+        return render_template("checkout.html", cart_items=items, total=total, form_data=form_data)
+
+    @app.get("/checkout/success")
+    def checkout_success():
+        latest = session.get("last_checkout_order")
+        if not latest:
+            return redirect(url_for("view_cart"))
+        return render_template("checkout_success.html", **latest)
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
