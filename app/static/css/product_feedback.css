@@ -1,5 +1,0 @@
-/* Tuấn – W3-065: flash do backend tạo, base.html của nhóm đã hiển thị. */
-.notice-error, .notice-danger { color: #7b2424; background: #fff0ee; border-color: #e5b0a7; }
-.notice-info { color: #244d69; background: #eef6fc; border-color: #bed5e6; }
-.flash-stack .notice { overflow-wrap: anywhere; }
-.flash-stack { scroll-margin-top: 16px; }

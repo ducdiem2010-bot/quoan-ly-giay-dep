@@ -82,10 +82,5 @@ def init_demo_database():
             conn.executescript((root / "schema_sqlite.sql").read_text(encoding="utf-8"))
             conn.executescript((root / "seed_sqlite.sql").read_text(encoding="utf-8"))
             conn.commit()
-        # Nâng cấp nhẹ bản demo cũ: giữ nguyên toàn bộ dữ liệu hiện có.
-        columns = {r[1] for r in conn.execute("PRAGMA table_info(SanPham)").fetchall()}
-        if "HienThi" not in columns:
-            conn.execute("ALTER TABLE SanPham ADD COLUMN HienThi INTEGER NOT NULL DEFAULT 1")
-            conn.commit()
     finally:
         conn.close()

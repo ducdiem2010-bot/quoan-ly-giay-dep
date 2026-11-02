@@ -1,8 +1,0 @@
-{# Tuấn – W3-052: macro dùng chung; Jinja tự escape các chuỗi hiển thị. #}
-{% macro empty_state(title, message, action_url, action_label) %}
-<section class="empty-state catalog-empty" role="status">
-  <span class="catalog-empty-mark" aria-hidden="true">0</span>
-  <h2>{{ title }}</h2><p>{{ message }}</p>
-  <a class="action-primary" href="{{ action_url }}">{{ action_label }}</a>
-</section>
-{% endmacro %}

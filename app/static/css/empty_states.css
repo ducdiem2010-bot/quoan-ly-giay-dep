@@ -1,6 +1,0 @@
-/* Tuấn – W3-052: trạng thái rỗng/lỗi đồng bộ. */
-.catalog-empty h2, .catalog-empty p, .error-page h1, .error-page p { overflow-wrap: anywhere; }
-.catalog-empty .action-primary { margin-top: 18px; max-width: 100%; white-space: normal; }
-.product-image-unavailable { display: grid; align-items: center; justify-items: center; padding: 18px; min-height: 120px; background: #eef2e8; border-radius: 12px; color: #58634f; text-align: center; }
-.product-image-unavailable[hidden] { display: none; }
-img[data-fallback-src][hidden] { display: none; }
