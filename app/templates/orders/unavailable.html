@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Thông tin đơn hàng - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/orders_w4.css') }}">{% endblock %}
+{% block content %}
+<section class="orders-page">
+  {% include 'orders/_preview.html' %}
+  <nav class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Đơn của tôi</nav>
+  <div class="orders-empty">
+    {% if reason == 'forbidden' %}
+    <span class="eyebrow">QUYỀN TRUY CẬP</span><h1>Trang dành cho tài khoản khách hàng</h1><p>Hãy sử dụng đúng tài khoản khách hàng để xem đơn của bạn.</p>
+    {% elif reason == 'not-found' %}
+    <span class="eyebrow">KHÔNG TÌM THẤY</span><h1>Không tìm thấy đơn hàng</h1><p>Đơn không tồn tại hoặc tài khoản hiện tại không được phép xem.</p>
+    {% else %}
+    <span class="eyebrow">CHƯA SẴN SÀNG</span><h1>Chưa kết nối chức năng theo dõi đơn</h1>
+    <p>Giao diện đã được chuẩn bị. Bản này chưa có dịch vụ backend cung cấp danh sách và trạng thái đơn hiện tại.</p>
+    <p>Đơn vừa gửi vẫn cần được cửa hàng xác nhận. Trang này chưa xác nhận việc giao hàng, thu tiền hoặc hủy đơn.</p>
+    {% endif %}
+    <a class="action-primary" href="{{ url_for('w3_catalog.product_list') }}">Tiếp tục xem sản phẩm</a>
+  </div>
+</section>
+{% endblock %}

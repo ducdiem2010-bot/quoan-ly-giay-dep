@@ -1,20 +1,108 @@
+{# Tuấn – W3-039: dữ liệu hiện tại giữ đúng các tên trường của nhóm.
+   product và variants do route /product/<id> hiện tại cung cấp.
+   Hai context trình bày ĐỀ XUẤT, cần backend xác nhận trước khi nghiệm thu:
+   product_images = [{filename: "images/...", alt: "...", is_cover: true/false}]
+   Trạng thái hàng: tính từ tổng tồn kho thật, không dùng cột giới tính.
+   filename phải tương đối trong static và được backend kiểm tra.
+   Sản phẩm ẩn phải bị backend trả 404; template không thay thế kiểm quyền/ẩn.
+#}
 {% extends 'base.html' %}
 {% block title %}{{ product.TenSanPham }} - Shoes Store{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_feedback.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_detail.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/availability.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/favorite.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/empty_states.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_responsive.css') }}">
+{% endblock %}
 {% block content %}
-<div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / <a href="{{ url_for('category', category_id=product.MaDanhMuc) }}">{{ product.TenDanhMuc }}</a> / Chi tiết</div>
-<div class="product-detail"><div class="detail-visual"><img src="{{ url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') }}" alt="Ảnh minh họa {{ product.TenSanPham }}"></div>
-<div class="detail-content"><span class="eyebrow">{{ product.ThuongHieu }} • {{ product.TenDanhMuc }}</span><h1>{{ product.TenSanPham }}</h1>
-  <p class="product-code">Mã sản phẩm: SP{{ '%03d' % product.MaSanPham }} | Còn {{ product.TongTon }} sản phẩm</p>
-  <p class="price-detail">{{ product.GiaBan|vnd }}</p><p class="desc">{{ product.MoTa }}</p>
-  <form method="post" action="{{ url_for('add_to_cart', product_id=product.MaSanPham) }}" class="buy-form">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <label for="variant_id">Chọn size và màu sắc</label><select name="variant_id" id="variant_id" required>
-      <option value="" selected disabled>-- Chọn size/màu --</option>
-      {% for v in variants %}<option value="{{ v.MaBienThe }}" {% if v.SoLuongTon == 0 %}disabled{% endif %}>Size {{ v.KichThuoc }} • {{ v.MauSac }} (còn {{ v.SoLuongTon }})</option>{% endfor %}
-    </select>
-    <label for="quantity">Số lượng</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="99" step="1" required>
-    <button type="submit" class="action-primary" {% if product.TongTon < 1 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
-    <p class="pickup-hint">Không giao hàng • Thanh toán khi nhận tại cửa hàng</p>
-  </form>
-</div></div>
+{% set gallery = product_images if product_images is defined and product_images else [] %}
+{% set cover = namespace(photo=gallery[0] if gallery else none) %}
+{% for photo in gallery %}{% if photo.is_cover|default(false) %}{% set cover.photo = photo %}{% endif %}{% endfor %}
+{% set fallback = url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') %}
+<nav class="breadcrumbs" aria-label="Đường dẫn">
+  <a href="{{ url_for('home') }}">Trang chủ</a> /
+  <a href="{{ url_for('category', category_id=product.MaDanhMuc) }}">{{ product.TenDanhMuc }}</a> /
+  <span aria-current="page">Chi tiết</span>
+</nav>
+<article class="product-detail detail-page" aria-labelledby="detail-title">
+  <section class="detail-gallery" aria-label="Hình ảnh sản phẩm">
+    <div class="detail-visual">
+      <img id="product-main-image" src="{{ url_for('static', filename=cover.photo.filename) if cover.photo else fallback }}"
+           data-fallback-src="{{ fallback }}" width="600" height="520"
+           alt="{{ cover.photo.alt|default(product.TenSanPham, true) if cover.photo else 'Ảnh minh họa ' ~ product.TenSanPham }}">
+    </div>
+    {% if gallery|length > 1 %}
+    <div class="detail-thumbnails" role="group" aria-label="Chọn ảnh sản phẩm">
+      {% for photo in gallery %}
+      <button type="button" class="detail-thumbnail" aria-label="Xem ảnh {{ loop.index }}"
+              aria-pressed="{{ 'true' if photo == cover.photo else 'false' }}"
+              data-gallery-src="{{ url_for('static', filename=photo.filename) }}"
+              data-gallery-alt="{{ photo.alt|default(product.TenSanPham, true) }}">
+        <img src="{{ url_for('static', filename=photo.filename) }}" data-fallback-src="{{ fallback }}"
+             alt="" loading="lazy" width="100" height="90">
+      </button>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  <section class="detail-content">
+    <span class="eyebrow">{{ product.ThuongHieu or 'Đang cập nhật' }}</span>
+    <h1 id="detail-title">{{ product.TenSanPham }}</h1>
+    <p class="product-code">Mã sản phẩm: SP{{ '%03d' % product.MaSanPham }}</p>
+    <p class="price-detail">{{ product.GiaBan|vnd }}</p>
+    <dl class="detail-attributes">
+      <div><dt>Thương hiệu</dt><dd>{{ product.ThuongHieu or 'Đang cập nhật' }}</dd></div>
+      <div><dt>Loại sản phẩm</dt><dd>{{ product.TenDanhMuc }}</dd></div>
+      <div><dt>Trạng thái</dt><dd><span class="availability {{ 'in-stock' if product.TongTon|int > 0 else 'sold-out' }}">{{ 'Còn hàng' if product.TongTon|int > 0 else 'Hết hàng' }}</span></dd></div>
+      <div><dt>Tổng tồn kho</dt><dd>{{ product.TongTon }}{% if product.TongTon == 0 %} — Hết hàng{% endif %}</dd></div>
+    </dl>
+    {% include 'favorite_button.html' %}
+    <h2 class="detail-subtitle">Mô tả sản phẩm</h2>
+    <p class="desc detail-description">{{ product.MoTa or 'Cửa hàng đang cập nhật mô tả.' }}</p>
+    <h2 class="detail-subtitle">Màu, size và tồn kho</h2>
+    {% if variants %}
+    <div class="detail-variant-table">
+      <table><caption class="visually-hidden">Các biến thể của {{ product.TenSanPham }}</caption>
+        <thead><tr><th scope="col">Màu</th><th scope="col">Size</th><th scope="col">Tồn</th><th scope="col">Tình trạng</th></tr></thead>
+        <tbody>{% for v in variants %}<tr>
+          <td>{{ v.MauSac }}</td><td>{{ v.KichThuoc }}</td><td>{{ v.SoLuongTon }}</td>
+          <td>{{ 'Hết hàng' if v.SoLuongTon == 0 else 'Còn hàng' }}</td>
+        </tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    {% else %}<p class="notice notice-warning">Chưa có thông tin màu và size cho sản phẩm này.</p>{% endif %}
+    <form method="post" action="{{ url_for('add_to_cart', product_id=product.MaSanPham) }}" class="buy-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div data-variant-enhanced hidden>
+        <fieldset class="variant-pickers">
+          <legend>Chọn màu và size</legend>
+          <div><label for="variant-color">Màu</label><select id="variant-color" aria-describedby="variant-stock"><option value="">-- Chọn màu --</option></select></div>
+          <div><label for="variant-size">Size</label><select id="variant-size" aria-describedby="variant-stock" disabled><option value="">-- Chọn size --</option></select></div>
+        </fieldset>
+        <p id="variant-stock" class="variant-stock" role="status" aria-live="polite">Vui lòng chọn màu và size.</p>
+      </div>
+      <div data-variant-fallback>
+      <label for="variant_id">Chọn size và màu sắc</label>
+      <select name="variant_id" id="variant_id" required {% if not variants or product.TongTon == 0 %}disabled{% endif %}>
+        <option value="" selected disabled>-- Chọn size/màu --</option>
+        {% for v in variants %}<option value="{{ v.MaBienThe }}" data-color="{{ v.MauSac }}" data-size="{{ v.KichThuoc }}" data-stock="{{ v.SoLuongTon }}" {% if v.SoLuongTon == 0 %}disabled{% endif %}>
+          Size {{ v.KichThuoc }} • {{ v.MauSac }} (còn {{ v.SoLuongTon }})
+        </option>{% endfor %}
+      </select>
+      </div>
+      <label for="quantity">Số lượng</label>
+      <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" step="1" required>
+      <button type="submit" class="action-primary" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
+      <p class="pickup-hint">Có giao hàng tận nơi hoặc nhận tại cửa hàng. Xem phương thức thanh toán tại bước xác nhận đơn hàng.</p>
+    </form>
+  </section>
+</article>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/product_detail.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/product_variants.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/favorite.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/empty_states.js') }}" defer></script>
 {% endblock %}

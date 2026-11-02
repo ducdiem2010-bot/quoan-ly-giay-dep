@@ -1,0 +1,8 @@
+/* Adapter giao diện Flask W3 – dựa trên chức năng/prototype Khải, bổ sung theo schema nhóm */
+.w3-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.w3-header p{color:#657383}.w3-inline{display:inline}.w3-small{padding:.3rem .6rem;border:1px solid #b9c5d3;background:white;border-radius:6px;cursor:pointer}
+.w3-pill{display:inline-block;background:#e2f2ec;padding:.2rem .5rem;border-radius:12px;font-size:.82rem}
+.w3-form{display:grid;gap:1rem;max-width:720px;margin:1rem 0 2rem}.w3-form label{display:grid;gap:.35rem;font-weight:600}
+.w3-form input,.w3-form select,.w3-form textarea{width:100%;padding:.7rem;border:1px solid #bac5d2;border-radius:8px;font-weight:400}
+.w3-actions{display:flex;gap:1rem;align-items:center}.w3-variant-form{max-width:none;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));align-items:end}
+@media(max-width:600px){.admin-table{font-size:.8rem}.w3-header{align-items:flex-start;flex-direction:column}}

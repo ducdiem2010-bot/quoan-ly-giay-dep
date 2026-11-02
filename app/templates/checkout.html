@@ -1,48 +1,51 @@
 {% extends 'base.html' %}
 {% block title %}Thông tin giao hàng và thanh toán - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">{% endblock %}
 {% block content %}
-<section class="public-demo" data-checkout-preview>
-  <div class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Thông tin giao hàng và thanh toán</div>
-  <div class="section-title"><div><span class="eyebrow">ĐẶT HÀNG ONLINE</span><h1>Thông tin giao hàng &amp; thanh toán</h1></div><span class="demo-tag">UI DEMO</span></div>
-  <div class="demo-banner"><strong>Bản xem trước giao diện</strong><span>Biểu mẫu minh họa việc nhập thông tin nhận hàng và chọn phương thức thanh toán. Chưa tạo đơn hàng, trừ tồn kho hoặc thực hiện giao dịch.</span></div>
-  {% if not session.get('user_id') %}<p class="notice">Theo Use Case, khách cần <a class="underlined" href="{{ url_for('login', next=request.full_path) }}">đăng nhập</a> trước khi đặt hàng thực tế. Bạn vẫn có thể xem trước biểu mẫu demo.</p>{% endif %}
-  <div id="checkout-selection-error" class="notice notice-warning" role="alert" hidden></div>
-  <div class="checkout-layout">
-    <div>
-      <form id="checkout-demo-form" method="post" action="{{ url_for('checkout') }}" class="panel">
-        <fieldset id="checkout-fields" disabled>
-          <legend class="panel-legend">1. Thông tin người nhận</legend>
-          <p class="muted small">Bản tích hợp sẽ lấy thông tin nhận hàng từ tài khoản. Trong bản demo, bạn nhập thông tin để xem trước.</p>
-          <label for="full_name">Họ và tên người nhận <span aria-hidden="true">*</span></label><input id="full_name" name="full_name" type="text" value="{{ session.get('user_name', '') if session.get('role') == 'Customer' else '' }}" required minlength="2" maxlength="100" autocomplete="shipping name" placeholder="Nhập họ và tên người nhận">
-          <label for="phone">Số điện thoại người nhận <span aria-hidden="true">*</span></label><input id="phone" name="phone" type="tel" required maxlength="20" autocomplete="shipping tel" inputmode="tel" placeholder="Nhập số điện thoại liên hệ khi giao hàng">
-          <label for="delivery_address">Địa chỉ giao hàng <span aria-hidden="true">*</span></label><textarea id="delivery_address" name="delivery_address" rows="3" required minlength="10" maxlength="255" autocomplete="shipping street-address" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></textarea>
-          <label for="note">Ghi chú giao hàng <span class="muted">(không bắt buộc)</span></label><textarea id="note" name="note" rows="2" maxlength="500" placeholder="Ví dụ: gọi trước khi giao"></textarea>
-          <div class="delivery-method"><strong>Hình thức nhận hàng</strong><span>Giao hàng đến địa chỉ của người nhận</span><small>Đơn vị vận chuyển và cách tính phí: chờ nhóm chốt.</small></div>
-          <fieldset class="payment-fieldset"><legend class="panel-legend">2. Thanh toán online</legend>
-            <label class="payment-option"><input type="radio" name="payment_method" value="bank_transfer" required><span><strong>Chuyển khoản trả trước</strong><small>Thanh toán online qua chuyển khoản trước khi nhận hàng.</small></span></label>
-            <label class="payment-option"><input type="radio" name="payment_method" value="bank_transfer_on_delivery" required><span><strong>Chuyển khoản khi nhận hàng (trả sau)</strong><small>Thanh toán online qua chuyển khoản khi nhận hàng.</small></span></label>
-            <p id="payment-instructions" class="notice">Chọn thời điểm chuyển khoản để xem hướng dẫn minh họa.</p>
-          </fieldset>
-          <button id="preview-order" class="action-primary full-width" type="submit" disabled>Kiểm tra thông tin demo</button>
-          <p class="muted small">Nút này chỉ kiểm tra biểu mẫu và hiển thị bản xem trước. Phí vận chuyển và tổng thanh toán cuối cùng đang chờ chốt.</p>
-        </fieldset>
-      </form>
-      <noscript><p class="notice notice-warning">Bật JavaScript để sử dụng biểu mẫu xem trước. Biểu mẫu không gửi thông tin hoặc tạo giao dịch khi JavaScript bị tắt.</p></noscript>
-      <section id="order-preview" class="panel order-preview" hidden tabindex="-1" aria-labelledby="preview-heading">
-        <span class="eyebrow">KẾT QUẢ MINH HỌA</span><h2 id="preview-heading">Thông tin demo đã được kiểm tra</h2><p>Đây là bản xem trước; chưa tạo đơn hàng hoặc xác nhận nhận tiền.</p>
-        <dl class="preview-details"><dt>Người nhận</dt><dd id="preview-name"></dd><dt>Điện thoại</dt><dd id="preview-phone"></dd><dt>Địa chỉ</dt><dd id="preview-address"></dd><dt>Thanh toán</dt><dd id="preview-payment"></dd><dt>Tiền hàng</dt><dd id="preview-subtotal"></dd><dt>Phí vận chuyển</dt><dd>Chờ chốt</dd><dt>Tổng thanh toán</dt><dd>Chờ cập nhật phí giao hàng</dd><dt>Ghi chú</dt><dd id="preview-note"></dd></dl>
-        <p class="notice notice-warning">Xác nhận mua hàng và xác nhận đã thanh toán là hai việc riêng. Bản UI này chưa kiểm tra tiền vào tài khoản.</p>
+<section class="w4-checkout" aria-labelledby="checkout-title">
+  <nav class="breadcrumbs"><a href="{{ url_for('view_cart') }}">Giỏ hàng</a> / Giao hàng &amp; thanh toán</nav>
+  <header class="checkout-heading"><div><span class="eyebrow">HOÀN TẤT YÊU CẦU ĐẶT HÀNG</span><h1 id="checkout-title">Giao hàng và thanh toán</h1><p>Kiểm tra sản phẩm và thông tin trước khi gửi đến cửa hàng.</p></div><a href="{{ url_for('view_cart') }}" class="checkout-back">← Sửa giỏ hàng</a></header>
+  <ol class="checkout-steps" aria-label="Các bước đặt hàng"><li>1. Giỏ hàng</li><li aria-current="step">2. Thông tin nhận hàng</li><li>3. Ghi nhận yêu cầu</li></ol>
+  <div class="notice notice-warning" role="note"><strong>Bản thử nghiệm — chưa thu tiền trực tuyến.</strong> Đơn được lưu ở trạng thái chờ xác nhận; bản backend hiện tại chưa trừ tồn kho. Phí giao hàng sẽ được cửa hàng xác nhận.</div>
+  <div class="checkout-layout checkout-updated">
+    <form id="checkout-form" class="panel checkout-form" method="post" action="{{ url_for('checkout') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div id="checkout-errors" class="checkout-error-summary" role="alert" tabindex="-1" hidden></div>
+      <section aria-labelledby="receiver-title"><h2 id="receiver-title"><span class="checkout-section-number" aria-hidden="true">01</span> Thông tin người nhận</h2><p class="checkout-help">Các trường có dấu * là bắt buộc.</p>
+        <div class="checkout-fields">
+          <div class="checkout-field"><label for="full_name">Họ và tên *</label><input id="full_name" name="full_name" type="text" minlength="2" maxlength="100" required autocomplete="name" aria-describedby="full_name-error" value="{{ form_data.get('full_name','') }}" placeholder="Nhập họ và tên"><p id="full_name-error" class="checkout-field-error" hidden></p></div>
+          <div class="checkout-field"><label for="phone">Số điện thoại *</label><input id="phone" name="phone" type="tel" maxlength="20" required autocomplete="tel-national" aria-describedby="phone-help phone-error" value="{{ form_data.get('phone','') }}" placeholder="09xxxxxxxx"><p id="phone-help" class="checkout-help">Nhập số liên hệ gồm 9–12 chữ số.</p><p id="phone-error" class="checkout-field-error" hidden></p></div>
+          <div class="checkout-field checkout-field-wide"><label for="email">Email (không bắt buộc)</label><input id="email" name="email" type="email" maxlength="150" autocomplete="email" aria-describedby="email-error" value="{{ form_data.get('email','') }}" placeholder="ban@example.com"><p id="email-error" class="checkout-field-error" hidden></p></div>
+        </div>
       </section>
-    </div>
-    <aside class="panel cart-summary checkout-summary"><span class="eyebrow">BẢNG TIỀN TRƯỚC KHI MUA</span><h2>Sản phẩm được chọn</h2>
-      <div id="checkout-items">
-      {% for item in cart_items %}<div class="checkout-item" data-checkout-row data-variant="{{ item.MaBienThe }}" data-price="{{ item.GiaBan }}" data-stock="{{ item.SoLuongTon }}" data-quantity="{{ item.quantity }}"><strong>{{ item.TenSanPham }}</strong><p>Size {{ item.KichThuoc }} • {{ item.MauSac }} • SL: <span data-checkout-quantity>{{ item.quantity }}</span></p><p class="summary-line"><span>{{ item.GiaBan|vnd }} / sản phẩm</span><strong data-checkout-subtotal>{{ item.subtotal|vnd }}</strong></p></div>{% endfor %}
-      </div>
-      <p class="summary-line"><span>Tiền hàng</span><strong id="checkout-subtotal">{{ total|vnd }}</strong></p><p class="summary-line"><span>Phí vận chuyển</span><span class="pending-label">Chờ chốt</span></p><hr>
-      <p class="summary-line summary-total"><span>Tổng thanh toán</span><strong class="pending-total">Chờ cập nhật phí giao hàng</strong></p><p class="muted small">Tiền hàng chỉ gồm sản phẩm được chọn. Phí vận chuyển chưa xác định; không mặc định miễn phí.</p>
-      <a href="{{ url_for('view_cart') }}" class="underlined">← Quay lại chỉnh giỏ hàng</a>
-      <details class="demo-scenarios"><summary>Minh họa trạng thái thanh toán</summary><p class="muted small">Chỉ thay đổi nội dung mẫu trên màn hình, chưa có giao dịch được thực hiện.</p><div class="scenario-buttons"><button type="button" data-payment-state="pending">Chờ xác minh</button><button type="button" data-payment-state="success">Thành công (mẫu)</button><button type="button" data-payment-state="failure">Thất bại (mẫu)</button><button type="button" data-payment-state="cancel">Khách dừng (mẫu)</button></div><p id="payment-demo-state" class="notice" aria-live="polite">Trạng thái demo: chưa thanh toán.</p></details>
+      <section aria-labelledby="fulfillment-title"><h2 id="fulfillment-title"><span class="checkout-section-number" aria-hidden="true">02</span> Hình thức nhận hàng</h2>
+        <fieldset class="checkout-choice"><legend class="sr-only">Chọn hình thức nhận hàng *</legend>
+          <label class="choice-line"><input type="radio" name="fulfillment" value="delivery" required {{ 'checked' if form_data.get('fulfillment', 'delivery') == 'delivery' else '' }}><span><strong>Giao hàng tận nơi</strong><small>Nhập địa chỉ để cửa hàng liên hệ xác nhận.</small></span></label>
+          <label class="choice-line"><input type="radio" name="fulfillment" value="pickup" required {{ 'checked' if form_data.get('fulfillment') == 'pickup' else '' }}><span><strong>Nhận tại cửa hàng</strong><small>Không tính phí vận chuyển.</small></span></label>
+        </fieldset>
+        <p id="fulfillment-error" class="checkout-field-error" hidden></p>
+        <div id="delivery-fields"><label for="address">Địa chỉ giao hàng *</label><textarea id="address" name="address" minlength="8" maxlength="255" rows="3" autocomplete="street-address" aria-describedby="address-help address-error" {% if form_data.get('fulfillment','delivery') != 'pickup' %}required{% endif %} placeholder="Số nhà, đường, phường/xã, tỉnh/thành phố">{{ form_data.get('address','') }}</textarea><p id="address-help" class="checkout-help">Từ 8–255 ký tự. Phí vận chuyển chưa được tính vào tạm tính sản phẩm.</p><p id="address-error" class="checkout-field-error" hidden></p></div>
+      </section>
+      <section aria-labelledby="payment-title"><h2 id="payment-title"><span class="checkout-section-number" aria-hidden="true">03</span> Phương thức thanh toán</h2>
+        <fieldset class="checkout-choice"><legend class="sr-only">Chọn phương thức thanh toán *</legend>
+          <label class="choice-line"><input type="radio" name="payment_method" value="cod" required {{ 'checked' if form_data.get('payment_method','cod') == 'cod' else '' }}><span><strong>Thanh toán khi nhận hàng (COD) / tại cửa hàng</strong><small>Chưa ghi nhận đã thu tiền ở bước gửi yêu cầu.</small></span></label>
+          <label class="choice-line"><input type="radio" name="payment_method" value="bank_transfer" required {{ 'checked' if form_data.get('payment_method') == 'bank_transfer' else '' }}><span><strong>Chuyển khoản ngân hàng (chờ xác nhận thủ công)</strong><small>Chờ hướng dẫn và xác nhận của cửa hàng.</small></span></label>
+          <label class="choice-line disabled-choice"><input type="radio" name="payment_method" value="gateway" disabled><span><strong>Thanh toán qua cổng trực tuyến</strong><small>Chưa kết nối trong bản hiện tại.</small></span></label>
+        </fieldset>
+        <p id="payment_method-error" class="checkout-field-error" hidden></p><p id="payment-explain" class="checkout-payment-note" role="status" aria-live="polite">Chọn phương thức phù hợp; gửi yêu cầu không có nghĩa đã thanh toán.</p>
+        <label for="note">Ghi chú (không bắt buộc)</label><textarea id="note" name="note" rows="3" maxlength="500" aria-describedby="note-error" placeholder="Yêu cầu khác, tối đa 500 ký tự">{{ form_data.get('note','') }}</textarea><p id="note-error" class="checkout-field-error" hidden></p>
+      </section>
+      <button class="action-primary checkout-submit" type="submit" data-idle-label="Gửi yêu cầu đặt hàng">Gửi yêu cầu đặt hàng</button>
+      <p id="checkout-submit-status" class="checkout-help" role="status" aria-live="polite"></p>
+      <p class="checkout-help">Cửa hàng cần xác nhận đơn và phí giao hàng trước khi hoàn tất. Không có giao dịch thanh toán online nào được thực hiện ở bước này.</p>
+    </form>
+    <aside class="panel cart-summary checkout-summary" aria-labelledby="basket-title"><span class="eyebrow">KIỂM TRA LẦN CUỐI</span><h2 id="basket-title">Thông tin giỏ hàng</h2>
+      {% for item in cart_items %}<div class="checkout-summary-item"><div><strong>{{ item.TenSanPham }}</strong><small>{{ item.MauSac }} · Size {{ item.KichThuoc }} · SL {{ item.quantity }}</small></div><strong>{{ item.subtotal|vnd }}</strong></div>{% endfor %}
+      <dl class="checkout-totals"><div><dt>Tạm tính sản phẩm</dt><dd>{{ total|vnd }}</dd></div><div><dt>Phí vận chuyển</dt><dd id="shipping-summary">Chờ xác nhận</dd></div><div class="checkout-total"><dt>Tổng tạm tính</dt><dd>{{ total|vnd }}</dd></div></dl>
+      <p class="checkout-help" id="shipping-help">Tổng tạm tính chưa bao gồm phí vận chuyển nếu chọn giao hàng.</p>
+      <div class="checkout-summary-note"><strong>Bạn cần thay đổi sản phẩm?</strong><p>Quay lại giỏ để kiểm tra màu, size và số lượng trước khi gửi.</p><a href="{{ url_for('view_cart') }}">Xem lại giỏ hàng →</a></div>
     </aside>
   </div>
 </section>
 {% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/checkout.js') }}" defer></script>{% endblock %}

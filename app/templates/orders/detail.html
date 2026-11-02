@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Đơn #{{ order.id }} - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/orders_w4.css') }}">{% endblock %}
+{% block content %}
+<section class="orders-page" aria-labelledby="order-title">
+  {% include 'orders/_preview.html' %}
+  <nav class="breadcrumbs"><a href="{{ url_for('tuan_w4_ui.preview', scenario='orders') if preview_mode|default(false) else url_for('tuan_w4_ui.my_orders') }}">Đơn của tôi</a> / Đơn #{{ order.id }}</nav>
+  <header class="orders-heading"><div><span class="eyebrow">CHI TIẾT ĐƠN HÀNG</span><h1 id="order-title">Đơn #{{ order.id }}</h1><p>{{ order.created_at|default('Chưa có thời gian', true) }}</p></div><span class="order-badge">{{ order.status_label|default('Chưa xác định trạng thái', true) }}</span></header>
+  {% if order.payment_status == 'failed' %}
+  <div class="w4-alert w4-alert-error" role="status"><strong>Thanh toán thất bại</strong><p>Chưa ghi nhận thanh toán thành công. Kiểm tra trạng thái đơn trước khi thực hiện thanh toán tiếp.</p></div>
+  {% elif order.payment_status == 'cancelled' %}
+  <div class="w4-alert" role="status"><strong>Giao dịch thanh toán đã hủy</strong><p>Thông tin đơn hàng bên dưới do backend cung cấp. Hủy giao dịch và hủy đơn là hai trạng thái riêng.</p></div>
+  {% endif %}
+  <div class="order-detail-layout">
+    <div class="orders-stack">
+      <section class="order-panel"><h2>Trạng thái giao nhận</h2>
+      {% if order.delivery_stage == 'cancelled' %}<p>Đơn đã hủy. Không tiếp tục hiển thị tiến trình giao hàng.</p>
+      {% elif order.fulfillment == 'pickup' %}<p>Nhận tại cửa hàng: {{ order.status_label|default('Chưa xác định trạng thái', true) }}</p>
+      {% elif order.delivery_stage in ['store','shipping','completed'] %}
+      <ol class="order-timeline">
+        {% for stage, label in [('store','Đang ở cửa hàng'),('shipping','Đang vận chuyển'),('completed','Đã hoàn thành')] %}
+        <li {% if order.delivery_stage == stage %}aria-current="step"{% endif %}><span>{{ loop.index }}</span><strong>{{ label }}</strong>{% if order.delivery_stage == stage %}<small>Trạng thái hiện tại</small>{% endif %}</li>
+        {% endfor %}
+      </ol>
+      {% else %}<p>Chưa có tiến trình giao nhận được xác nhận.</p>{% endif %}
+      </section>
+      <section class="order-panel"><h2>Sản phẩm trong đơn</h2>
+        {% for item in order['items'] %}
+        <div class="order-item"><span class="order-shoe" aria-hidden="true">SP</span><div><strong>{{ item.product_name }}</strong><p>{{ item.color }} · Size {{ item.size }}</p><p>{{ item.unit_price|vnd }} × {{ item.quantity }}</p></div><strong>{{ item.subtotal|vnd }}</strong></div>
+        {% else %}<p>Backend chưa cung cấp chi tiết sản phẩm.</p>{% endfor %}
+        <p class="order-muted">Đơn giá hiển thị theo dữ liệu đã lưu trong đơn hàng.</p>
+      </section>
+      <section class="order-panel"><h2>Thông tin người nhận</h2><dl class="order-facts">
+        <div><dt>Họ tên</dt><dd>{{ order.receiver.name|default('Chưa cung cấp', true) }}</dd></div>
+        <div><dt>Điện thoại</dt><dd>{{ order.receiver.phone|default('Chưa cung cấp', true) }}</dd></div>
+        <div><dt>Hình thức nhận</dt><dd>{{ 'Nhận tại cửa hàng' if order.fulfillment == 'pickup' else 'Giao tận nơi' }}</dd></div>
+        {% if order.fulfillment != 'pickup' %}<div><dt>Địa chỉ</dt><dd>{{ order.receiver.address|default('Chưa cung cấp', true) }}</dd></div>{% endif %}
+      </dl></section>
+    </div>
+    <aside class="order-panel order-summary"><h2>Thanh toán</h2><p>{{ order.payment_method_label|default('Chưa cung cấp', true) }}</p><span class="order-payment">{{ order.payment_status_label|default('Chưa xác định', true) }}</span>
+      <dl class="order-facts"><div><dt>Tiền hàng</dt><dd>{{ order.items_total|vnd }}</dd></div><div><dt>Phí giao hàng</dt><dd>{{ order.shipping_fee|vnd if order.shipping_fee is not none else 'Chưa xác định' }}</dd></div><div class="order-total"><dt>Tổng đơn</dt><dd>{{ order.total|vnd }}</dd></div></dl>
+      {% if order.shipping_fee is none %}<p class="order-muted">Tổng hiển thị có thể chưa bao gồm phí giao hàng. Theo dõi xác nhận từ cửa hàng.</p>{% endif %}
+      {% if order.can_cancel and (cancel_connected or preview_mode|default(false)) %}
+      <button class="w4-danger" type="button" data-open-cancel>Yêu cầu hủy đơn</button>
+      <p class="order-muted">Chỉ hủy khi backend xác nhận đơn còn đủ điều kiện.</p>
+      {% if not preview_mode|default(false) %}<noscript><form method="post" action="{{ url_for('tuan_w4_ui.cancel_order', order_id=order.id) }}"><input name="csrf_token" type="hidden" value="{{ csrf_token }}"><button class="w4-danger" type="submit">Xác nhận yêu cầu hủy đơn</button></form></noscript>{% endif %}
+      {% else %}<p class="order-muted">Hiện không có thao tác hủy khả dụng cho đơn này.</p>{% endif %}
+    </aside>
+  </div>
+  {% if order.can_cancel and (cancel_connected or preview_mode|default(false)) %}
+  <dialog class="order-dialog" id="cancel-dialog" aria-labelledby="cancel-title">
+    <h2 id="cancel-title">Hủy đơn #{{ order.id }}?</h2><p>Hệ thống sẽ kiểm tra lại điều kiện hủy khi nhận yêu cầu.</p>
+    {% if preview_mode|default(false) %}<p class="w4-alert">Bản xem thử không gửi yêu cầu và không thay đổi dữ liệu.</p><button class="action-primary" type="button" data-close-cancel>Đóng bản xem thử</button>
+    {% else %}<form method="post" action="{{ url_for('tuan_w4_ui.cancel_order', order_id=order.id) }}" data-cancel-form><input name="csrf_token" type="hidden" value="{{ csrf_token }}"><div class="order-dialog-actions"><button class="w4-secondary" type="button" data-close-cancel>Giữ lại đơn</button><button class="w4-danger" type="submit">Xác nhận hủy</button></div><p role="status" data-cancel-status></p></form>{% endif %}
+  </dialog>
+  {% endif %}
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/orders_w4.js') }}" defer></script>{% endblock %}

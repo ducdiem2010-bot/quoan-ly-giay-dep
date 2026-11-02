@@ -1,0 +1,12 @@
+{# Tuấn – W3-038. Các giá trị đúng contract nhóm; backend vẫn phải whitelist ORDER BY. #}
+{% set allowed_sorts = ['price_asc', 'price_desc', 'name_asc', 'brand_asc'] %}
+{% set selected_sort = filter_ui['values']['sort'] if filter_ui['values']['sort'] in allowed_sorts else '' %}
+<div class="filter-field filter-sort">
+  <label for="filter-sort">Sắp xếp</label>
+  <select class="form-select" id="filter-sort" name="sort">
+    <option value=""{% if not selected_sort %} selected{% endif %}>Mặc định</option>
+    {% for value, label in [('price_asc','Giá tăng dần'),('price_desc','Giá giảm dần'),('name_asc','Tên A–Z'),('brand_asc','Thương hiệu A–Z')] %}
+    <option value="{{ value }}"{% if selected_sort == value %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+</div>

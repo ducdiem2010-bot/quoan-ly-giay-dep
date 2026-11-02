@@ -1,0 +1,330 @@
+{
+  "browser": "153.0.8010.0",
+  "database": "isolated SQLite demo",
+  "cssMode": "local CSS; Bootstrap CDN blocked deliberately",
+  "metrics": [
+    {
+      "name": "home",
+      "url": "/",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "catalog",
+      "url": "/products",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "search",
+      "url": "/products?q=Converse",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "paging",
+      "url": "/products?page=2",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "detail",
+      "url": "/product/1",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "cart",
+      "url": "/cart",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "checkout",
+      "url": "/checkout",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "orders_sample",
+      "url": "/ui-preview/w4/orders",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "order_detail_sample",
+      "url": "/ui-preview/w4/detail",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "payment_failed_sample",
+      "url": "/ui-preview/w4/failed",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "cancelled_sample",
+      "url": "/ui-preview/w4/cancelled",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "empty_sample",
+      "url": "/ui-preview/w4/empty",
+      "expectedHttp": 200,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "orders_backend_unavailable",
+      "url": "/my-orders",
+      "expectedHttp": 503,
+      "width": 375,
+      "scrollWidth": 375,
+      "brokenImages": []
+    },
+    {
+      "name": "home",
+      "url": "/",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "catalog",
+      "url": "/products",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "search",
+      "url": "/products?q=Converse",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "paging",
+      "url": "/products?page=2",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "detail",
+      "url": "/product/1",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "cart",
+      "url": "/cart",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "checkout",
+      "url": "/checkout",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "orders_sample",
+      "url": "/ui-preview/w4/orders",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "order_detail_sample",
+      "url": "/ui-preview/w4/detail",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "payment_failed_sample",
+      "url": "/ui-preview/w4/failed",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "cancelled_sample",
+      "url": "/ui-preview/w4/cancelled",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "empty_sample",
+      "url": "/ui-preview/w4/empty",
+      "expectedHttp": 200,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "orders_backend_unavailable",
+      "url": "/my-orders",
+      "expectedHttp": 503,
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": []
+    },
+    {
+      "name": "home",
+      "url": "/",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "catalog",
+      "url": "/products",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "search",
+      "url": "/products?q=Converse",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "paging",
+      "url": "/products?page=2",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "detail",
+      "url": "/product/1",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "cart",
+      "url": "/cart",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "checkout",
+      "url": "/checkout",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "orders_sample",
+      "url": "/ui-preview/w4/orders",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "order_detail_sample",
+      "url": "/ui-preview/w4/detail",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "payment_failed_sample",
+      "url": "/ui-preview/w4/failed",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "cancelled_sample",
+      "url": "/ui-preview/w4/cancelled",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "empty_sample",
+      "url": "/ui-preview/w4/empty",
+      "expectedHttp": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    },
+    {
+      "name": "orders_backend_unavailable",
+      "url": "/my-orders",
+      "expectedHttp": 503,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "brokenImages": []
+    }
+  ],
+  "checks": [
+    "Invalid client form: blocked POST, inline errors visible",
+    "Pickup: no required address, no shipping fee",
+    "Bank transfer: pending explanation, no paid claim",
+    "Valid pickup checkout: one POST, real SQLite order, snapshot-labelled response",
+    "Sample cancellation dialog: opens/closes without sending cancellation",
+    "Admin dashboard add link reaches real W3 product form"
+  ],
+  "pageErrors": [],
+  "sqlServer": "NOT RUN",
+  "liveOrderBackend": "BLOCKED; sample previews are not integration proof"
+}

@@ -1,0 +1,597 @@
+[
+  {
+    "file": ".env.example",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "c4191e32390a2fb3"
+  },
+  {
+    "file": ".gitignore",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/.gitignore [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "bfb23c48aae5ba9d"
+  },
+  {
+    "file": "README.md",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/README.md [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "730e588a13e2c990"
+  },
+  {
+    "file": "app/__init__.py",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/__init__.py [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "47994eb8a5b12a4b"
+  },
+  {
+    "file": "app/admin_w3.py",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "821e860fec65698c"
+  },
+  {
+    "file": "app/catalog_w3.py",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "81d457c6174f8d10"
+  },
+  {
+    "file": "app/data.py",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/data.py [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "f43853b278c18b7e"
+  },
+  {
+    "file": "app/db.py",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/db.py [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b787ac304803d9b4"
+  },
+  {
+    "file": "app/routes.py",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/routes.py | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "3048855abcbe4603"
+  },
+  {
+    "file": "app/static/css/empty_states.css",
+    "source": "Tuấn ZIP tuần 3 / W3-065/empty_states.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "94a79065bfa6231d"
+  },
+  {
+    "file": "app/static/css/favorite.css",
+    "source": "Tuấn ZIP tuần 3 / W3-066/favorite.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "d3ca7cda4deb7829"
+  },
+  {
+    "file": "app/static/css/product_detail.css",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_detail.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "a5e00987ebf0b0b4"
+  },
+  {
+    "file": "app/static/css/product_feedback.css",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_feedback.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b68d43beb9d22074"
+  },
+  {
+    "file": "app/static/css/product_filters.css",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_filters.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "deb7104be13ace9c"
+  },
+  {
+    "file": "app/static/css/product_list.css",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_list.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "8d847b178ed91855"
+  },
+  {
+    "file": "app/static/css/product_responsive.css",
+    "source": "Tuấn ZIP tuần 3 / W3-066/product_responsive.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "d8dfb80eb6e0bfa8"
+  },
+  {
+    "file": "app/static/css/style.css",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/static/css/style.css | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "63dc369f1a2f8e53"
+  },
+  {
+    "file": "app/static/css/w3_admin.css",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "0b74c63d49c8946f"
+  },
+  {
+    "file": "app/static/images/shoe-1.svg",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/static/images/shoe-1.svg | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "3c3d5135e28807fb"
+  },
+  {
+    "file": "app/static/images/shoe-2.svg",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/static/images/shoe-2.svg | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "fb8337886f4b9cf9"
+  },
+  {
+    "file": "app/static/images/shoe-3.svg",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/static/images/shoe-3.svg | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "2f9eb3b4f8cf5f1c"
+  },
+  {
+    "file": "app/static/js/empty_states.js",
+    "source": "Tuấn ZIP tuần 3 / W3-065/empty_states.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "ba124e6964376d7a"
+  },
+  {
+    "file": "app/static/js/favorite.js",
+    "source": "Tuấn ZIP tuần 3 / W3-066/favorite.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "f1b23e870c59147e"
+  },
+  {
+    "file": "app/static/js/product_detail.js",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_detail.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "7f484c738762242c"
+  },
+  {
+    "file": "app/static/js/product_filters.js",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_filters.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "6d9aa9439c5eb1e3"
+  },
+  {
+    "file": "app/static/js/product_list.js",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_list.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "a5794ed239769b21"
+  },
+  {
+    "file": "app/static/js/product_responsive.js",
+    "source": "Tuấn ZIP tuần 3 / W3-066/product_responsive.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "252ea40dbcfc0d3c"
+  },
+  {
+    "file": "app/static/js/product_sort.js",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_sort.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "06e3197d73eae88a"
+  },
+  {
+    "file": "app/static/js/product_variants.js",
+    "source": "Tuấn ZIP tuần 3 / W3-066/product_variants.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "aa80893c8cec1027"
+  },
+  {
+    "file": "app/static/js/site.js",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/static/js/site.js | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "f7ad67ac2128787f"
+  },
+  {
+    "file": "app/templates/404.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/404.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "f130c705849d7404"
+  },
+  {
+    "file": "app/templates/500.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/500.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "4d9e88b897c20a5f"
+  },
+  {
+    "file": "app/templates/_product_card.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/_product_card.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b98f159a4be4fed6"
+  },
+  {
+    "file": "app/templates/admin/index.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/admin/index.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "727e612298887661"
+  },
+  {
+    "file": "app/templates/admin/product_add.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/admin/product_add.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "02bc12c0fcdbc0f0"
+  },
+  {
+    "file": "app/templates/admin/w3_product_form.html",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "dd1716c28f2e4f10"
+  },
+  {
+    "file": "app/templates/admin/w3_products.html",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "bd46b775c75f2619"
+  },
+  {
+    "file": "app/templates/admin/w3_variants.html",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "99f169ebf86d6d84"
+  },
+  {
+    "file": "app/templates/admin_base.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/admin_base.html [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "e2e0f8745ba37c94"
+  },
+  {
+    "file": "app/templates/base.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/base.html [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "cbcbe3c9f0206384"
+  },
+  {
+    "file": "app/templates/cart.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/cart.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "ee29cca851c4c57b"
+  },
+  {
+    "file": "app/templates/category.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/category.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b8ae3d1ec589df75"
+  },
+  {
+    "file": "app/templates/checkout.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/checkout.html [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b8084db24b89cb8f"
+  },
+  {
+    "file": "app/templates/empty_state.html",
+    "source": "Tuấn ZIP tuần 3 / W3-065/empty_state.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "28bbe4c5282478c7"
+  },
+  {
+    "file": "app/templates/error.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/error.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "bce416104f555fb7"
+  },
+  {
+    "file": "app/templates/favorite_button.html",
+    "source": "Tuấn ZIP tuần 3 / W3-066/favorite_button.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b6aa78eb393370ac"
+  },
+  {
+    "file": "app/templates/index.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/index.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "f58bca06dcd1faa5"
+  },
+  {
+    "file": "app/templates/login.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/login.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "4599720603daf8f3"
+  },
+  {
+    "file": "app/templates/product_card.html",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_card.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "e2eb7c3c8900bb3d"
+  },
+  {
+    "file": "app/templates/product_detail.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/product_detail.html [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "e701a621326d96b5"
+  },
+  {
+    "file": "app/templates/product_filters.html",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_filters.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "96fbe8cff1d41ca8"
+  },
+  {
+    "file": "app/templates/product_list.html",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_list.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "fc0b25d697305625"
+  },
+  {
+    "file": "app/templates/product_sort.html",
+    "source": "Tuấn ZIP tuần 3 / W3-065/product_sort.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "01b0f61a6d54a8a4"
+  },
+  {
+    "file": "app/templates/register.html",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/app/templates/register.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "02688fe183d520bf"
+  },
+  {
+    "file": "app/templates/responsive_controls.html",
+    "source": "Tuấn ZIP tuần 3 / W3-065/responsive_controls.html | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "6709c29b90b9efa3"
+  },
+  {
+    "file": "database/migrate_w3_visibility_sqlserver.sql",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "3bb984dbad3a1e68"
+  },
+  {
+    "file": "database/schema.sql",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/database/schema.sql [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "a713e2b61a8dc138"
+  },
+  {
+    "file": "database/schema_sqlite.sql",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/database/schema_sqlite.sql [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "affba6538733065f"
+  },
+  {
+    "file": "database/seed.sql",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/database/seed.sql | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "0e45e7275f6af8db"
+  },
+  {
+    "file": "database/seed_sqlite.sql",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/database/seed_sqlite.sql | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "f34401300467cc5b"
+  },
+  {
+    "file": "docs/BAO_CAO_SMOKE_TEST.md",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/docs/BAO_CAO_SMOKE_TEST.md | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "e3952db5f3c62f82"
+  },
+  {
+    "file": "docs/CON_VIEC_CAN_XAC_NHAN.md",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/docs/CON_VIEC_CAN_XAC_NHAN.md [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "92777ddb47f08cc9"
+  },
+  {
+    "file": "docs/FILE_PROVENANCE.json",
+    "source": "Bổ sung bởi trợ lý tích hợp",
+    "week": "W3",
+    "owner": "Bản tích hợp",
+    "sha256": "41079a4d43bed9"
+  },
+  {
+    "file": "docs/GUI_DE_XUAT_GITHUB.md",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "8dcab2ad3fc3aa9c"
+  },
+  {
+    "file": "docs/KET_QUA_TEST_W2_W3.txt",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "0d27bffacd6e792b"
+  },
+  {
+    "file": "docs/NGUON_VA_QUYET_DINH_GHEP.md",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/docs/NGUON_VA_QUYET_DINH_GHEP.md | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "8e334c9faafee31f"
+  },
+  {
+    "file": "docs/SOURCE_GITHUB.md",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "80de2df28025ab74"
+  },
+  {
+    "file": "docs/TICH_HOP_W3_LUU_Y.md",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "1b5a0fe414360afc"
+  },
+  {
+    "file": "docs/UI_API_CONTRACT_V1.md",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/docs/UI_API_CONTRACT_V1.md | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "4d600d9f7e1f28b7"
+  },
+  {
+    "file": "docs/data_dictionary.md",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/docs/data_dictionary.md [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "ffcbb197e3d15949"
+  },
+  {
+    "file": "docs/references/khai_admin_products_source.css",
+    "source": "Khải-dev ZIP / thu 6/admin_products.css [mẫu tham khảo, không chạy] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "e52e1e527eb3d9ec"
+  },
+  {
+    "file": "docs/smoke_test_log.txt",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/docs/smoke_test_log.txt | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "78186b1b4d3d87a8"
+  },
+  {
+    "file": "requirements.txt",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/requirements.txt [đã chỉnh sửa W3] | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2→W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b57dbfeccf56a7ab"
+  },
+  {
+    "file": "run.py",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/run.py | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "8174e1e121a2d6a1"
+  },
+  {
+    "file": "tests/test_integration_w3.py",
+    "source": "Bổ sung bởi trợ lý tích hợp | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "4ef7911f160958c9"
+  },
+  {
+    "file": "tests/test_smoke.py",
+    "source": "ZIP chung / Nhom6_Tuan2_DaGhep/tests/test_smoke.py | Cập nhật UI Checkout/Trạng thái theo yêu cầu mới",
+    "week": "W2",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "0db604c68d3dd3b9"
+  },
+  {
+    "file": "app/checkout_service.py",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "24cf65f7b8b40f59"
+  },
+  {
+    "file": "app/static/css/availability.css",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "82c3de9c17627ca1"
+  },
+  {
+    "file": "app/static/css/checkout.css",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "fb96af097737f22a"
+  },
+  {
+    "file": "app/static/js/checkout.js",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "a89774cb8e74c968"
+  },
+  {
+    "file": "app/templates/checkout_success.html",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "5195256b110c79e9"
+  },
+  {
+    "file": "database/migration_checkout_sqlserver.sql",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "b9982972528723da"
+  },
+  {
+    "file": "docs/CAP_NHAT_CHECKOUT_TRANG_THAI.md",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "d314dcbff73a587b"
+  },
+  {
+    "file": "docs/KET_QUA_TEST_CHECKOUT_TRANG_THAI.txt",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "8344c49868275b82"
+  },
+  {
+    "file": "tests/test_checkout_update.py",
+    "source": "Bổ sung sau ghép W2–W3: thay đổi checkout/trạng thái theo yêu cầu trưởng nhóm",
+    "week": "Bổ sung sau W2–W3",
+    "owner": "Chỉnh sửa bản tích hợp",
+    "sha256": "0c12a742ad81816c"
+  }
+]

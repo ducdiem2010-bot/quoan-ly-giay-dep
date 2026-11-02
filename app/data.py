@@ -2,14 +2,14 @@
 from .db import query_all, query_one
 
 SELECT_PRODUCT = """
- SELECT sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.ThuongHieu, sp.MoTa,
+ SELECT sp.MaSanPham, sp.TenSanPham, sp.HienThi, sp.GiaBan, sp.ThuongHieu, sp.MoTa,
         sp.MaDanhMuc, dm.TenDanhMuc,
         COALESCE(SUM(bt.SoLuongTon), 0) AS TongTon
  FROM SanPham sp
  JOIN DanhMuc dm ON dm.MaDanhMuc = sp.MaDanhMuc
  LEFT JOIN BienTheSanPham bt ON bt.MaSanPham = sp.MaSanPham
 """
-GROUP_PRODUCT = " GROUP BY sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.ThuongHieu, sp.MoTa, sp.MaDanhMuc, dm.TenDanhMuc "
+GROUP_PRODUCT = " GROUP BY sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.ThuongHieu, sp.MoTa, sp.MaDanhMuc, sp.HienThi, dm.TenDanhMuc "
 
 
 def get_categories():
@@ -17,7 +17,7 @@ def get_categories():
 
 
 def get_all_products(category_id=None, keyword=None):
-    where, args = [], []
+    where, args = ["sp.HienThi=1"], []
     if category_id is not None:
         where.append("sp.MaDanhMuc = ?")
         args.append(category_id)
@@ -29,7 +29,7 @@ def get_all_products(category_id=None, keyword=None):
 
 
 def get_product_by_id(product_id):
-    return query_one(SELECT_PRODUCT + " WHERE sp.MaSanPham = ? " + GROUP_PRODUCT, (product_id,))
+    return query_one(SELECT_PRODUCT + " WHERE sp.MaSanPham = ? AND sp.HienThi=1 " + GROUP_PRODUCT, (product_id,))
 
 
 def get_products_by_category(category_id):

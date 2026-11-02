@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Đơn của tôi - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/orders_w4.css') }}">{% endblock %}
+{% block content %}
+<section class="orders-page" aria-labelledby="orders-title">
+  {% include 'orders/_preview.html' %}
+  <nav class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Đơn của tôi</nav>
+  <header class="orders-heading"><div><span class="eyebrow">ĐƠN HÀNG CỦA BẠN</span><h1 id="orders-title">Đơn của tôi</h1><p>Theo dõi thông tin và trạng thái đơn hàng.</p></div><a class="w4-secondary" href="{{ url_for('w3_catalog.product_list') }}">Tiếp tục mua sắm</a></header>
+  {% if orders %}
+  <p class="orders-count">{{ orders|length }} đơn hàng được backend cung cấp</p>
+  <div class="orders-stack">
+  {% for order in orders %}
+    <article class="order-card">
+      <header><div><h2>Đơn #{{ order.id }}</h2><p>{{ order.created_at|default('Chưa có thời gian', true) }}</p></div><span class="order-badge">{{ order.status_label|default('Chưa xác định trạng thái', true) }}</span></header>
+      {% for item in order['items'] %}
+      <div class="order-item"><span class="order-shoe" aria-hidden="true">SP</span><div><strong>{{ item.product_name }}</strong><p>{{ item.color }} · Size {{ item.size }} · Số lượng {{ item.quantity }}</p></div><strong>{{ item.subtotal|vnd }}</strong></div>
+      {% else %}<p>Backend chưa cung cấp chi tiết sản phẩm.</p>{% endfor %}
+      <footer><div><span class="order-muted">{{ order.payment_status_label|default('Chưa xác định thanh toán', true) }}</span><p>Tổng đơn <strong>{{ order.total|vnd }}</strong>{% if order.shipping_fee is none %}<small>Phí vận chuyển chưa xác định</small>{% endif %}</p></div>
+      {% set sample_view = 'cancelled' if order.delivery_stage == 'cancelled' else 'failed' if order.payment_status == 'failed' else 'shipping' if order.delivery_stage == 'shipping' else 'completed' if order.delivery_stage == 'completed' else 'detail' %}
+      <a class="action-primary" href="{{ url_for('tuan_w4_ui.preview', scenario=sample_view) if preview_mode|default(false) else url_for('tuan_w4_ui.order_detail', order_id=order.id) }}">Xem chi tiết →</a></footer>
+    </article>
+  {% endfor %}
+  </div>
+  {% else %}
+  <div class="orders-empty"><span class="eyebrow">BẮT ĐẦU MUA SẮM</span><h2>Bạn chưa có đơn hàng</h2><p>Các đơn gắn với tài khoản của bạn sẽ xuất hiện tại đây.</p><a class="action-primary" href="{{ url_for('w3_catalog.product_list') }}">Khám phá sản phẩm</a></div>
+  {% endif %}
+</section>
+{% endblock %}

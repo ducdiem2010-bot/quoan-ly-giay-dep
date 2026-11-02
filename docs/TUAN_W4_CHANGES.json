@@ -1,0 +1,525 @@
+{
+  "source_archive": "WED nhóm 6(7).zip",
+  "source_sha256": "e7d92b7df58bec3249073baed2b8ea71fe83f76881afd0dc0036111322118b17",
+  "scope": [
+    "W4-004",
+    "W4-009",
+    "W4-014",
+    "W4-019",
+    "W4-024"
+  ],
+  "protected_unchanged": [
+    "database/migrate_w3_visibility_sqlserver.sql",
+    "database/migration_checkout_sqlserver.sql",
+    "database/schema.sql",
+    "database/schema_sqlite.sql",
+    "database/seed.sql",
+    "database/seed_sqlite.sql",
+    "app/routes.py",
+    "app/db.py",
+    "app/data.py",
+    "app/checkout_service.py",
+    "app/catalog_w3.py",
+    "app/admin_w3.py",
+    "requirements.txt",
+    "tests/test_checkout_update.py",
+    "tests/test_integration_w3.py",
+    "tests/test_smoke.py"
+  ],
+  "changes": [
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256_before": "730e588a13e2c99058c7c07e3f8cf0095aff9fcb2b18c902304a51788bc2a7af",
+      "sha256_after": "898e808999b8c9715187e844beeb92df7dc1f819651c3948c9a298a72cd0151e"
+    },
+    {
+      "path": "README_W4_TUAN.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "d6d72f842c97f28825c50519369e76f4295a2d444b456a934841c936f984ab2f"
+    },
+    {
+      "path": "app/__init__.py",
+      "change": "modified",
+      "sha256_before": "47994eb8a5b12a4b628ae58a39f28b9f148c06b0e8005af0617968459ca18b7d",
+      "sha256_after": "ee70c04a639af66c8fe49b8e862abe6733bbf519815dcd1ed7556e39575719bd"
+    },
+    {
+      "path": "app/static/css/checkout.css",
+      "change": "modified",
+      "sha256_before": "fb96af097737f22acd8461180c777cd873a18df3826658a781cd9b57357bf8c3",
+      "sha256_after": "5231e9576c3492ea9fa80935edb867ebc813a74c42b43f01f78542537d9b25ce"
+    },
+    {
+      "path": "app/static/css/orders_w4.css",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "15965b6d8a06f9a1146a95d8c7621746f06c6e885381a2a2b7bd4ed883cb4ade"
+    },
+    {
+      "path": "app/static/css/tuan_w4.css",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "6489af31b71f46d80838b516c6aae79384f8c58d7675ad459d272baaf84d7788"
+    },
+    {
+      "path": "app/static/js/checkout.js",
+      "change": "modified",
+      "sha256_before": "a89774cb8e74c9687d6d5f71ccddae8b93c36d0cdc74001039b0654611c4530a",
+      "sha256_after": "fda6ce382af3aa686d18f5d8cfbd8469ae1236e52cf2d145925ec7c3db14285a"
+    },
+    {
+      "path": "app/static/js/orders_w4.js",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "d80506925068f7bf068bb4de074773b70c577ecf7a53f964b21485ab9c6ab129"
+    },
+    {
+      "path": "app/templates/admin/index.html",
+      "change": "modified",
+      "sha256_before": "727e6122988876619d3d0cc14937de1682aeb86134d84b28965cf53bb946d797",
+      "sha256_after": "17a2fc13233182a1c4fd5fba3049eb48859558c89f780e807548dee957bec103"
+    },
+    {
+      "path": "app/templates/base.html",
+      "change": "modified",
+      "sha256_before": "cbcbe3c9f02063849226ffb7f47142d3e5318766c32e1bc3863ca64fb6505028",
+      "sha256_after": "230469056aff1743d15e648f0c4919a7a69eba2dca4376b31f354625ee9ca029"
+    },
+    {
+      "path": "app/templates/checkout.html",
+      "change": "modified",
+      "sha256_before": "b8084db24b89cb8f65c382e83a1b56c7cea118356ac803c5cb49bd304a7fa964",
+      "sha256_after": "114b1a305ac48ad45c99a656c0aeadfaa6aad5ed7770084c860a75adeb468745"
+    },
+    {
+      "path": "app/templates/checkout_success.html",
+      "change": "modified",
+      "sha256_before": "5195256b110c79e992a241bd85890ee564ad6ddb980ba7f98705365b668bf5bb",
+      "sha256_after": "6f9e8ccccabe3a6c89c100e088f6598d46a8ded25bdf971e8eaa84c550e9bb11"
+    },
+    {
+      "path": "app/templates/orders/_preview.html",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "3abc5cf2a9f96d2a8e9782cfce9d4e9b838c6cbf82cb7b65e1c8c3fa4f5b27b2"
+    },
+    {
+      "path": "app/templates/orders/detail.html",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "4b66502aaceeffc3aef26548b3db6c5c69faa75e1c119e87840e190972e12e76"
+    },
+    {
+      "path": "app/templates/orders/list.html",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "bba318850d908c129e20a60b770555d87b5cbf6a231dbba689a7a8689f934b81"
+    },
+    {
+      "path": "app/templates/orders/unavailable.html",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "6e6b86c218b1379ecc2c159f3138282faeb0a82a0ca94b599f7172f17786a3cf"
+    },
+    {
+      "path": "app/tuan_w4_connection.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "81b7c1db772720f930c882b84ce9e078723ed021005d2f0f0ec44445dac7c050"
+    },
+    {
+      "path": "app/tuan_w4_preview.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1bef3342493fbe4f00e7fb7632934b6c9500928e0a1de4029bf3aea006c537af"
+    },
+    {
+      "path": "app/tuan_w4_ui.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "4527b8e7999cfd7c631749465f87eb210a1cf22faf6bc0d1ee0d9bf7fc8babac"
+    },
+    {
+      "path": "docs/TUAN_W4_BACKEND_HANDOFF.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "935f01e6da4e0e8e2037e17cc65749ee8492b700d4112924f35e35477e34af73"
+    },
+    {
+      "path": "docs/TUAN_W4_CODE.diff",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "538e30065b09a857c2a4e22a960cb3bfee4af9b8954644b234fe21bfa3ba7e0e"
+    },
+    {
+      "path": "docs/TUAN_W4_HANDOFF.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "258ebed0bcb2dcd6e0a7c76a736c805e5f0c2e102749720552b0304c0be6042a"
+    },
+    {
+      "path": "docs/TUAN_W4_ORDER_UI_CONTRACT.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "81860444e01d742483fbc02cfbe004f167de48f112bff82cbce61d37af9e1384"
+    },
+    {
+      "path": "docs/TUAN_W4_PR.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "d952ba418bdc36a54ad3f2bdff426b327512aa1d54e6a9329a17fe28043426da"
+    },
+    {
+      "path": "docs/UI_smoke_w4.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "b1cad6a318798037b0ed201c88d1987e88cb52a1718706a6bf3580dbdc080698"
+    },
+    {
+      "path": "docs/W4_CONNECTION_VERIFICATION.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "93b42c462af57e08497077e9cefa0abe53e67d782ad01d611c4c175806be502b"
+    },
+    {
+      "path": "docs/W4_VERIFICATION.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "2c4d02a5b9e0ff9a267618b5ea88da6c9977aa6e42882b2b0b763b971a997187"
+    },
+    {
+      "path": "docs/evidence/w4/before_checkout_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "67d2535d75c9707d562fbe294deced66c5d75ad08b52b2f50c7237a67db686d4"
+    },
+    {
+      "path": "docs/evidence/w4/before_checkout_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "4e3f0d686b723d2019e70d155284679350d4ad8ca8c813a5e14d2005c048960f"
+    },
+    {
+      "path": "docs/evidence/w4/browser_results.json",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1547d3d5f0cb1a39ae61aa592aa6f5ed72224e7a2dc2614bf4fbf71823b52abf"
+    },
+    {
+      "path": "docs/evidence/w4/cancelled_sample_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "ed12974904e1f346f397f957df84aed2deb50fee6a1077de0b1bae1be33a7b52"
+    },
+    {
+      "path": "docs/evidence/w4/cancelled_sample_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "938e1b5fd26baecb176f47c2c776e2b0d11e49061d23a76019b49e8ace854384"
+    },
+    {
+      "path": "docs/evidence/w4/cancelled_sample_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "c33a9130d1a7c59b7ecbc90610f6765f6842266eae96658c3715c4af8a272e43"
+    },
+    {
+      "path": "docs/evidence/w4/checkout_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "8766a267f7a4c07495be659e782a0391a2d1b1ba9f7c67ea17def7e72299da77"
+    },
+    {
+      "path": "docs/evidence/w4/checkout_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "6ee46cd46485c76054f3727a0ea8f55a4ea4433efc56843c090754bab549ab45"
+    },
+    {
+      "path": "docs/evidence/w4/checkout_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "d93204b94e4c001b8531f61ca5e62fbbcd05678068596c749876cc22a2e5a62f"
+    },
+    {
+      "path": "docs/evidence/w4/checkout_invalid_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "5db2cdd8205ae33dd98165fde2c7d2e17e75831de69f2978b15f0dd147f86ed6"
+    },
+    {
+      "path": "docs/evidence/w4/checkout_result_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1c96bf8eec11a29ca14970a862834abdc7a6ba6d8f68abc20f3f2c75d869859a"
+    },
+    {
+      "path": "docs/evidence/w4/empty_sample_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "b52cd9331c35eb162bfa8b532e1316b9e62395f6eca0d0a21015d88365c98aa6"
+    },
+    {
+      "path": "docs/evidence/w4/empty_sample_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "aa2ae9c6909a1ffd96216365c834c012a1158f1c8d829d80ea89ead5e3b748e9"
+    },
+    {
+      "path": "docs/evidence/w4/empty_sample_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "be832bc8d47972812405ab4ca211aba82cce80c0d3503df63a9b6454589c6b4b"
+    },
+    {
+      "path": "docs/evidence/w4/order_detail_sample_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "b5efe28802b8758492bb82483ce864bfb892d422845e6dbd33e8925894d9c10d"
+    },
+    {
+      "path": "docs/evidence/w4/order_detail_sample_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "5d413591b2407fdaa30656f9f9ddc06ee2cf543f2e3f658388b264334c57f99a"
+    },
+    {
+      "path": "docs/evidence/w4/order_detail_sample_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "9293eb3a4bfce834298a2742309873a03818e1e5596f7c2615c94aae9886530f"
+    },
+    {
+      "path": "docs/evidence/w4/orders_backend_unavailable_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "63ba1061ca5330f0882c03465d6bc211a3021c2c045307838665181d86fa924c"
+    },
+    {
+      "path": "docs/evidence/w4/orders_backend_unavailable_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1d30704608968f2d88de218d3ae96cf28b7faf48a7158750f7db79ecf65d0499"
+    },
+    {
+      "path": "docs/evidence/w4/orders_backend_unavailable_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "7dc505a47b3e81968221669753c02b5399996d3ab30cde69a733f0b2e5055c05"
+    },
+    {
+      "path": "docs/evidence/w4/orders_sample_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "f5a4fca48b0d7d892e40c1ef4bffeed553c86e63e6388694858dc07466a29f76"
+    },
+    {
+      "path": "docs/evidence/w4/orders_sample_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "fbdb77061eae39f2ece8429604138b8ae80768efe12b31954242ce8f0ed8da48"
+    },
+    {
+      "path": "docs/evidence/w4/orders_sample_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "168f2f77966fc4388450c2995a9c6237e0bcc8c792c43a8bcb460b6736453aa8"
+    },
+    {
+      "path": "docs/evidence/w4/payment_failed_sample_1280.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "a2c8081652d326624268b754790abbc612fcd83487bf9dfbb545d0abaf545aab"
+    },
+    {
+      "path": "docs/evidence/w4/payment_failed_sample_375.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "2112cf8f247b4fd75efe17dc2288c50b8dbbf375fdca58f135087caf9f1537d0"
+    },
+    {
+      "path": "docs/evidence/w4/payment_failed_sample_768.png",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "6c3dabe0535c6d84b8a0e2b87b2e947989e82e2aac9e0d1adcc4d511f87897a2"
+    },
+    {
+      "path": "docs/evidence/w4/unittest_results.txt",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1103992b93c1cc634147438e75201562804cb1b1590f261cfad47d622df95a4c"
+    },
+    {
+      "path": "docs/evidence/w4_connection/browser_results.json",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1547d3d5f0cb1a39ae61aa592aa6f5ed72224e7a2dc2614bf4fbf71823b52abf"
+    },
+    {
+      "path": "docs/evidence/w4_connection/cli_results.json",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "0ebc2b4232d612fc370ba6db36592c00bb687311b5bf19193206ffce23e39339"
+    },
+    {
+      "path": "docs/evidence/w4_connection/unittest_results.txt",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "925f93fc78ad1cfc4ee31797110a548d92c4e2254bf79ea5531d188a5d3e717c"
+    },
+    {
+      "path": "integration_examples/nghia_order_ui.py.example",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "db5a39507f0478a7f61f8cf0037cfd8cb548edba08f1feb1ccced7f5f75ec406"
+    },
+    {
+      "path": "scripts/check_order_ui_connection.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "845a9739505de9a6493e16f241a3f6b69fb1a44ee623e95e2612bb5e66ebd6b5"
+    },
+    {
+      "path": "tests/browser_smoke_w4.cjs",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "87f5dc588fea26daed96e29c2fab3bbcca301277038fb9138c4beb6204da5488"
+    },
+    {
+      "path": "tests/run_browser_smoke_w4.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "98f831472ece32d526c1a640e77df552f326b16a546c148308a19893e2ff3dad"
+    },
+    {
+      "path": "tests/test_tuan_w4_connection.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "f6129f5185a4f80081a48571adf9a10eac4381d632600f330da2b15d7c335203"
+    },
+    {
+      "path": "tests/test_tuan_w4_ui.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "c573848515446a6797b0e197c1610121f3425aaf274bc7d765dd50b90b2ee575"
+    }
+  ],
+  "integration_baseline_archive": "Nhom6_Tuan4_Tuan_Frontend.zip",
+  "integration_baseline_sha256": "2eaad9afb1de12d643c1b23384c3935989329a883382e2f89e11703bddb2d25b",
+  "integration_changes": [
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256_before": "e74c8348079d0ad296f3afc4d0a390a906f0b2b48b061a2f634fcc16529fbfb2",
+      "sha256_after": "898e808999b8c9715187e844beeb92df7dc1f819651c3948c9a298a72cd0151e"
+    },
+    {
+      "path": "README_W4_TUAN.md",
+      "change": "modified",
+      "sha256_before": "bbd2c3673845476164fc13748fa3e5e93a65eac38b61d699321a4c31cc0ded6f",
+      "sha256_after": "d6d72f842c97f28825c50519369e76f4295a2d444b456a934841c936f984ab2f"
+    },
+    {
+      "path": "app/tuan_w4_connection.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "81b7c1db772720f930c882b84ce9e078723ed021005d2f0f0ec44445dac7c050"
+    },
+    {
+      "path": "app/tuan_w4_ui.py",
+      "change": "modified",
+      "sha256_before": "b4ab0b84b6b6e417de493fcbbb22a0d9c4bbe4f818a2a69aad35e0dad423a802",
+      "sha256_after": "4527b8e7999cfd7c631749465f87eb210a1cf22faf6bc0d1ee0d9bf7fc8babac"
+    },
+    {
+      "path": "docs/TUAN_W4_BACKEND_HANDOFF.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "935f01e6da4e0e8e2037e17cc65749ee8492b700d4112924f35e35477e34af73"
+    },
+    {
+      "path": "docs/TUAN_W4_CODE.diff",
+      "change": "modified",
+      "sha256_before": "48c063e7819132b1c29ce0ce45b69ddbd1c791ba8873d32543b85ddd8e41ffea",
+      "sha256_after": "538e30065b09a857c2a4e22a960cb3bfee4af9b8954644b234fe21bfa3ba7e0e"
+    },
+    {
+      "path": "docs/TUAN_W4_HANDOFF.md",
+      "change": "modified",
+      "sha256_before": "882c95ac80c3af3fe8f49d9f1fc09dae8f2cd0e04f12472f32ada058850e3cce",
+      "sha256_after": "258ebed0bcb2dcd6e0a7c76a736c805e5f0c2e102749720552b0304c0be6042a"
+    },
+    {
+      "path": "docs/TUAN_W4_ORDER_UI_CONTRACT.md",
+      "change": "modified",
+      "sha256_before": "9af27815a3dd6788f5f4f075985e79acd250856668af0a548e7b6251981a813d",
+      "sha256_after": "81860444e01d742483fbc02cfbe004f167de48f112bff82cbce61d37af9e1384"
+    },
+    {
+      "path": "docs/TUAN_W4_PR.md",
+      "change": "modified",
+      "sha256_before": "b6a34baf09250322269deab84a990454d4d950c67000b693e205741952828dec",
+      "sha256_after": "d952ba418bdc36a54ad3f2bdff426b327512aa1d54e6a9329a17fe28043426da"
+    },
+    {
+      "path": "docs/UI_smoke_w4.md",
+      "change": "modified",
+      "sha256_before": "86d49c4d6bf8e846941a00603a53eee43e86109e50a3246b02ca0c5d12f42f3e",
+      "sha256_after": "b1cad6a318798037b0ed201c88d1987e88cb52a1718706a6bf3580dbdc080698"
+    },
+    {
+      "path": "docs/W4_CONNECTION_VERIFICATION.md",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "93b42c462af57e08497077e9cefa0abe53e67d782ad01d611c4c175806be502b"
+    },
+    {
+      "path": "docs/W4_VERIFICATION.md",
+      "change": "modified",
+      "sha256_before": "04630d526e1342d609483e692366b857457685ad9039e06d0c95421169e6710a",
+      "sha256_after": "2c4d02a5b9e0ff9a267618b5ea88da6c9977aa6e42882b2b0b763b971a997187"
+    },
+    {
+      "path": "docs/evidence/w4_connection/browser_results.json",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "1547d3d5f0cb1a39ae61aa592aa6f5ed72224e7a2dc2614bf4fbf71823b52abf"
+    },
+    {
+      "path": "docs/evidence/w4_connection/cli_results.json",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "0ebc2b4232d612fc370ba6db36592c00bb687311b5bf19193206ffce23e39339"
+    },
+    {
+      "path": "docs/evidence/w4_connection/unittest_results.txt",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "925f93fc78ad1cfc4ee31797110a548d92c4e2254bf79ea5531d188a5d3e717c"
+    },
+    {
+      "path": "integration_examples/nghia_order_ui.py.example",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "db5a39507f0478a7f61f8cf0037cfd8cb548edba08f1feb1ccced7f5f75ec406"
+    },
+    {
+      "path": "scripts/check_order_ui_connection.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "845a9739505de9a6493e16f241a3f6b69fb1a44ee623e95e2612bb5e66ebd6b5"
+    },
+    {
+      "path": "tests/test_tuan_w4_connection.py",
+      "change": "added",
+      "sha256_before": null,
+      "sha256_after": "f6129f5185a4f80081a48571adf9a10eac4381d632600f330da2b15d7c335203"
+    }
+  ],
+  "excluded_from_self_hash": [
+    "docs/TUAN_W4_CHANGES.json"
+  ],
+  "status": "UI connector ready; real Nghia backend/SQL Server not integrated"
+}

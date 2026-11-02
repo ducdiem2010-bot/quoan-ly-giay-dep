@@ -1,0 +1,22 @@
+{# Tuấn – W3-066: contract trình bày còn chờ Khải xác nhận.
+   favorites_ui = {MaSanPham: {saved: bool, save_url: URL nội bộ, remove_url: URL nội bộ}}.
+   Backend phải lấy owner từ session và kiểm tra CSRF; template không thay thế ownership.
+#}
+{% if not session.get('user_id') %}
+<a class="favorite-login" href="{{ url_for('login', next=request.full_path) }}">Đăng nhập để lưu yêu thích</a>
+{% elif session.get('role') == 'Customer' %}
+  {% set favorite_action = favorites_ui.get(product.MaSanPham) if favorites_ui is defined else none %}
+  {% set known_state = favorite_action and (favorite_action.saved is sameas true or favorite_action.saved is sameas false) %}
+  {% set favorite_target = (favorite_action.remove_url if favorite_action.saved else favorite_action.save_url)|default('', true) if known_state else '' %}
+  {% if known_state and favorite_target.startswith('/') and not favorite_target.startswith('//') %}
+  <form method="post" action="{{ favorite_target }}" class="favorite-form" data-favorite-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="favorite-toggle" aria-pressed="{{ 'true' if favorite_action.saved else 'false' }}"
+            aria-label="{{ 'Hủy yêu thích ' if favorite_action.saved else 'Lưu yêu thích ' }}{{ product.TenSanPham }}">
+      <span aria-hidden="true">{{ '♥' if favorite_action.saved else '♡' }}</span>
+      <span data-favorite-label>{{ 'Hủy yêu thích' if favorite_action.saved else 'Lưu yêu thích' }}</span>
+    </button>
+    <p class="favorite-status" role="status" aria-live="polite" data-favorite-status></p>
+  </form>
+  {% else %}<button class="favorite-toggle" type="button" disabled>Yêu thích tạm chưa khả dụng</button>{% endif %}
+{% endif %}
