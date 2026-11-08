@@ -1,7 +1,12 @@
 {% extends 'admin_base.html' %}
 {% block admin_title %}Danh sách sản phẩm{% endblock %}
+<<<<<<< HEAD
 {% block admin_content %}<div class="section-title"><div><span class="eyebrow">SẢN PHẨM</span><h1>Quản trị sản phẩm</h1></div><a href="{{ url_for('admin_w3.product_new') }}" class="action-primary">＋ Thêm sản phẩm</a></div>
 <p>Danh sách đọc từ cơ sở dữ liệu. Thêm, sửa và ẩn sản phẩm tại <a href="{{ url_for('admin_w3.products') }}">quản lý sản phẩm</a>.</p>
+=======
+{% block admin_content %}<div class="section-title"><div><span class="eyebrow">SẢN PHẨM</span><h1>Quản trị sản phẩm</h1></div><a href="{{ url_for('admin_product_add') }}" class="action-primary">＋ Thêm sản phẩm</a></div>
+<p>Danh sách đọc từ cơ sở dữ liệu; CRUD sản phẩm được triển khai ở tuần tiếp theo.</p>
+>>>>>>> ba1d4e0 (Upload project)
 <div class="table-wrap"><table class="admin-table"><thead><tr><th>Mã</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Tồn</th></tr></thead><tbody>
 {% for p in products %}<tr><td>SP{{ '%03d' % p.MaSanPham }}</td><td>{{ p.TenSanPham }}</td><td>{{ p.TenDanhMuc }}</td><td>{{ p.GiaBan|vnd }}</td><td>{{ p.TongTon }}</td></tr>{% endfor %}
 </tbody></table></div>{% endblock %}

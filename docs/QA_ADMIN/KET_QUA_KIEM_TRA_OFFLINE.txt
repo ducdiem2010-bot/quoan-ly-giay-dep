@@ -1,0 +1,40 @@
+Admin UX QA offline verification – 08/11/2026
+$ python scripts/verify_admin_ux_offline.py
+test_csrf_hidden_inputs_remain (__main__.AdminUXOfflineChecks.test_csrf_hidden_inputs_remain) ... ok
+test_feedback_css_is_admin_scoped (__main__.AdminUXOfflineChecks.test_feedback_css_is_admin_scoped) ... ok
+test_invalid_variant_input_is_rendered_back (__main__.AdminUXOfflineChecks.test_invalid_variant_input_is_rendered_back) ... ok
+test_product_list_zero_stock_and_hidden_badge (__main__.AdminUXOfflineChecks.test_product_list_zero_stock_and_hidden_badge) ... ok
+test_python_sources_parse (__main__.AdminUXOfflineChecks.test_python_sources_parse) ... ok
+test_sql_server_v2_not_claimed_as_present (__main__.AdminUXOfflineChecks.test_sql_server_v2_not_claimed_as_present) ... ok
+test_sqlite_stock_constraint_still_rejects_negative (__main__.AdminUXOfflineChecks.test_sqlite_stock_constraint_still_rejects_negative) ... ok
+test_variant_client_and_server_integer_validation (__main__.AdminUXOfflineChecks.test_variant_client_and_server_integer_validation) ... ok
+test_visibility_post_keeps_csrf_and_confirmation (__main__.AdminUXOfflineChecks.test_visibility_post_keeps_csrf_and_confirmation) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.009s
+
+OK
+
+$ python scripts/verify_w3_offline.py
+test_at_least_twelve_footwear_products (__main__.OfflineSchemaW3.test_at_least_twelve_footwear_products) ... ok
+test_atomic_rollback_sample (__main__.OfflineSchemaW3.test_atomic_rollback_sample) ... ok
+test_favorite_owner_and_uniqueness (__main__.OfflineSchemaW3.test_favorite_owner_and_uniqueness) ... ok
+test_hidden_product_in_seed (__main__.OfflineSchemaW3.test_hidden_product_in_seed) ... ok
+test_out_of_stock_variant (__main__.OfflineSchemaW3.test_out_of_stock_variant) ... ok
+test_python_syntax (__main__.OfflineSchemaW3.test_python_syntax) ... ok
+test_same_variant_row_required (__main__.OfflineSchemaW3.test_same_variant_row_required) ... ok
+test_variant_uniqueness_and_check (__main__.OfflineSchemaW3.test_variant_uniqueness_and_check) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.015s
+
+OK
+
+$ node --check app/static/js/admin_product_feedback.js
+PASS
+
+$ python -m py_compile app/routes/admin.py
+PASS
+
+$ Jinja template parse
+PASS – all HTML templates parsed

@@ -15,3 +15,9 @@ CREATE INDEX IX_DonHang_MaNguoiDung ON DonHang(MaNguoiDung);
 CREATE TRIGGER trg_CTDH_ai AFTER INSERT ON ChiTietDonHang BEGIN UPDATE DonHang SET TongTien=(SELECT COALESCE(SUM(ThanhTien),0) FROM ChiTietDonHang WHERE MaDonHang=NEW.MaDonHang) WHERE MaDonHang=NEW.MaDonHang; END;
 CREATE TRIGGER trg_CTDH_ad AFTER DELETE ON ChiTietDonHang BEGIN UPDATE DonHang SET TongTien=(SELECT COALESCE(SUM(ThanhTien),0) FROM ChiTietDonHang WHERE MaDonHang=OLD.MaDonHang) WHERE MaDonHang=OLD.MaDonHang; END;
 CREATE TRIGGER trg_CTDH_au AFTER UPDATE ON ChiTietDonHang BEGIN UPDATE DonHang SET TongTien=(SELECT COALESCE(SUM(ThanhTien),0) FROM ChiTietDonHang WHERE MaDonHang=NEW.MaDonHang) WHERE MaDonHang=NEW.MaDonHang; UPDATE DonHang SET TongTien=(SELECT COALESCE(SUM(ThanhTien),0) FROM ChiTietDonHang WHERE MaDonHang=OLD.MaDonHang) WHERE MaDonHang=OLD.MaDonHang; END;
+<<<<<<< HEAD
+=======
+
+-- W3-057: relation user/product, unique favorite per user.
+CREATE TABLE IF NOT EXISTS YeuThich (MaNguoiDung INTEGER NOT NULL REFERENCES NguoiDung(MaNguoiDung) ON DELETE CASCADE, MaSanPham INTEGER NOT NULL REFERENCES SanPham(MaSanPham) ON DELETE CASCADE, PRIMARY KEY (MaNguoiDung, MaSanPham));
+>>>>>>> ba1d4e0 (Upload project)

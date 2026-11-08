@@ -1,0 +1,51 @@
+/* Chỉ dùng cho khu vực quản trị sản phẩm W3. Không tác động giao diện public. */
+.w3-admin-page > .flash-stack { display:grid; gap:10px; margin:0 0 18px; }
+.w3-admin-page > .flash-stack .notice,
+.w3-feedback-toast { display:flex; align-items:flex-start; gap:10px; padding:12px 15px; border:1px solid #d6dee8; border-left:4px solid #64748b; border-radius:10px; background:#fff; color:#263445; box-shadow:0 5px 18px rgba(15,23,42,.06); }
+.w3-admin-page > .flash-stack .notice-success { border-left-color:#16a34a; background:#f0fdf4; }
+.w3-admin-page > .flash-stack .notice-warning,
+.w3-admin-page > .flash-stack .notice-error { border-left-color:#d97706; background:#fffbeb; }
+.w3-stock-zero { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border:1px solid #fecaca; border-radius:999px; background:#fef2f2; color:#b91c1c; font-size:.82rem; font-weight:700; white-space:nowrap; }
+.w3-stock-zero::before { content:""; width:7px; height:7px; border-radius:50%; background:currentColor; }
+.w3-stock-ok { color:#166534; font-weight:650; }
+.w3-confirm-backdrop { position:fixed; inset:0; z-index:10000; display:grid; place-items:center; padding:18px; background:rgba(15,23,42,.58); }
+.w3-confirm-dialog { width:min(100%,430px); padding:22px; border:1px solid #e2e8f0; border-radius:16px; background:#fff; box-shadow:0 24px 70px rgba(0,0,0,.25); color:#1e293b; }
+.w3-confirm-dialog h2 { margin:0 0 8px; font-size:1.2rem; }
+.w3-confirm-dialog p { margin:0 0 20px; color:#64748b; line-height:1.55; }
+.w3-confirm-actions { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:9px; }
+.w3-confirm-actions button { min-height:40px; padding:8px 15px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#334155; cursor:pointer; font:inherit; }
+.w3-confirm-actions .w3-confirm-accept { border-color:#1d4ed8; background:#1d4ed8; color:#fff; }
+.w3-confirm-actions .w3-confirm-danger { border-color:#b91c1c; background:#b91c1c; color:#fff; }
+.w3-feedback-toast { position:fixed; z-index:10001; right:20px; bottom:20px; width:min(420px,calc(100vw - 40px)); animation:w3-toast-in .18s ease-out; }
+.w3-feedback-toast[data-kind="error"] { border-left-color:#dc2626; background:#fef2f2; }
+.w3-feedback-toast[data-kind="success"] { border-left-color:#16a34a; background:#f0fdf4; }
+.w3-feedback-toast[data-kind="warning"] { border-left-color:#d97706; background:#fffbeb; }
+.w3-form-feedback { min-height:0; color:#b45309; font-size:.9rem; }
+.w3-form-feedback:empty { display:none; }
+.w3-form [aria-invalid="true"] { border-color:#dc2626 !important; outline:2px solid rgba(220,38,38,.10); }
+@keyframes w3-toast-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@media (prefers-reduced-motion:reduce) { .w3-feedback-toast { animation:none; } }
+
+/* Bổ sung UX riêng cho bảng sản phẩm/biến thể W3. */
+.w3-admin-page .w3-product-thumb { width:56px; height:48px; object-fit:cover; border-radius:8px; background:#f1f5f9; }
+.w3-admin-page .w3-no-image { color:#94a3b8; font-size:.8rem; }
+.w3-admin-page .w3-pill-visible { background:#dcfce7; color:#166534; }
+.w3-admin-page .w3-pill-hidden { background:#fee2e2; color:#991b1b; }
+.w3-admin-page .w3-row-hidden { background:#fffafa; }
+.w3-admin-page .w3-row-hidden td { color:#64748b; }
+.w3-admin-page .w3-product-actions { display:flex; align-items:center; flex-wrap:wrap; gap:9px; }
+.w3-admin-page .w3-product-actions form { margin:0; }
+.w3-admin-page .w3-button-hide { color:#991b1b; border-color:#fecaca; }
+.w3-admin-page .w3-button-show { color:#166534; border-color:#bbf7d0; }
+.w3-admin-page .w3-help-text { margin-top:12px; color:#64748b; font-size:.88rem; }
+.w3-admin-page .w3-empty-row { padding:26px; text-align:center; color:#64748b; }
+.w3-admin-page .w3-variant-stock-zero { display:inline-flex; margin:5px 0 0; }
+.w3-admin-page .w3-variants-table input { min-width:85px; max-width:150px; padding:7px 9px; border:1px solid #cbd5e1; border-radius:7px; }
+.w3-admin-page .w3-variants-table td:last-child { min-width:150px; }
+.w3-admin-page .w3-form-feedback { grid-column:1 / -1; margin:0; }
+.w3-admin-page .w3-form-feedback:not(:empty) { padding:9px 11px; border-radius:8px; background:#fff7ed; color:#9a3412; }
+.w3-admin-page [data-integer-stock][aria-invalid="true"] { border-color:#dc2626; background:#fff7f7; }
+@media(max-width:640px) {
+  .w3-admin-page .w3-product-actions { min-width:145px; }
+  .w3-admin-page .w3-variant-form { grid-template-columns:1fr; }
+}

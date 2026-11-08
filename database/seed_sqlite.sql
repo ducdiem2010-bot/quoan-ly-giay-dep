@@ -63,3 +63,14 @@ INSERT INTO DonHang (MaNguoiDung, TrangThai) VALUES
 INSERT INTO ChiTietDonHang (MaDonHang, MaBienThe, SoLuong, DonGia) VALUES
 (1, 1, 2, 1250000),
 (1, 4, 1, 990000);
+<<<<<<< HEAD
+=======
+
+
+-- W3-006 (AI-assisted): two extra shoe examples, unchanged original 10 IDs.
+INSERT INTO SanPham (MaDanhMuc, MaNguoiTao, TenSanPham, GiaBan, ThuongHieu, MoTa) VALUES
+(3,2,'Sandal Học Sinh Chống Trượt',290000,'LocalShoes','Test hết tồn'),
+(1,2,'Giày Thể Thao Mẫu Ẩn',590000,'LocalShoes','Test sản phẩm ẩn');
+INSERT INTO BienTheSanPham (MaSanPham,KichThuoc,MauSac,SoLuongTon) VALUES (11,'39','Đỏ',0),(11,'40','Xanh',0),(12,'41','Đen',8);
+UPDATE SanPham SET HienThi=0 WHERE TenSanPham='Giày Thể Thao Mẫu Ẩn';
+>>>>>>> ba1d4e0 (Upload project)

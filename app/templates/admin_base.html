@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}{% block admin_title %}Quản trị{% endblock %} - Shoes Store{% endblock %}
+<<<<<<< HEAD
 {% block content %}<div class="admin-layout"><aside class="admin-sidebar"><span class="eyebrow">QUẢN LÝ</span><h2>Dashboard</h2>
 <a href="{{ url_for('admin_w3.products') }}">▦ Danh sách sản phẩm</a><a href="{{ url_for('admin_w3.product_new') }}">＋ Thêm sản phẩm W3</a><a href="{{ url_for('home') }}">↗ Xem cửa hàng</a>
 </aside><div class="admin-panel">{% block admin_content %}{% endblock %}</div></div>{% endblock %}
+=======
+{% block content %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_product_feedback.css') }}">
+<div class="admin-layout"><aside class="admin-sidebar"><span class="eyebrow">QUẢN LÝ</span><h2>Dashboard</h2>
+<a href="{{ url_for('admin_w3.products') }}">▦ Danh sách sản phẩm</a><a href="{{ url_for('admin_w3.product_new') }}">＋ Thêm sản phẩm W3</a><a href="{{ url_for('home') }}">↗ Xem cửa hàng</a>
+</aside><div class="admin-panel">{% block admin_content %}{% endblock %}</div></div>
+<script src="{{ url_for('static', filename='js/admin_product_feedback.js') }}" defer></script>
+{% endblock %}
+>>>>>>> ba1d4e0 (Upload project)

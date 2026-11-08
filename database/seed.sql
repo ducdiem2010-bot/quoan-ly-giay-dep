@@ -65,4 +65,15 @@ INSERT INTO DonHang (MaNguoiDung, TrangThai) VALUES
 INSERT INTO ChiTietDonHang (MaDonHang, MaBienThe, SoLuong, DonGia) VALUES
 (1, 1, 2, 1250000),
 (1, 4, 1, 990000);
+<<<<<<< HEAD
+=======
+
+-- W3-006 (AI-assisted): two extra shoe examples, unchanged original 10 IDs.
+INSERT INTO SanPham (MaDanhMuc, MaNguoiTao, TenSanPham, GiaBan, ThuongHieu, MoTa) VALUES
+(3,2,N'Sandal Học Sinh Chống Trượt',290000,N'LocalShoes',N'Test hết tồn'),
+(1,2,N'Giày Thể Thao Mẫu Ẩn',590000,N'LocalShoes',N'Test sản phẩm ẩn');
+INSERT INTO BienTheSanPham (MaSanPham,KichThuoc,MauSac,SoLuongTon) VALUES (11,N'39',N'Đỏ',0),(11,N'40',N'Xanh',0),(12,N'41',N'Đen',8);
+IF COL_LENGTH('dbo.SanPham','HienThi') IS NOT NULL
+    EXEC(N'UPDATE dbo.SanPham SET HienThi=0 WHERE TenSanPham=N''Giày Thể Thao Mẫu Ẩn''');
+>>>>>>> ba1d4e0 (Upload project)
 GO

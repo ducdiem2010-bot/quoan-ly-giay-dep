@@ -2,6 +2,7 @@
 {% block admin_title %}Quản lý sản phẩm W3{% endblock %}
 {% block admin_content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/w3_admin.css') }}">
+<<<<<<< HEAD
 <div class="w3-header"><div><span class="eyebrow">NHÓM 6 · TUẦN 3</span><h1>Quản lý sản phẩm</h1><p>Danh sách kết nối cơ sở dữ liệu – phiên bản tích hợp thử nghiệm</p></div>
 <a class="action-primary" href="{{url_for('admin_w3.product_new')}}">＋ Thêm sản phẩm</a></div>
 <div class="table-wrap"><table class="admin-table"><thead><tr><th>Mã</th><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn</th><th>Hiển thị</th><th>Thao tác</th></tr></thead><tbody>
@@ -13,3 +14,22 @@
 </tbody></table></div>
 <p class="small text-muted">Chức năng cập nhật dữ liệu được bổ sung trong adapter Flask W3. Giao diện tham khảo bản mẫu quản lý sản phẩm của Khải.</p>
 {% endblock %}
+=======
+<div class="w3-header"><div><span class="eyebrow">NHÓM 6 · TUẦN 3</span><h1>Quản lý sản phẩm</h1><p>Danh sách sản phẩm, tồn kho và trạng thái hiển thị</p></div>
+<a class="action-primary" href="{{url_for('admin_w3.product_new')}}">＋ Thêm sản phẩm</a></div>
+<div class="table-wrap"><table class="admin-table w3-products-table"><thead><tr><th>Mã</th><th>Ảnh</th><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tổng tồn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+{% for p in products %}
+<tr class="{{ 'w3-row-hidden' if not p.HienThi else '' }}">
+<td>SP{{ '%03d' % p.MaSanPham }}</td>
+<td>{% if p.AnhDaiDien %}<img src="{{url_for('static',filename='uploads/products/' ~ p.AnhDaiDien)}}" alt="Ảnh {{p.TenSanPham}}" class="w3-product-thumb">{% else %}<span class="w3-no-image">Chưa có ảnh</span>{% endif %}</td>
+<td><strong>{{p.TenSanPham}}</strong></td><td>{{p.TenDanhMuc}}</td><td>{{p.GiaBan|vnd}}</td>
+<td data-stock-value="{{p.TongTon}}">{% if p.TongTon|int <= 0 %}<span class="w3-stock-zero" role="status">Hết hàng · tồn 0</span>{% else %}<span class="w3-stock-ok">{{p.TongTon}} đôi</span>{% endif %}</td>
+<td>{% if p.HienThi %}<span class="w3-pill w3-pill-visible">Đang hiển thị</span>{% else %}<span class="w3-pill w3-pill-hidden">Đã ẩn</span>{% endif %}</td>
+<td class="w3-product-actions"><a href="{{url_for('admin_w3.product_edit',product_id=p.MaSanPham)}}">Sửa</a><a href="{{url_for('admin_w3.variants',product_id=p.MaSanPham)}}">Biến thể</a>
+<form method="post" action="{{url_for('admin_w3.visibility',product_id=p.MaSanPham)}}" class="w3-inline" data-w3-confirm="{{ 'Bạn muốn ẩn sản phẩm này khỏi cửa hàng?' if p.HienThi else 'Bạn muốn hiển thị lại sản phẩm này trên cửa hàng?' }}" data-confirm-label="{{ 'Ẩn sản phẩm' if p.HienThi else 'Hiện sản phẩm' }}" data-confirm-danger="{{ 'true' if p.HienThi else 'false' }}">
+<input type="hidden" name="csrf_token" value="{{csrf_token}}"><button type="submit" class="w3-small {{'w3-button-hide' if p.HienThi else 'w3-button-show'}}">{{'Ẩn' if p.HienThi else 'Hiện'}}</button></form></td></tr>
+{% else %}<tr><td colspan="8" class="w3-empty-row">Chưa có sản phẩm. Hãy thêm sản phẩm đầu tiên.</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="w3-help-text">Sản phẩm đã ẩn không xuất hiện ở cửa hàng. Tồn kho được tính bằng tổng tồn của các biến thể.</p>
+{% endblock %}
+>>>>>>> ba1d4e0 (Upload project)
