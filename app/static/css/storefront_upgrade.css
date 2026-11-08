@@ -1,0 +1,64 @@
+/* Tuấn – T1.2/T2.1/T2.2. Chỉ định style vùng storefront, footer và header chung. */
+.storefront-featured { min-width: 0; margin: 0 0 50px; }
+.storefront-featured-heading { align-items: flex-end; flex-wrap: wrap; }
+.storefront-featured-heading h2 { overflow-wrap: anywhere; }
+.storefront-featured-link { display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px; font-weight: 750; color: #365f3a; border-radius: 9px; }
+.storefront-featured-link:hover, .storefront-featured-link:focus-visible { background: #e8f1dc; }
+.storefront-featured-grid { min-width: 0; }
+.storefront-featured-empty { padding: 23px; margin: 0; border: 1px dashed #c4d3b9; border-radius: 12px; color: var(--muted); background: white; }
+
+/* Hai mẫu card đều có lớp storefront-card; không đụng form trang chi tiết. */
+.storefront-card { display: flex; flex-direction: column; min-width: 0; }
+.storefront-card .product-visual { position: relative; display: block; min-width: 0; aspect-ratio: 1.14; }
+.storefront-card .product-visual img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+.storefront-card .storefront-image-note { position: absolute; bottom: 8px; left: 8px; max-width: calc(100% - 16px); padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 7px; background: rgba(255,255,255,.94); color: #445f46; pointer-events: none; }
+.storefront-card .storefront-image-unavailable { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 14px; color: #576a5b; font-size: 13px; }
+.storefront-card [hidden] { display: none !important; }
+.storefront-card .product-meta { flex-wrap: wrap; min-width: 0; }
+.storefront-card .product-meta .eyebrow, .storefront-card .category-label, .storefront-card h3, .storefront-card h3 a { min-width: 0; overflow-wrap: anywhere; }
+.storefront-card .stock-label { white-space: nowrap; }
+.storefront-card .stock-label.is-out-of-stock { font-weight: 750; color: #a13f3f; }
+.storefront-card .card-bottom { gap: 8px; margin-top: auto; }
+.storefront-card .card-bottom strong { min-width: 0; overflow-wrap: anywhere; font-size: clamp(13px, 1.5vw, 16px); }
+.storefront-card .card-bottom .circle-arrow { flex: 0 0 30px; }
+.storefront-card .favorite-form, .storefront-card .favorite-login { margin-top: 9px; }
+
+/* Footer chỉ sử dụng các route đã có trong W6, không tự bịa liên hệ. */
+.site-footer .storefront-footer-grid { display: grid; grid-template-columns: minmax(0,1.7fr) repeat(2,minmax(0,1fr)); gap: clamp(18px,4vw,70px); padding-bottom: 28px; }
+.site-footer .storefront-footer-grid > * { min-width: 0; }
+.site-footer .storefront-footer-brand strong { font-weight: 900; font-size: 18px; }
+.site-footer .storefront-footer-brand p { max-width: 320px; }
+.site-footer .storefront-footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; }
+.site-footer .storefront-footer-links strong { margin-bottom: 2px; }
+.site-footer .storefront-footer-links a { color: #415f49; font-size: 13px; padding: 3px 0; }
+.site-footer .storefront-footer-links a:hover, .site-footer .storefront-footer-links a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+.site-footer .storefront-footer-bottom { padding: 14px 0; border-top: 1px solid #dce5d7; color: #647467; text-align: center; }
+
+/* Header dùng chung có thể rất dài (danh mục + trạng thái đăng nhập). */
+.site-header .shell-header > *, .site-header .nav-links, .site-header .account-actions { min-width: 0; }
+.site-header .nav-links a, .site-header .account-actions a { overflow-wrap: anywhere; }
+
+@media (max-width: 1100px) {
+  .site-header .shell-header { align-items: center; }
+  .site-header .nav-links { min-width: 0; max-width: 100%; }
+}
+@media (max-width: 768px) {
+  .storefront-featured { margin-bottom: 34px; }
+  .storefront-featured-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+  .site-footer .storefront-footer-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; }
+  .site-footer .storefront-footer-brand { grid-column: 1 / -1; }
+  .site-header .shell-header { flex-wrap: wrap; }
+  .site-header .nav-links { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 430px) {
+  .storefront-featured-grid { gap: 8px; }
+  .storefront-featured-link { padding: 8px 0; }
+  .storefront-card .product-visual { aspect-ratio: 1; }
+  .storefront-card .product-visual .storefront-image-note { font-size: 10px; bottom: 5px; left: 5px; }
+  .storefront-card .product-meta .eyebrow { font-size: 10px; }
+  .storefront-card .card-bottom { flex-wrap: wrap; }
+  .site-footer .storefront-footer-grid { grid-template-columns: minmax(0,1fr); }
+  .site-footer .storefront-footer-brand { grid-column: auto; }
+  .site-header .brand { max-width: 100%; }
+  .site-header .account-actions { flex-wrap: wrap; white-space: normal; max-width: 100%; }
+}

@@ -1,9 +1,33 @@
-<article class="product-card">
-  <a class="product-visual" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Xem {{ product.TenSanPham }}">
-    <img src="{{ url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') }}" alt="Ảnh minh họa {{ product.TenSanPham }}" loading="lazy">
+{# Card công khai: ảnh thật product_covers đã được backend xác thực; thiếu/hỏng dùng SVG có sẵn. #}
+{% set card_id = product.MaSanPham|int %}
+{% set card_fallback = 'images/shoe-' ~ ((card_id % 3) + 1) ~ '.svg' %}
+{% set card_cover = product_covers.get(card_id) if product_covers is defined and product_covers else none %}
+{# Adapter trình bày: V2 product_covers ưu tiên; nhánh upload trả basename AnhDaiDien. #}
+{% if card_cover is not string or not card_cover %}
+  {% set uploaded_name = product.AnhDaiDien|default('', true) %}
+  {% if uploaded_name is string and uploaded_name and '/' not in uploaded_name and '\\' not in uploaded_name and '..' not in uploaded_name and ':' not in uploaded_name %}
+    {% set card_cover = 'uploads/products/' ~ uploaded_name %}
+  {% endif %}
+{% endif %}
+{% set card_has_cover = card_cover is string and card_cover|length > 0 %}
+<article class="product-card storefront-card" data-product-id="{{ card_id }}">
+  <a class="product-visual" href="{{ url_for('product_detail', product_id=card_id) }}" aria-label="Xem chi tiết {{ product.TenSanPham }}">
+    <img src="{{ url_for('static', filename=card_cover if card_has_cover else card_fallback) }}"
+         alt="{{ 'Ảnh sản phẩm: ' if card_has_cover else 'Ảnh minh họa: ' }}{{ product.TenSanPham }}"
+         data-storefront-image data-storefront-fallback-src="{{ url_for('static', filename=card_fallback) }}"
+         data-fallback-alt="Ảnh minh họa: {{ product.TenSanPham }}"
+         loading="lazy" width="400" height="350">
+    <span class="storefront-image-note"{% if card_has_cover %} hidden{% endif %}>Ảnh minh họa</span>
+    <span class="storefront-image-unavailable" hidden>Ảnh hiện chưa khả dụng</span>
   </a>
-  <div class="product-meta"><span class="eyebrow">{{ product.ThuongHieu }}</span><span class="stock-label">Còn {{ product.TongTon }}</span></div>
-  <h3><a href="{{ url_for('product_detail', product_id=product.MaSanPham) }}">{{ product.TenSanPham }}</a></h3>
-  <p class="category-label">{{ product.TenDanhMuc }}</p>
-  <div class="card-bottom"><strong>{{ product.GiaBan|vnd }}</strong><a class="circle-arrow" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Chi tiết">↗</a></div>
+  <div class="product-meta">
+    <span class="eyebrow">{{ product.ThuongHieu|default('Giày dép', true) }}</span>
+    <span class="stock-label{{ ' is-out-of-stock' if product.TongTon|int <= 0 else '' }}">{{ 'Hết hàng' if product.TongTon|int <= 0 else 'Còn ' ~ product.TongTon }}</span>
+  </div>
+  <h3><a href="{{ url_for('product_detail', product_id=card_id) }}">{{ product.TenSanPham }}</a></h3>
+  <p class="category-label">{{ product.TenDanhMuc|default('', true) }}</p>
+  <div class="card-bottom">
+    <strong>{{ product.GiaBan|vnd }}</strong>
+    <a class="circle-arrow" href="{{ url_for('product_detail', product_id=card_id) }}" aria-label="Xem chi tiết {{ product.TenSanPham }}">↗</a>
+  </div>
 </article>
