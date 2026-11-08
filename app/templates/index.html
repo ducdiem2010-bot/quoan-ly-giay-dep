@@ -6,6 +6,7 @@
   <p>Khám phá sản phẩm, chọn size và lưu giỏ hàng. Mua và nhận trực tiếp tại cửa hàng.</p>
   <a href="#san-pham" class="action-primary">Khám phá sản phẩm <span>↗</span></a>
 </div><div class="hero-art"><img src="{{ url_for('static', filename='images/shoe-1.svg') }}" alt="Minh họa giày thể thao"></div></section>
+{% include '_featured_sections.html' %}
 <section id="san-pham" class="section-products"><div class="section-title"><div><span class="eyebrow">GIÀY • DÉP • SANDAL</span><h2>Tất cả sản phẩm</h2></div><span>{{ products|length }} sản phẩm</span></div>
   <form method="get" action="{{ url_for('home') }}" class="search-row" role="search">
     <label for="searchInput" class="sr-only">Tìm kiếm theo tên hoặc thương hiệu</label>
