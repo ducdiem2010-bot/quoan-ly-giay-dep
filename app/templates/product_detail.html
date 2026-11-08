@@ -94,7 +94,10 @@
       </div>
       <label for="quantity">Số lượng</label>
       <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" step="1" required>
-      <button type="submit" class="action-primary" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
+      <div class="buy-actions">
+        <button type="submit" class="action-secondary" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
+        <button type="submit" class="action-primary buy-now-btn" formaction="{{ url_for('buy_now', product_id=product.MaSanPham) }}" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>Mua ngay</button>
+      </div>
       <p class="pickup-hint">Có giao hàng tận nơi hoặc nhận tại cửa hàng. Xem phương thức thanh toán tại bước xác nhận đơn hàng.</p>
     </form>
   </section>

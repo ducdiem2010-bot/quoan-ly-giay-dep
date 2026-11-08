@@ -1,10 +1,11 @@
 {% extends 'admin_base.html' %}
-{% block admin_title %}{{'Sửa' if product else 'Thêm'}} sản phẩm W3{% endblock %}
+{% block admin_title %}{{'Sửa' if product else 'Thêm'}} sản phẩm{% endblock %}
 {% block admin_content %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/w3_admin.css')}}">
+<link rel="stylesheet" href="{{url_for('static',filename='css/product_upload.css')}}">
 <span class="eyebrow">ADMIN · SẢN PHẨM</span>
 <h1>{{'Sửa' if product else 'Thêm'}} sản phẩm</h1>
-<form class="w3-form" method="post">
+<form class="w3-form" method="post" enctype="multipart/form-data">
 <input type="hidden" name="csrf_token" value="{{csrf_token}}">
 <label>Tên sản phẩm * <input name="name" maxlength="200" minlength="2" required value="{{product.TenSanPham if product else request.form.get('name','')}}"></label>
 <label>Giá bán (VNĐ) * <input name="price" type="number" min="0" step="0.01" required value="{{product.GiaBan if product else request.form.get('price','')}}"></label>
@@ -12,6 +13,18 @@
 {% for c in categories %}<option value="{{c.MaDanhMuc}}" {% if (product and c.MaDanhMuc==product.MaDanhMuc) or (not product and request.form.get('category_id')==c.MaDanhMuc|string) %}selected{% endif %}>{{c.TenDanhMuc}}</option>{% endfor %}</select></label>
 <label>Thương hiệu <input name="brand" maxlength="100" value="{{product.ThuongHieu or '' if product else request.form.get('brand','')}}"></label>
 <label>Mô tả <textarea name="description" maxlength="5000" rows="4">{{product.MoTa or '' if product else request.form.get('description','')}}</textarea></label>
-<div class="w3-actions"><button class="action-primary" type="submit">Lưu vào database</button><a href="{{url_for('admin_w3.products')}}">Quay lại danh sách</a></div>
-</form><p class="small text-muted">Ảnh sản phẩm và các danh mục nâng cao chưa có trong schema gốc; không tuyên bố đã hỗ trợ upload ảnh.</p>
+<section class="upload-panel">
+  <div><h2>Hình ảnh sản phẩm</h2><p>Chọn một hoặc nhiều ảnh. Định dạng JPG, PNG, WebP · tối đa 5 MB/ảnh.</p></div>
+  <label class="upload-drop" for="product-images"><span class="upload-icon">＋</span><strong>Chọn ảnh từ máy tính</strong><span>Kéo thả hoặc nhấn để tải ảnh lên</span><input id="product-images" type="file" name="images" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple></label>
+  <div id="image-preview" class="image-preview" aria-live="polite"></div>
+  {% if images %}<h3>Ảnh hiện có</h3><div class="saved-images">{% for image in images %}<div class="saved-image"><img src="{{url_for('static',filename=image.filename)}}" alt="Ảnh sản phẩm"><div><b>{{'Ảnh đại diện' if image.is_cover else 'Ảnh phụ'}}</b>{% if not image.is_cover %}<button type="submit" class="image-action" formaction="{{url_for('admin_w3.image_cover',product_id=product.MaSanPham,image_id=image.MaHinhAnh)}}">Đặt làm đại diện</button>{% endif %}<button type="submit" class="image-action danger" formaction="{{url_for('admin_w3.image_delete',product_id=product.MaSanPham,image_id=image.MaHinhAnh)}}" onclick="return confirm('Bạn có chắc muốn xóa ảnh này?')">Xóa ảnh</button></div></div>{% endfor %}</div>{% endif %}
+</section>
+{% if not product %}<fieldset><legend>Biến thể đầu tiên (không bắt buộc)</legend>
+<label>Size đầu tiên <input name="initial_size" maxlength="30" value="{{request.form.get('initial_size','')}}"></label>
+<label>Màu đầu tiên <input name="initial_color" maxlength="50" value="{{request.form.get('initial_color','')}}"></label>
+<label>Tồn ban đầu <input name="initial_stock" type="number" min="0" value="{{request.form.get('initial_stock','0')}}"></label>
+</fieldset>{% endif %}
+<div class="w3-actions"><button class="action-primary" type="submit">{{'Lưu thay đổi' if product else 'Thêm sản phẩm'}}</button><a href="{{url_for('admin_w3.products')}}">Quay lại danh sách</a></div>
+</form>
+<script src="{{url_for('static',filename='js/product_upload.js')}}" defer></script>
 {% endblock %}

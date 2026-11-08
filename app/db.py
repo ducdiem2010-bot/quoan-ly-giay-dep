@@ -86,6 +86,44 @@ def init_demo_database():
         columns = {r[1] for r in conn.execute("PRAGMA table_info(SanPham)").fetchall()}
         if "HienThi" not in columns:
             conn.execute("ALTER TABLE SanPham ADD COLUMN HienThi INTEGER NOT NULL DEFAULT 1")
-            conn.commit()
+        # Hồ sơ khách hàng: thêm cột mới cho NguoiDung, giữ nguyên dữ liệu cũ.
+        user_cols = {r[1] for r in conn.execute("PRAGMA table_info(NguoiDung)").fetchall()}
+        for col in ("Ho", "Ten", "GioiTinh", "NgaySinh", "TinhThanh", "PhuongXa"):
+            if col not in user_cols:
+                conn.execute(f"ALTER TABLE NguoiDung ADD COLUMN {col} TEXT")
+        # Product image gallery: additive migration, keeps existing products intact.
+        conn.execute("""CREATE TABLE IF NOT EXISTS SanPhamHinhAnh (
+            MaHinhAnh INTEGER PRIMARY KEY AUTOINCREMENT,
+            MaSanPham INTEGER NOT NULL REFERENCES SanPham(MaSanPham) ON DELETE CASCADE,
+            TenTep TEXT NOT NULL,
+            LaAnhDaiDien INTEGER NOT NULL DEFAULT 0 CHECK(LaAnhDaiDien IN (0,1)),
+            ThuTu INTEGER NOT NULL DEFAULT 0,
+            NgayTao TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )""")
+        # Idempotent additive migration for the SQLite demo, no DROP or data loss.
+        conn.execute("""CREATE TABLE IF NOT EXISTS YeuThich (
+            MaNguoiDung INTEGER NOT NULL REFERENCES NguoiDung(MaNguoiDung) ON DELETE CASCADE,
+            MaSanPham INTEGER NOT NULL REFERENCES SanPham(MaSanPham) ON DELETE CASCADE,
+            PRIMARY KEY (MaNguoiDung, MaSanPham))""")
+        # Nâng cấp seed demo cũ (10 SP) không xóa dữ liệu hay thay đổi ID cũ.
+        # Không dùng cho SQL Server; trên SQL Server cần quy trình seed/migration test riêng.
+        examples = [
+            ("Sandal Học Sinh Chống Trượt", 3, 290000, "LocalShoes", "Test hết tồn", [ ("39", "Đỏ", 0), ("40", "Xanh", 0) ], 1),
+            ("Giày Thể Thao Mẫu Ẩn", 1, 590000, "LocalShoes", "Test sản phẩm ẩn", [ ("41", "Đen", 8) ], 0),
+        ]
+        for name, category, price, brand, detail, variants, visible in examples:
+            existing = conn.execute("SELECT MaSanPham FROM SanPham WHERE TenSanPham=?", (name,)).fetchone()
+            if not existing:
+                cur = conn.execute("INSERT INTO SanPham (MaDanhMuc,MaNguoiTao,TenSanPham,GiaBan,ThuongHieu,MoTa,HienThi) VALUES (?,?,?,?,?,?,?)",
+                    (category, None, name, price, brand, detail, visible))
+                pid = cur.lastrowid
+            else:
+                pid = int(existing[0])
+            if not visible:
+                conn.execute("UPDATE SanPham SET HienThi=0 WHERE MaSanPham=?", (pid,))
+            for size, color, stock in variants:
+                if not conn.execute("SELECT 1 FROM BienTheSanPham WHERE MaSanPham=? AND KichThuoc=? AND MauSac=?", (pid, size, color)).fetchone():
+                    conn.execute("INSERT INTO BienTheSanPham(MaSanPham,KichThuoc,MauSac,SoLuongTon) VALUES(?,?,?,?)", (pid, size, color, stock))
+        conn.commit()
     finally:
         conn.close()

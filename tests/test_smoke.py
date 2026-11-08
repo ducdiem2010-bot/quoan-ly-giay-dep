@@ -1,4 +1,6 @@
-"""Kiểm thử tự động nghiệm thu Tuần 2 (SQLite demo, KHÔNG thay SQL Server)."""
+"""Smoke test W2 chạy trên fixture W3 mở rộng; bản W2 gốc ở docs/references/test_smoke_w2_original.py.
+Các assertion được cập nhật đúng 12 sản phẩm, 11 hiển thị, 10 bảng (9 nền + YeuThich), không bỏ test.
+"""
 import os
 import sqlite3
 import tempfile
@@ -44,18 +46,18 @@ class Week2SmokeTest(unittest.TestCase):
 
     def test_seed_and_integrity(self):
         with closing(sqlite3.connect(self.db_path)) as con:
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0], 10)
+            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0], 12)
             self.assertEqual(con.execute("SELECT COUNT(*) FROM DanhMuc").fetchone()[0], 3)
             self.assertGreaterEqual(con.execute("SELECT COUNT(*) FROM NguoiDung").fetchone()[0], 2)
             self.assertEqual(con.execute("PRAGMA foreign_key_check").fetchall(), [])
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchone()[0], 9)
+            self.assertEqual(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchone()[0], 10)
             self.assertEqual(con.execute("SELECT TongTien FROM DonHang WHERE MaDonHang=1").fetchone()[0], 3490000)
 
     def test_home_db_and_search(self):
         page = self.client.get("/")
         self.assertEqual(page.status_code, 200)
         self.assertIn("Nike Air Zoom Pegasus", page.get_data(as_text=True))
-        self.assertEqual(parse_html(page.data).cards, 10)
+        self.assertEqual(parse_html(page.data).cards, 11)
         page = self.client.get("/?q=Converse")
         self.assertEqual(parse_html(page.data).cards, 1)
 
@@ -63,7 +65,7 @@ class Week2SmokeTest(unittest.TestCase):
         page = self.client.get("/category/3")
         self.assertEqual(page.status_code, 200)
         soup = parse_html(page.data)
-        self.assertEqual(soup.cards, 4)
+        self.assertEqual(soup.cards, 5)
         self.assertIn("Dép &amp; Sandal", page.get_data(as_text=True))
         self.assertEqual(self.client.get("/category/444").status_code, 404)
 
@@ -119,7 +121,7 @@ class Week2SmokeTest(unittest.TestCase):
         submit=self.client.post("/admin/product/add",data={"csrf_token":token,"name":"Mẫu mới","price":"10000","stock":"2","category_id":"1","image":"shoe-1.svg"},follow_redirects=True)
         self.assertIn("CHƯA lưu sản phẩm",submit.get_data(as_text=True))
         with closing(sqlite3.connect(self.db_path)) as con:
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0],10)
+            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0],12)
 
     def test_seller_cannot_admin(self):
         token=self.csrf("/login")

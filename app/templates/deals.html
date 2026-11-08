@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Ưu đãi - Shoes Store{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Ưu đãi</div>
+<div class="empty-state">
+  <span class="eyebrow">ƯU ĐÃI</span>
+  <h2>Chương trình ưu đãi đang được cập nhật</h2>
+  <p><strong>Nhận tại cửa hàng:</strong> không mất phí vận chuyển.</p><p>Cửa hàng chưa có sản phẩm giảm giá. Bạn có thể xem các mẫu đang được chọn nhiều nhất.</p>
+  <a class="action-primary" href="{{ url_for('w3_catalog.trending') }}">Xem xu hướng</a>
+</div>
+{% endblock %}
