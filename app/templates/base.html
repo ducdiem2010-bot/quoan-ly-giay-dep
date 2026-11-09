@@ -7,8 +7,8 @@
     {% elif rule.endpoint == 'account_v2.profile' and sqlserver_v2|default(false) %}{% set storefront_routes.profile = rule.endpoint %}
     {% elif rule.endpoint == 'acct.profile' and not sqlserver_v2|default(false) %}{% set storefront_routes.profile = rule.endpoint %}
     {% elif rule.endpoint == 'staff_orders_v2.orders' and sqlserver_v2|default(false) %}{% set storefront_routes.staff = rule.endpoint %}
-    {% elif rule.endpoint == 'new_arrivals.show' %}{% set storefront_routes.latest = rule.endpoint %}
-    {% elif rule.endpoint == 'best_sellers.show' %}{% set storefront_routes.best = rule.endpoint %}
+    {% elif (rule.endpoint == 'new_arrivals.show' or (rule.rule == '/new-arrivals' and not rule.arguments)) %}{% set storefront_routes.latest = rule.endpoint %}
+    {% elif (rule.endpoint == 'best_sellers.show' or (rule.rule == '/best-sellers' and not rule.arguments)) %}{% set storefront_routes.best = rule.endpoint %}
     {% elif rule.endpoint == 'w3_catalog.deals' %}{% set storefront_routes.deals = rule.endpoint %}
     {% elif rule.endpoint == 'w3_catalog.trending' %}{% set storefront_routes.trending = rule.endpoint %}{% endif %}
   {% endfor %}
@@ -69,6 +69,8 @@
       <a href="{{ url_for('home') }}">Trang chủ</a>
       <a href="{{ url_for('w3_catalog.product_list') }}">Tất cả sản phẩm</a>
       <a href="{{ url_for('view_cart') }}">Giỏ hàng</a>
+      {% if storefront_routes.latest %}<a href="{{ url_for(storefront_routes.latest) }}">Sản phẩm mới nhất</a>{% endif %}
+      {% if storefront_routes.best %}<a href="{{ url_for(storefront_routes.best) }}">Sản phẩm bán chạy</a>{% endif %}
     </nav>
     <nav class="storefront-footer-links" aria-label="Tài khoản và hỗ trợ">
       <strong>Tài khoản</strong>
@@ -102,7 +104,7 @@
   }
   function onBrokenImage(img) {
     if (!img || !img.matches('img[data-storefront-image]')) return;
-    const visual = img.closest('.product-visual');
+    const visual = img.closest('.product-visual, .detail-visual');
     if (img.dataset.fallbackApplied !== 'true') {
       img.dataset.fallbackApplied = 'true';
       const fallback = img.dataset.storefrontFallbackSrc;

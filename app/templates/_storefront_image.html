@@ -1,0 +1,29 @@
+{# Dùng chung cho card và ảnh đại diện trang chi tiết. Không truy vấn hay sửa DB. #}
+{% from '_storefront_images.html' import storefront_images %}
+{% set sf_key = (product.TenSanPham|default('', true)|trim|lower) ~ '|' ~ (product.ThuongHieu|default('', true)|trim|lower) %}
+{% set sf_local = storefront_images.get(sf_key) %}
+{% set sf_fallback = 'images/shoe-' ~ ((product.MaSanPham|int % 3) + 1) ~ '.svg' %}
+{% set sf_image = namespace(file=none, note='') %}
+{% if product_covers is defined and product_covers %}
+  {% set sf_image.file = product_covers.get(product.MaSanPham|int) %}
+{% endif %}
+{% if sf_image.file is not string or not sf_image.file %}
+  {% set sf_upload = product.AnhDaiDien|default('', true) %}
+  {% if sf_upload is string and sf_upload and '/' not in sf_upload and '\\' not in sf_upload and '..' not in sf_upload and ':' not in sf_upload %}
+    {% set sf_image.file = 'uploads/products/' ~ sf_upload %}
+  {% elif sf_local %}
+    {% set sf_image.file = sf_local.file %}
+    {% set sf_image.note = sf_local.note %}
+  {% else %}
+    {% set sf_image.file = sf_fallback %}
+    {% set sf_image.note = 'Ảnh minh họa' %}
+  {% endif %}
+{% endif %}
+<img {% if storefront_main_image|default(false) %}id="product-main-image"{% endif %}
+     src="{{ url_for('static', filename=sf_image.file) }}"
+     alt="{{ sf_image.note ~ ': ' if sf_image.note else 'Ảnh sản phẩm: ' }}{{ product.TenSanPham }}"
+     data-storefront-image data-storefront-fallback-src="{{ url_for('static', filename=sf_fallback) }}"
+     data-fallback-alt="Ảnh minh họa: {{ product.TenSanPham }}"
+     loading="{{ 'eager' if storefront_main_image|default(false) else 'lazy' }}" decoding="async" width="800" height="700">
+<span class="storefront-image-note"{% if not sf_image.note %} hidden{% endif %}>{{ sf_image.note or 'Ảnh minh họa' }}</span>
+<span class="storefront-image-unavailable" hidden>Ảnh hiện chưa khả dụng</span>
