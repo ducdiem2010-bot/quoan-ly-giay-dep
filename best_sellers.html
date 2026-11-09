@@ -1,0 +1,35 @@
+<!-- Vị trí lưu: app/templates/best_sellers.html -->
+{% extends "base.html" %} <!-- Tùy thuộc vào layout gốc của nhóm bạn -->
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/best_sellers.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🔥 Sản Phẩm Bán Chạy Nhất 🔥</h2>
+...
+
+    {% if products and products|length > 0 %}
+        <div class="row">
+            {% for p in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ url_for('static', filename='uploads/' ~ p.HinhAnh) }}" class="card-img-top" alt="{{ p.TenSanPham }}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ p.TenSanPham }}</h5>
+                        <p class="text-danger fw-bold">{{ "{:,.0f}".format(p.GiaBan) }} VNĐ</p>
+                        <div class="badge bg-success fs-6">Đã bán: {{ p.TongDaBan }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center mt-4">
+            <h4>Chưa có dữ liệu thống kê!</h4>
+            <p>Hiện tại chưa có đơn hàng nào hoàn thành hợp lệ để tính doanh số bán chạy.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

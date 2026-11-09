@@ -1,0 +1,4 @@
+MaSanPham,SoBienThe,SoDonHopLe,Expected_DaBan,Actual_DaBan,GhiChu
+SP001,2,1,5,5,Đã test cộng dồn 2 biến thể (2+3=5)
+SP002,1,0,0,0,Đơn hàng có 9 sản phẩm nhưng đã Hủy (-1) -> Không cộng
+SP003,0,0,0,0,Trạng thái không có đơn hợp lệ -> Trả về mảng rỗng []
