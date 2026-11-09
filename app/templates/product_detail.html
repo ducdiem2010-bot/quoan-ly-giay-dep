@@ -29,10 +29,16 @@
 <article class="product-detail detail-page" aria-labelledby="detail-title">
   <section class="detail-gallery" aria-label="Hình ảnh sản phẩm">
     <div class="detail-visual">
+      {% if cover.photo %}
       <img id="product-main-image" src="{{ url_for('static', filename=cover.photo.filename) if cover.photo else fallback }}"
            data-fallback-src="{{ fallback }}" width="600" height="520"
            alt="{{ cover.photo.alt|default(product.TenSanPham, true) if cover.photo else 'Ảnh minh họa ' ~ product.TenSanPham }}">
+      {% else %}
+      {% set storefront_main_image = true %}
+      {% include '_storefront_image.html' %}
+      {% endif %}
     </div>
+    {% if not cover.photo %}<p class="storefront-photo-caption">Ảnh tham khảo kiểu dáng; màu thực tế theo biến thể bạn chọn.</p>{% endif %}
     {% if gallery|length > 1 %}
     <div class="detail-thumbnails" role="group" aria-label="Chọn ảnh sản phẩm">
       {% for photo in gallery %}

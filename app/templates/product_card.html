@@ -1,23 +1,18 @@
-{# Partial dùng chung; product giữ nguyên tên trường của schema hiện tại. #}
-<article class="product-card" data-product-id="{{ product.MaSanPham }}">
-  <a class="product-visual" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Xem {{ product.TenSanPham }}">
-    {# product_covers là mapping trình bày đề xuất: {MaSanPham: filename tương đối trong static}.
-       Backend hiện tại chưa bàn giao ảnh: khi thiếu mapping, dùng SVG của nhóm.
-       Không giả định cột ảnh mới trong SanPham; backend phải xác thực filename. #}
-    {% set cover_filename = product_covers.get(product.MaSanPham) if product_covers is defined else none %}
-    {% set has_cover = cover_filename is not none and cover_filename != '' %}
-    {% set cover_filename = cover_filename if has_cover else 'images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg' %}
-    <img src="{{ url_for('static', filename=cover_filename) }}" alt="{{ 'Ảnh ' if has_cover else 'Ảnh minh họa ' }}{{ product.TenSanPham }}" data-product-image data-fallback-src="{{ url_for('static', filename='images/shoe-1.svg') }}" loading="lazy" width="400" height="350">
+{% set card_id = product.MaSanPham|int %}
+<article class="product-card storefront-card" data-product-id="{{ card_id }}">
+  <a class="product-visual" href="{{ url_for('product_detail', product_id=card_id) }}" aria-label="Xem chi tiết {{ product.TenSanPham }}">
+    {% include '_storefront_image.html' %}
   </a>
   <div class="product-meta">
-    <span class="eyebrow">{{ product.ThuongHieu or 'Giày dép' }}</span>
-    <span class="stock-label">{{ 'Hết hàng' if product.TongTon == 0 else 'Còn ' ~ product.TongTon }}</span>
+    <span class="eyebrow">{{ product.ThuongHieu|default('Giày dép', true) }}</span>
+    <span class="stock-label{{ ' is-out-of-stock' if product.TongTon|int <= 0 else '' }}">{{ 'Hết hàng' if product.TongTon|int <= 0 else 'Còn ' ~ product.TongTon }}</span>
   </div>
-  <h3><a href="{{ url_for('product_detail', product_id=product.MaSanPham) }}">{{ product.TenSanPham }}</a></h3>
-  <p class="category-label">{{ product.TenDanhMuc }}</p>
+  <h3><a href="{{ url_for('product_detail', product_id=card_id) }}">{{ product.TenSanPham }}</a></h3>
+  <p class="category-label">{{ product.TenDanhMuc|default('', true) }}</p>
   <div class="card-bottom">
     <strong>{{ product.GiaBan|vnd }}</strong>
-    <a class="circle-arrow" href="{{ url_for('product_detail', product_id=product.MaSanPham) }}" aria-label="Xem chi tiết {{ product.TenSanPham }}">↗</a>
+    <a class="circle-arrow" href="{{ url_for('product_detail', product_id=card_id) }}" aria-label="Xem chi tiết {{ product.TenSanPham }}">↗</a>
   </div>
+  {# Chỉ mẫu /products vốn đã có form yêu thích; giữ nguyên CSRF và contract. #}
   {% include 'favorite_button.html' %}
 </article>
