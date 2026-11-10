@@ -9,8 +9,8 @@
 <label>Màu <input name="color" maxlength="50" required placeholder="Đen"></label>
 <label>Tồn kho <input name="stock" type="number" min="0" step="1" required value="0"></label>
 <button type="submit" class="action-primary">Thêm biến thể</button></form>
-<div class="table-wrap"><table class="admin-table"><thead><tr><th>ID</th><th>Size</th><th>Màu</th><th>Tồn kho</th></tr></thead><tbody>
-{% for v in variants %}<tr><td>{{v.MaBienThe}}</td><td>{{v.KichThuoc}}</td><td>{{v.MauSac}}</td><td>{{v.SoLuongTon}}</td></tr>
-{% else %}<tr><td colspan="4">Chưa có biến thể.</td></tr>{% endfor %}</tbody></table></div>
+<div class="table-wrap"><table class="admin-table"><thead><tr><th>ID</th><th>Size</th><th>Màu</th><th>Tồn kho</th><th>Cập nhật</th></tr></thead><tbody>
+{% for v in variants %}<tr><td>{{v.MaBienThe}}</td><td><input form="edit-{{v.MaBienThe}}" name="size" value="{{v.KichThuoc}}" required maxlength="30" aria-label="Size"></td><td><input form="edit-{{v.MaBienThe}}" name="color" value="{{v.MauSac}}" required maxlength="50" aria-label="Màu"></td><td><input form="edit-{{v.MaBienThe}}" name="stock" type="number" value="{{v.SoLuongTon}}" min="0" required aria-label="Tồn"></td><td><form id="edit-{{v.MaBienThe}}" method="post" action="{{url_for('admin_w3.variant_edit',product_id=product.MaSanPham,variant_id=v.MaBienThe)}}"><input type="hidden" name="csrf_token" value="{{csrf_token}}"><button type="submit">Lưu</button></form></td></tr>
+{% else %}<tr><td colspan="5">Chưa có biến thể.</td></tr>{% endfor %}</tbody></table></div>
 <a href="{{url_for('admin_w3.products')}}">← Trở về quản lý sản phẩm</a>
 {% endblock %}

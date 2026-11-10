@@ -4,6 +4,7 @@ from .db import query_all, query_one
 SELECT_PRODUCT = """
  SELECT sp.MaSanPham, sp.TenSanPham, sp.HienThi, sp.GiaBan, sp.ThuongHieu, sp.MoTa,
         sp.MaDanhMuc, dm.TenDanhMuc,
+        (SELECT TenTep FROM SanPhamHinhAnh ia WHERE ia.MaSanPham=sp.MaSanPham AND ia.LaAnhDaiDien=1) AS AnhDaiDien,
         COALESCE(SUM(bt.SoLuongTon), 0) AS TongTon
  FROM SanPham sp
  JOIN DanhMuc dm ON dm.MaDanhMuc = sp.MaDanhMuc

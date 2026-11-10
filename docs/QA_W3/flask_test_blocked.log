@@ -1,0 +1,72 @@
+======================================================================
+ERROR: test_checkout_update (unittest.loader._FailedTest.test_checkout_update)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_checkout_update
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.13/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/tests/test_checkout_update.py", line 6, in <module>
+    from app import create_app
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/app/__init__.py", line 3, in <module>
+    from flask import Flask, session
+ModuleNotFoundError: No module named 'flask'
+
+
+======================================================================
+ERROR: test_integration_w3 (unittest.loader._FailedTest.test_integration_w3)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_integration_w3
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.13/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/tests/test_integration_w3.py", line 4, in <module>
+    from app import create_app
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/app/__init__.py", line 3, in <module>
+    from flask import Flask, session
+ModuleNotFoundError: No module named 'flask'
+
+
+======================================================================
+ERROR: test_smoke (unittest.loader._FailedTest.test_smoke)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_smoke
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.13/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/tests/test_smoke.py", line 28, in <module>
+    from app import create_app
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/app/__init__.py", line 3, in <module>
+    from flask import Flask, session
+ModuleNotFoundError: No module named 'flask'
+
+
+======================================================================
+ERROR: test_w3_extensions (unittest.loader._FailedTest.test_w3_extensions)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_w3_extensions
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.13/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/tests/test_w3_extensions.py", line 5, in <module>
+    from app import create_app
+  File "/mnt/data/w3_work/Nhom6_WebGiayDep_TichHop_W2_W3/app/__init__.py", line 3, in <module>
+    from flask import Flask, session
+ModuleNotFoundError: No module named 'flask'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+FAILED (errors=4)

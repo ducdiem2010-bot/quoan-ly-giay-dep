@@ -3,3 +3,43 @@
 @media(max-width:1100px){.shell-header{flex-wrap:wrap;padding:15px 0;justify-content:space-between}.nav-links{order:3;width:100%;justify-content:center;gap:13px}.nav-links a{font-size:12px}.product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-copy{padding:40px}}
 @media(max-width:768px){.container{width:min(100% - 28px,1180px)}.main-area{padding-top:21px}.shell-header{min-height:65px}.nav-links{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:7px}.nav-links a{flex-shrink:0}.hero{grid-template-columns:1fr;min-height:0;margin-bottom:38px}.hero-copy{padding:32px 25px 15px}.hero-art{min-height:180px;max-height:255px}.hero-art img{width:min(83%,340px)}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.product-card{padding:10px}.product-card h3{font-size:14px}.product-detail,.cart-layout,.checkout-layout,.admin-layout{grid-template-columns:1fr;gap:18px}.detail-visual{min-height:250px}.detail-visual img{max-height:340px}.footer-flex{grid-template-columns:1fr 1fr}.admin-sidebar{flex-direction:row;flex-wrap:wrap}.admin-sidebar .eyebrow,.admin-sidebar h2{width:100%}.admin-sidebar a{flex:1 1 130px}}
 @media(max-width:430px){.container{width:calc(100% - 24px)}.brand{font-size:18px}.brand-icon{width:30px;height:30px;font-size:16px}.account-actions{gap:4px;font-size:12px}.register-link{padding:5px 8px}.search-row{gap:6px}.search-row .action-primary{padding:10px 12px}.product-grid{gap:8px}.product-meta{flex-wrap:wrap}.product-card h3{min-height:40px;font-size:13px}.card-bottom strong{font-size:13px}.product-visual{aspect-ratio:1}.footer-flex{grid-template-columns:1fr}.section-title{align-items:flex-start;flex-wrap:wrap}.cart-item{gap:8px}.cart-item img{width:75px}.cart-items,.cart-summary,.panel,.admin-panel{padding:15px}.error-code{font-size:60px}}
+
+/* Menu tài khoản trong header: bấm để mở form đăng nhập */
+.account-menu{position:relative}.account-menu summary{list-style:none;cursor:pointer}.account-menu summary::-webkit-details-marker{display:none}
+.account-trigger{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--line);border-radius:99px;background:#fff;transition:background .15s}
+.account-trigger:hover,.account-menu[open] .account-trigger{background:#eef5df}
+.account-avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;flex-shrink:0}
+.account-text{display:flex;flex-direction:column;line-height:1.2;text-align:left}.account-text strong{font-size:13px;font-weight:800}.account-text small{font-size:12px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.account-dropdown{position:absolute;right:0;top:calc(100% + 10px);width:min(320px,calc(100vw - 28px));background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 18px 40px #1f33271f;z-index:20;white-space:normal}
+.account-dropdown label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}.account-dropdown input{display:block;width:100%}
+.account-submit{width:100%;margin-top:16px;background:var(--ink);color:#fff;border:0;border-radius:11px;min-height:44px;font-weight:750}.account-submit:hover{background:#315643}.account-logout{margin-top:10px;background:#fff;color:#ba3f46;border:1px solid var(--line)}.account-logout:hover{background:#fbeeee}
+.account-foot{margin:14px 0 0;color:var(--muted);font-size:13px;text-align:center}.account-foot a{color:#587b30;font-weight:700}
+.account-hello{margin:0 0 12px;font-size:14px}.account-link{display:block;padding:10px 12px;border-radius:9px;background:#eef5df;font-weight:700;font-size:13px}
+
+/* Giỏ hàng cạnh nút Tài khoản */
+.cart-trigger{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--line);border-radius:99px;background:#fff;transition:background .15s}.cart-trigger:hover{background:#eef5df;color:inherit}
+.cart-trigger .account-avatar{position:relative;overflow:visible}.cart-badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:99px;background:#e0443e;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;line-height:1}
+@media(max-width:560px){.account-text small{display:none}.account-trigger,.cart-trigger{padding-right:5px}.account-text strong{display:none}}
+
+/* Thanh menu: Ưu đãi, Xu hướng + trang Xu hướng */
+.nav-hot{display:inline-block;background:#e0443e;color:#fff;font-size:9px;font-weight:800;letter-spacing:.06em;padding:2px 6px;border-radius:99px;vertical-align:middle;margin-left:3px}.nav-trend{color:#236340}
+.trend-hero{background:#eef5df;border-radius:23px;display:grid;grid-template-columns:1fr .8fr;align-items:center;overflow:hidden;margin:0 0 50px;min-height:320px}.trend-copy{padding:50px 30px 50px 62px}.trend-copy h1{font-size:clamp(32px,4vw,54px);letter-spacing:-.06em;line-height:1.1;font-weight:850;margin:20px 0 15px}.trend-copy h1 em{font-style:normal;color:#799b47}.trend-copy p{max-width:430px;color:#5d7064;margin-bottom:26px}.trend-art{display:grid;place-items:center;min-height:250px;transform:rotate(-6deg)}.trend-art img{width:min(90%,430px);filter:drop-shadow(0 24px 18px #354c295c)}
+.trend-item{position:relative;min-width:0}.trend-rank{position:absolute;top:-8px;left:-6px;z-index:1;background:var(--ink);color:#fff;font-weight:850;font-size:13px;padding:5px 11px;border-radius:99px;box-shadow:0 4px 10px #1f33273d}.trend-sold{margin:8px 4px 0;font-size:12px;font-weight:700;color:#587b30}.trend-new{color:var(--muted)}.trend-note{margin:22px 0 0;color:var(--muted);font-size:12px}.trend-more{margin-top:46px}.trend-more h3{font-size:20px;font-weight:850;margin:0 0 14px}
+@media(max-width:768px){.trend-hero{grid-template-columns:1fr;min-height:0;margin-bottom:34px}.trend-copy{padding:30px 24px 10px}.trend-art{min-height:170px}}
+
+/* Header gọn để vừa 1 hàng khi có thêm Ưu đãi/Xu hướng */
+.shell-header{gap:14px}.nav-links{gap:15px;flex-wrap:nowrap}.nav-links a{white-space:nowrap}.account-actions{flex-wrap:nowrap;flex-shrink:0}
+.account-text small{max-width:84px}.account-trigger,.cart-trigger{padding-right:10px}
+@media(max-width:1240px){.shell-header{flex-wrap:wrap;padding:15px 0}.nav-links{order:3;width:100%;justify-content:center}}
+@media(max-width:768px){.nav-links{justify-content:flex-start;overflow-x:auto}}
+
+/* Banner quảng cáo tự trượt */
+.hero-slider{position:relative;border-radius:23px;overflow:hidden;margin:6px 0 60px}.hero-track{display:flex;transition:transform .6s ease}.hero-slide{flex:0 0 100%;min-width:0;margin:0;border-radius:0}
+.slide-trend{background:#eef5df}.slide-product{background:#f8ecdf}.slide-deal{background:#e3eef6}.slide-product .hero-pill{background:#f1d9bd}.slide-deal .hero-pill{background:#c9dfef}.slide-product .hero h1 em,.slide-product h1 em{color:#b0743c}.slide-deal h1 em{color:#3f7fae}
+.slide-product h1{font-size:clamp(30px,3.8vw,52px)}.hero-slide .hero-copy p{max-width:460px}
+.hero-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:42px;height:42px;border-radius:50%;border:1px solid #d5dfd2;background:#ffffffd9;color:var(--ink);font-size:26px;line-height:1;display:grid;place-items:center;padding:0 0 3px}.hero-nav:hover{background:#fff}.hero-prev{left:14px}.hero-next{right:14px}
+.hero-dots{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:9px;z-index:2}.hero-dot{width:10px;height:10px;padding:0;border-radius:99px;border:0;background:#1f33274d;transition:width .25s,background .25s}.hero-dot[aria-current="true"]{width:28px;background:var(--ink)}
+@media(max-width:768px){.hero-slider{margin-bottom:38px}.hero-nav{display:none}.hero-slide .hero-copy{padding-bottom:30px}.hero-dots{bottom:10px}}
+
+/* Menu tài khoản: hai liên kết xếp dọc */
+.account-link+.account-link{margin-top:8px}.account-link-2{background:#f5f7f2}.account-dropdown form{margin-top:10px}

@@ -1,0 +1,18 @@
+{% extends 'account_base.html' %}
+{% block account_body %}
+<div class="acct-orders">
+  <h2>Đơn hàng của tôi</h2>
+  {% if orders %}
+  {% for o in orders %}
+  <article class="order-card">
+    <header><div><strong>Đơn #{{ o.MaDonHang }}</strong><small>{{ o.NgayDat }}</small></div>
+      <span class="order-status">{{ o.TrangThai }}</span></header>
+    <ul>{% for it in o["items"] %}<li><a href="{{ url_for('product_detail', product_id=it.MaSanPham) }}">{{ it.TenSanPham }}</a> <small>{{ it.MauSac }} · Size {{ it.KichThuoc }}</small><span>× {{ it.SoLuong }}</span><strong>{{ (it.DonGia * it.SoLuong)|vnd }}</strong></li>{% endfor %}</ul>
+    <footer><span>Tổng tạm tính</span><strong>{{ o.TongTien|vnd }}</strong></footer>
+  </article>
+  {% endfor %}
+  {% else %}
+  <div class="acct-empty"><p>Bạn chưa có đơn hàng nào.</p><a class="action-primary" href="{{ url_for('w3_catalog.product_list') }}">Xem sản phẩm</a></div>
+  {% endif %}
+</div>
+{% endblock %}

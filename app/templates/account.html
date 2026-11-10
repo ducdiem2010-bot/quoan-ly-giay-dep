@@ -1,0 +1,52 @@
+{% extends 'account_base.html' %}
+{% block account_body %}
+<div class="acct-grid">
+  <aside class="acct-side">
+    <div class="acct-user"><span class="acct-initials" aria-hidden="true">{{ initials }}</span>
+      <div><strong>{{ user.HoVaTen }}</strong><small>{{ user.Email }}</small></div></div>
+    <nav class="acct-menu" aria-label="Mục tài khoản">
+      <a href="#thong-tin" class="active"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>Thông tin tài khoản</a>
+      <a href="#dia-chi"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Địa chỉ giao hàng</a>
+      <a href="#lien-he-tk"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Thông tin liên hệ</a>
+    </nav>
+    <p class="acct-side-note">Thông tin lưu ở đây sẽ được <strong>điền sẵn khi đặt hàng</strong>. Bạn vẫn có thể nhập thông tin khác ở bước thanh toán.</p>
+  </aside>
+  <form id="profile-form" class="acct-main" method="post" action="{{ url_for('acct.profile') }}" data-start-editing="{{ '1' if editing else '0' }}" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <section id="thong-tin">
+      <div class="acct-head"><h2>Thông tin cá nhân</h2><button type="button" id="edit-toggle" class="acct-edit">Chỉnh sửa</button></div>
+      <div class="acct-row acct-row-3">
+        <div><label for="ten">Tên <i>*</i></label><input id="ten" name="ten" data-editable maxlength="60" required autocomplete="given-name" value="{{ v.ten }}"></div>
+        <div><label for="ho">Họ <i>*</i></label><input id="ho" name="ho" data-editable maxlength="60" required autocomplete="family-name" value="{{ v.ho }}"></div>
+        <div><span class="acct-label">Giới tính</span>
+          <div class="acct-radios">
+            <label><input type="radio" name="gender" value="Nam" data-editable {{ 'checked' if v.gender == 'Nam' else '' }}> Nam</label>
+            <label><input type="radio" name="gender" value="Nữ" data-editable {{ 'checked' if v.gender == 'Nữ' else '' }}> Nữ</label>
+          </div></div>
+      </div>
+      <div class="acct-row acct-row-3">
+        <div><label for="day">Ngày sinh</label><select id="day" name="day" data-editable><option value="">Ngày</option>{% for d in range(1, 32) %}<option value="{{ d }}" {{ 'selected' if v.day|string == d|string else '' }}>{{ d }}</option>{% endfor %}</select></div>
+        <div><label for="month">Tháng sinh</label><select id="month" name="month" data-editable><option value="">Tháng</option>{% for m in range(1, 13) %}<option value="{{ m }}" {{ 'selected' if v.month|string == m|string else '' }}>{{ m }}</option>{% endfor %}</select></div>
+        <div><label for="year">Năm sinh</label><select id="year" name="year" data-editable><option value="">Năm</option>{% for y in years %}<option value="{{ y }}" {{ 'selected' if v.year|string == y|string else '' }}>{{ y }}</option>{% endfor %}</select></div>
+      </div>
+    </section>
+    <section id="dia-chi">
+      <h2>Thông tin địa chỉ</h2>
+      <div class="acct-row acct-row-2">
+        <div><label for="province">Tỉnh / Thành phố</label><select id="province" name="province" data-editable autocomplete="address-level1"><option value="">Chọn Tỉnh / Thành phố</option>{% for p in provinces %}<option value="{{ p }}" {{ 'selected' if v.province == p else '' }}>{{ p }}</option>{% endfor %}</select></div>
+        <div><label for="ward">Phường / Xã</label><input id="ward" name="ward" data-editable maxlength="100" autocomplete="address-level2" placeholder="Ví dụ: Phường Trà Lý" value="{{ v.ward }}"></div>
+      </div>
+      <div class="acct-row"><div><label for="address">Số nhà, tên đường</label><input id="address" name="address" data-editable maxlength="150" autocomplete="street-address" placeholder="Số nhà, đường, thôn/xóm..." value="{{ v.address }}"></div></div>
+    </section>
+    <section id="lien-he-tk">
+      <h2>Thông tin liên hệ</h2>
+      <div class="acct-row acct-row-2">
+        <div><label for="phone">Số điện thoại</label><input id="phone" name="phone" type="tel" data-editable maxlength="20" autocomplete="tel-national" placeholder="09xxxxxxxx" value="{{ v.phone }}"></div>
+        <div><label for="email">Email <small>(dùng để đăng nhập)</small></label><input id="email" name="email" type="email" data-editable maxlength="150" required autocomplete="email" value="{{ v.email }}"></div>
+      </div>
+    </section>
+    <button id="save-profile" class="action-primary acct-save" type="submit">Lưu thông tin</button>
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/account.js') }}" defer></script>{% endblock %}

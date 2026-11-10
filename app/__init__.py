@@ -11,10 +11,9 @@ def create_app(test_config=None):
         DB_BACKEND=os.getenv("DB_BACKEND", "sqlite").lower(),
         DATABASE=os.getenv("DB_PATH", str(Path(app.instance_path) / "demo.sqlite3")),
         SQLSERVER_CONN=os.getenv("SQLSERVER_CONN", ""),
+        MAX_CONTENT_LENGTH=45 * 1024 * 1024,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
-        TUAN_W4_PREVIEW=os.getenv("TUAN_W4_PREVIEW", "0") == "1",
-        TUAN_ORDER_UI_PROVIDER=None,
     )
     if test_config:
         app.config.update(test_config)
@@ -24,13 +23,12 @@ def create_app(test_config=None):
             init_demo_database()
     from .routes import register_routes
     register_routes(app)
-    from .catalog_w3 import w3_catalog
-    from .admin_w3 import admin_w3
+    from .routes.catalog import w3_catalog
+    from .routes.admin import admin_w3
+    from .routes.account import acct
+    app.register_blueprint(acct)
     app.register_blueprint(w3_catalog)
     app.register_blueprint(admin_w3)
-    # W4 Tuấn: bộ điều khiển trình bày; không truy vấn DB hay xử lý nghiệp vụ đơn.
-    from .tuan_w4_ui import tuan_w4_ui
-    app.register_blueprint(tuan_w4_ui)
 
     @app.context_processor
     def inject_shared():
