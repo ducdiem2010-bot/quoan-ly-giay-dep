@@ -1,0 +1,87 @@
+KET QUA TEST W4 (SQLite test, tao boi AI - 2026-11-10). SQL Server CHUA duoc chay that.
+Lenh: python -m unittest discover -s tests -p "test*.py" -v
+
+test_account_requires_login (test_account.AccountTests.test_account_requires_login) ... ok
+test_checkout_prefill_and_different_info (test_account.AccountTests.test_checkout_prefill_and_different_info) ... ok
+test_first_purchase_sets_default (test_account.AccountTests.test_first_purchase_sets_default) ... ok
+test_guest_checkout_has_login_hint (test_account.AccountTests.test_guest_checkout_has_login_hint) ... ok
+test_orders_tab_lists_user_orders (test_account.AccountTests.test_orders_tab_lists_user_orders) ... ok
+test_profile_csrf_and_duplicate_email (test_account.AccountTests.test_profile_csrf_and_duplicate_email) ... ok
+test_profile_validation (test_account.AccountTests.test_profile_validation) ... ok
+test_save_profile (test_account.AccountTests.test_save_profile) ... ok
+test_buy_now_goes_to_checkout_without_touching_cart (test_buy_now.BuyNowLoginTests.test_buy_now_goes_to_checkout_without_touching_cart) ... ok
+test_buy_now_validation (test_buy_now.BuyNowLoginTests.test_buy_now_validation) ... ok
+test_buy_now_works_with_empty_cart_and_no_login (test_buy_now.BuyNowLoginTests.test_buy_now_works_with_empty_cart_and_no_login) ... ok
+test_cart_kept_after_buy_now_order (test_buy_now.BuyNowLoginTests.test_cart_kept_after_buy_now_order) ... ok
+test_checkout_without_any_basket_redirects_to_cart (test_buy_now.BuyNowLoginTests.test_checkout_without_any_basket_redirects_to_cart) ... ok
+test_header_login_form_keeps_query_in_next (test_buy_now.BuyNowLoginTests.test_header_login_form_keeps_query_in_next) ... ok
+test_login_keeps_buy_now_and_query (test_buy_now.BuyNowLoginTests.test_login_keeps_buy_now_and_query) ... ok
+test_normal_checkout_ignores_buy_now_session (test_buy_now.BuyNowLoginTests.test_normal_checkout_ignores_buy_now_session) ... ok
+test_product_page_has_both_buttons (test_buy_now.BuyNowLoginTests.test_product_page_has_both_buttons) ... ok
+test_buy_now_goes_to_checkout_without_touching_cart (test_buy_now.BuyNowTests.test_buy_now_goes_to_checkout_without_touching_cart) ... ok
+test_buy_now_validation (test_buy_now.BuyNowTests.test_buy_now_validation) ... ok
+test_buy_now_works_with_empty_cart_and_no_login (test_buy_now.BuyNowTests.test_buy_now_works_with_empty_cart_and_no_login) ... ok
+test_cart_kept_after_buy_now_order (test_buy_now.BuyNowTests.test_cart_kept_after_buy_now_order) ... ok
+test_checkout_without_any_basket_redirects_to_cart (test_buy_now.BuyNowTests.test_checkout_without_any_basket_redirects_to_cart) ... ok
+test_normal_checkout_ignores_buy_now_session (test_buy_now.BuyNowTests.test_normal_checkout_ignores_buy_now_session) ... ok
+test_product_page_has_both_buttons (test_buy_now.BuyNowTests.test_product_page_has_both_buttons) ... ok
+test_checkout_csrf_block (test_checkout_update.CheckoutUpdateTests.test_checkout_csrf_block) ... ok
+test_checkout_delivery_bank_transfer_pending (test_checkout_update.CheckoutUpdateTests.test_checkout_delivery_bank_transfer_pending) ... ok
+test_checkout_has_shipping_and_payment (test_checkout_update.CheckoutUpdateTests.test_checkout_has_shipping_and_payment) ... ok
+test_checkout_insufficient_stock_no_order (test_checkout_update.CheckoutUpdateTests.test_checkout_insufficient_stock_no_order) ... ok
+test_checkout_pickup_persists_order_not_paid (test_checkout_update.CheckoutUpdateTests.test_checkout_pickup_persists_order_not_paid) ... ok
+test_checkout_validate_address (test_checkout_update.CheckoutUpdateTests.test_checkout_validate_address) ... ok
+test_checkout_validate_invalid_payment (test_checkout_update.CheckoutUpdateTests.test_checkout_validate_invalid_payment) ... ok
+test_checkout_validate_phone (test_checkout_update.CheckoutUpdateTests.test_checkout_validate_phone) ... ok
+test_product_status_in_stock (test_checkout_update.CheckoutUpdateTests.test_product_status_in_stock) ... ok
+test_product_status_sold_out (test_checkout_update.CheckoutUpdateTests.test_product_status_sold_out) ... ok
+test_success_not_public_without_session (test_checkout_update.CheckoutUpdateTests.test_success_not_public_without_session) ... ok
+test_admin_add_variant_duplicate_rejected (test_integration_w3.IntegrationW3.test_admin_add_variant_duplicate_rejected) ... ok
+test_admin_form_and_crud (test_integration_w3.IntegrationW3.test_admin_form_and_crud) ... ok
+test_admin_negative_price_rollback (test_integration_w3.IntegrationW3.test_admin_negative_price_rollback) ... ok
+test_admin_seller_forbidden (test_integration_w3.IntegrationW3.test_admin_seller_forbidden) ... ok
+test_admin_unauth (test_integration_w3.IntegrationW3.test_admin_unauth) ... ok
+test_csrf_block (test_integration_w3.IntegrationW3.test_csrf_block) ... ok
+test_detail (test_integration_w3.IntegrationW3.test_detail) ... ok
+test_filter_category_brand (test_integration_w3.IntegrationW3.test_filter_category_brand) ... ok
+test_paging (test_integration_w3.IntegrationW3.test_paging) ... ok
+test_public_catalog (test_integration_w3.IntegrationW3.test_public_catalog) ... ok
+test_search_empty (test_integration_w3.IntegrationW3.test_search_empty) ... ok
+test_search_existing (test_integration_w3.IntegrationW3.test_search_existing) ... ok
+test_sort_price_asc (test_integration_w3.IntegrationW3.test_sort_price_asc) ... ok
+test_variant_same_row (test_integration_w3.IntegrationW3.test_variant_same_row) ... ok
+test_cancel_paid_order_marks_refund (test_inventory_w4.InventoryTests.test_cancel_paid_order_marks_refund) ... ok
+test_cod_has_no_online_payment_failure (test_inventory_w4.InventoryTests.test_cod_has_no_online_payment_failure) ... ok
+test_concurrent_orders_never_oversell (test_inventory_w4.InventoryTests.test_concurrent_orders_never_oversell) ... ok
+test_confirm_keeps_stock_deducted_and_customer_cannot_cancel_confirmed (test_inventory_w4.InventoryTests.test_confirm_keeps_stock_deducted_and_customer_cannot_cancel_confirmed) ... ok
+test_customer_cancel_restores_once (test_inventory_w4.InventoryTests.test_customer_cancel_restores_once) ... ok
+test_insufficient_stock_rolls_back_everything (test_inventory_w4.InventoryTests.test_insufficient_stock_rolls_back_everything) ... ok
+test_invalid_basket_rejected (test_inventory_w4.InventoryTests.test_invalid_basket_rejected) ... ok
+test_legacy_orders_migrated_not_lost (test_inventory_w4.InventoryTests.test_legacy_orders_migrated_not_lost) ... ok
+test_payment_failed_restores_once_and_marks_transaction (test_inventory_w4.InventoryTests.test_payment_failed_restores_once_and_marks_transaction) ... ok
+test_payment_reference_unique (test_inventory_w4.InventoryTests.test_payment_reference_unique) ... ok
+test_permissions (test_inventory_w4.InventoryTests.test_permissions) ... ok
+test_place_order_deducts_per_variant_and_records_snapshot (test_inventory_w4.InventoryTests.test_place_order_deducts_per_variant_and_records_snapshot) ... ok
+test_reject_restores_once_and_blocks_further_cancel (test_inventory_w4.InventoryTests.test_reject_restores_once_and_blocks_further_cancel) ... ok
+test_sold_out_and_hidden_variants_cannot_be_ordered (test_inventory_w4.InventoryTests.test_sold_out_and_hidden_variants_cannot_be_ordered) ... ok
+test_admin_guard_and_login (test_smoke.Week2SmokeTest.test_admin_guard_and_login) ... ok
+test_cart_guard (test_smoke.Week2SmokeTest.test_cart_guard) ... ok
+test_cart_session_and_remove (test_smoke.Week2SmokeTest.test_cart_session_and_remove) ... ok
+test_category_filter (test_smoke.Week2SmokeTest.test_category_filter) ... ok
+test_custom_500 (test_smoke.Week2SmokeTest.test_custom_500) ... ok
+test_details_404_and_static (test_smoke.Week2SmokeTest.test_details_404_and_static) ... ok
+test_home_db_and_search (test_smoke.Week2SmokeTest.test_home_db_and_search) ... ok
+test_register_and_login (test_smoke.Week2SmokeTest.test_register_and_login) ... ok
+test_seed_and_integrity (test_smoke.Week2SmokeTest.test_seed_and_integrity) ... ok
+test_seller_cannot_admin (test_smoke.Week2SmokeTest.test_seller_cannot_admin) ... ok
+test_12_seed_and_hidden (test_w3_extensions.ExtensionsW3.test_12_seed_and_hidden) ... ok
+test_atomic_product_variant_failure (test_w3_extensions.ExtensionsW3.test_atomic_product_variant_failure) ... ok
+test_favorite_toggle (test_w3_extensions.ExtensionsW3.test_favorite_toggle) ... ok
+test_seller_no_favorite (test_w3_extensions.ExtensionsW3.test_seller_no_favorite) ... ok
+test_variant_api_same_row (test_w3_extensions.ExtensionsW3.test_variant_api_same_row) ... ok
+test_variant_edit_admin (test_w3_extensions.ExtensionsW3.test_variant_edit_admin) ... ok
+
+----------------------------------------------------------------------
+Ran 79 tests in 7.394s
+
+OK

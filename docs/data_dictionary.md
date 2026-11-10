@@ -30,3 +30,38 @@ Bản dùng chung cho SQL Server và bản SQLite demo. **Không trộn tên c�
 
 ## Quy tắc backend còn phải kiểm soát
 Tổng tồn kho và trừ tồn phải xử lý trong transaction khi đơn hàng thật được triển khai; hiện tại chỉ có kiểm tra tồn để thêm session giỏ. `TongTien` tự tính bằng trigger trong cả SQL Server và SQLite. `NgayTao` có mặc định. **Bảng công việc yêu cầu chính xác 8 bảng, trong khi thiết kế thực có 9 bảng**; cần lấy ý kiến giảng viên, không tự tuyên bố đạt.
+
+
+---
+# BỔ SUNG W4-007 / W4-008 — Giao nhận, thanh toán, tồn kho (cập nhật Data Dictionary)
+
+Migration: `database/migration_w4_giao_dich_sqlserver.sql` (rollback: `rollback_migration_w4_giao_dich_sqlserver.sql`). Thiết kế theo ERD v2 nhưng **giữ tên cột cũ** để code hiện tại không vỡ. **Chưa chạy thử trên SQL Server thật.** SQLite demo tự nâng cấp tương đương (`app/db.py::_upgrade_sqlite_w4`).
+
+## Cột mới của `DonHang`
+| Cột | Kiểu SQL Server | Ý nghĩa / ràng buộc |
+| --- | --- | --- |
+| `LaDonCu` | BIT, DEFAULT 0 | 1 = đơn tạo trước migration (không có mã nhân viên/thời điểm thật) |
+| `HinhThucNhanHang` | VARCHAR(20) | `delivery`/`pickup`; delivery bắt buộc có `DiaChiGiaoHang` (trừ đơn cũ) |
+| `TenNguoiNhan`, `SdtNguoiNhan` (VARCHAR 20, chỉ số và +), `DiaChiGiaoHang` | NVARCHAR | Bản chụp lúc đặt |
+| `PhiVanChuyen` | DECIMAL(18,2) ≥ 0, DEFAULT 0 | 0 = miễn phí hoặc chưa tính |
+| `TongThanhToan` | cột tính PERSISTED | `TongTien + PhiVanChuyen`. `TongTien` = tiền hàng (ERD v2 gọi là `TienHang`) |
+| `PhuongThucThanhToan` | NVARCHAR(30) | COD · Chuyển khoản · Ví điện tử · Thẻ |
+| `TrangThaiThanhToan` | NVARCHAR(30) | Chưa thanh toán · Đã thanh toán · Hoàn tiền |
+| `TrangThaiXacNhan`, `MaNVXacNhan` (FK→NguoiDung), `ThoiDiemXacNhan` | | Chờ xác nhận · Đã xác nhận · Từ chối. Chờ ⇒ NV và thời điểm NULL; còn lại ⇒ có thời điểm (và NV, trừ đơn cũ) |
+| `TrangThaiGiaoHang`, `MaNVCapNhatGiaoHang` (FK), `ThoiDiemCapNhatGiaoHang` | | Chưa giao · Đang chuẩn bị · Đang giao · Đã giao · Giao thất bại; ≠ Chưa giao ⇒ đã xác nhận |
+| `DaHuy`, `ThoiDiemHuy` | BIT, DATETIME2(0) | DaHuy=1 ⇔ có thời điểm hủy |
+| `DaTruKho` | BIT | 1 = tồn của đơn đang bị trừ. CHECK: đơn đã hủy/từ chối bắt buộc = 0 |
+`TrangThai` (cột cũ) vẫn còn và **luôn khớp** (CHECK `CK_DonHang_DongBoTrangThaiCu`): hủy/từ chối→Đã hủy; đã giao→Hoàn thành; đã xác nhận→Đã xác nhận; còn lại→Chờ xác nhận.
+
+## Bảng/cột mới khác
+- `ChiTietDonHang.TenSanPham/MauSac/KichThuoc`: bản chụp (NOT NULL sau khi điền từ dữ liệu cũ).
+- `GiaoDichThanhToan` (PK `MaGiaoDich`; FK `MaDonHang`→DonHang): `PhuongThuc`, `SoTien`, `TrangThai` (Chờ xử lý · Thành công · Thất bại · Hoàn tiền), `MaThamChieu`. **UNIQUE**: `MaThamChieu` (lọc NOT NULL); mỗi đơn tối đa 1 giao dịch `Thành công`.
+- `HoaDon` (ERD v2): `MaDonHang` UNIQUE, `SoHoaDon` UNIQUE.
+- `NhatKyMigration`: nhật ký từng bước migration/seed.
+- `ThongTinGiaoDich` (cũ) giữ lại cho email/ghi chú và tương thích; code ghi song song.
+
+## Mapping dữ liệu đơn cũ
+`Chờ xác nhận`→(Chờ xác nhận, Chưa giao) · `Đã xác nhận`→(Đã xác nhận, Chưa giao) · `Hoàn thành`→(Đã xác nhận, Đã giao) · `Đã hủy`→(Chờ xác nhận, Chưa giao, DaHuy=1; **giả định** vì không biết đã xác nhận trước khi hủy). Thời điểm xác nhận/giao/hủy lấy `NgayDat` (xấp xỉ). Đơn cũ không có `ThongTinGiaoDich` → `pickup`, tên người nhận lấy từ `NguoiDung`.
+
+## Quy tắc tồn kho (W4-008) — `app/services/order_inventory.py`
+Tạo đơn hợp lệ → trừ theo biến thể (UPDATE có điều kiện `SoLuongTon >= SL`, kiểm tra rowcount); hủy / từ chối / thanh toán online thất bại → hoàn đúng 1 lần (chỉ khi `DaTruKho=1`); thiếu ở bất kỳ dòng nào → rollback cả đơn. Giao thất bại **chưa** hoàn kho (ngoài phạm vi, cần chốt quy tắc).

@@ -50,7 +50,9 @@ class Week2SmokeTest(unittest.TestCase):
             self.assertEqual(con.execute("SELECT COUNT(*) FROM DanhMuc").fetchone()[0], 3)
             self.assertGreaterEqual(con.execute("SELECT COUNT(*) FROM NguoiDung").fetchone()[0], 2)
             self.assertEqual(con.execute("PRAGMA foreign_key_check").fetchall(), [])
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchone()[0], 10)
+            tables = {r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            core = {"VaiTro","NguoiDung","DanhMuc","SanPham","BienTheSanPham","GioHang","ChiTietGioHang","DonHang","ChiTietDonHang","GiaoDichThanhToan"}
+            self.assertTrue(core <= tables, core - tables)  # không còn đếm cứng số bảng (đã lỗi thời từ W3)
             self.assertEqual(con.execute("SELECT TongTien FROM DonHang WHERE MaDonHang=1").fetchone()[0], 3490000)
 
     def test_home_db_and_search(self):

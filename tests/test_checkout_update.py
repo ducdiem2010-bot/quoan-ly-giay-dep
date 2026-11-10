@@ -87,7 +87,7 @@ class CheckoutUpdateTests(unittest.TestCase):
             self.assertEqual(order[1],2500000)
             self.assertEqual(order[2],'Chờ xác nhận')
             self.assertEqual(info,('pickup',None,'cod','Chưa thanh toán',0))
-            self.assertEqual(c.execute('SELECT SoLuongTon FROM BienTheSanPham WHERE MaBienThe=1').fetchone()[0],10)
+            self.assertEqual(c.execute('SELECT SoLuongTon FROM BienTheSanPham WHERE MaBienThe=1').fetchone()[0],8)  # W4-008: tồn bị trừ 2
         with self.c.session_transaction() as sess:
             self.assertEqual(sess['cart'],{})
 

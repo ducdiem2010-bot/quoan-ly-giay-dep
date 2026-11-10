@@ -70,7 +70,7 @@ Danh sách nguồn, tệp ghép và trạng thái xem `docs/TICH_HOP_W3_LUU_Y.md
 Trạng thái trong trang chi tiết được tính từ tổng tồn kho (`Còn hàng/Hết hàng`).
 Tại `/checkout`, người dùng có thể nhập địa chỉ giao hàng hoặc chọn nhận tại cửa hàng,
 chọn COD hoặc yêu cầu chuyển khoản chờ xác nhận. Sau khi gửi, đơn **chờ xác nhận**
-được lưu trong SQLite demo, chưa trừ kho, chưa thu tiền, chưa tính phí vận chuyển cho giao hàng.
+được lưu trong SQLite demo, chưa thu tiền, chưa tính phí vận chuyển cho giao hàng. (Từ W4-008 đơn **có trừ tồn kho** khi đặt, hoàn lại khi hủy/từ chối/thanh toán thất bại — xem mục W4 cuối file.)
 Cổng thanh toán online thật chưa tích hợp.
 
 **SQL Server:** chạy **`database/migration_checkout_sqlserver.sql`** trên database đã được backup
@@ -132,3 +132,11 @@ Phần `.venv` và `__pycache__` **không nằm trong ZIP**; `.venv` trên máy 
 - `/checkout` tự điền sẵn từ hồ sơ, khách vẫn sửa được. Có ô "Lưu làm thông tin mặc định" (tự tick ở lần mua đầu); không tick thì hồ sơ giữ nguyên.
 - SQLite tự thêm cột mới vào `NguoiDung`. **SQL Server:** chạy `database/migrate_account_profile_sqlserver.sql` trên DB đã backup.
 - Phường/Xã hiện là ô nhập tay (chưa có danh sách phường/xã đầy đủ). Test: `tests/test_account.py`.
+
+
+## Cập nhật W4 (chưa nghiệm thu trên SQL Server)
+- **W4-007** `database/migration_w4_giao_dich_sqlserver.sql` (+ `rollback_...`): thêm cột giao nhận/thanh toán/xác nhận/giao hàng/hủy/`DaTruKho` cho `DonHang`, bảng `GiaoDichThanhToan`, `HoaDon`, `NhatKyMigration`; CHECK/FK/UNIQUE; chuyển đổi đơn cũ không mất dữ liệu. Data Dictionary: `docs/data_dictionary.md` (mục W4).
+- **W4-008** `app/services/order_inventory.py`: trừ/hoàn tồn trong transaction, rollback khi thiếu tồn, hủy/từ chối/thanh toán thất bại hoàn đúng 1 lần. Test: `tests/test_inventory_w4.py` (SQLite).
+- **Seed** `database/seed_products_w4.sql` (16 SP có tình huống biên) và tuỳ chọn `seed_orders_w4.sql`.
+- **Tái lập DB**: `docs/DB_repro_steps.md`. Log test SQLite: `docs/KET_QUA_TEST_W4.txt`.
+- Chưa có giao diện hủy/xác nhận đơn; các hàm `confirm_order/reject_order/cancel_order/mark_paid/mark_payment_failed` mới chỉ gọi được từ code/test.
