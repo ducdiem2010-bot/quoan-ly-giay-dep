@@ -1,11 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}Giỏ hàng - Shoes Store{% endblock %}
 {% block content %}
+<style>
+.cart-unavailable-warning { color:#991b1b; background:#fef2f2; border:1px solid #fecaca;
+  border-radius:7px; padding:8px 10px; font-size:.875rem; margin:8px 0; overflow-wrap:anywhere; }
+.cart-item button:disabled, .cart-item input:disabled { opacity:.55; cursor:not-allowed; }
+@media (max-width:600px) { .cart-unavailable-warning { font-size:.82rem; } }
+</style>
 <div class="section-title"><div><span class="eyebrow">GIỎ HÀNG</span><h1>Giỏ hàng của bạn</h1></div><a href="{{ url_for('home') }}">← Tiếp tục mua sắm</a></div>
-{% if cart_items %}<div class="cart-layout"><div class="cart-items">
-{% for item in cart_items %}<div class="cart-item"><img src="{{ url_for('static', filename='images/shoe-' ~ ((item.MaSanPham % 3)+1) ~ '.svg') }}" alt="Hình minh họa {{ item.TenSanPham }}">
-<div class="cart-info"><strong>{{ item.TenSanPham }}</strong><p>Size {{ item.KichThuoc }} • {{ item.MauSac }}</p><p>{{ item.GiaBan|vnd }} × {{ item.quantity }}</p><strong>{{ item.subtotal|vnd }}</strong></div>
+{% if cart_items %}
+{% set has_invalid = cart_items|selectattr('unavailable_reason')|list|length > 0 %}
+<div class="cart-layout"><div class="cart-items">
+{% for item in cart_items %}<div class="cart-item">{% set item_img = product_image_url(item) %}{% if item_img %}<img src="{{ item_img }}" alt="{{ item.TenSanPham }}" style="width:72px; height:72px; object-fit:contain; background:#f8fafc; border-radius:8px; padding:2px; border:1px solid #e2e8f0;">{% else %}<div style="width:72px; height:72px; background:#f1f5f9; border-radius:8px; display:flex; align-items:center; justify-content:center; text-align:center; font-size:11px; color:#64748b; padding:4px;">Chưa có ảnh</div>{% endif %}
+<div class="cart-info">
+  <strong>{{ item.TenSanPham }}</strong>
+  {% if item.unavailable_reason %}<p role="alert" class="cart-unavailable-warning">{{ item.unavailable_reason }}</p>{% endif %}
+  <p>Size {{ item.KichThuoc }} • {{ item.MauSac }} (Còn: {{ item.SoLuongTon }})</p>
+  <form method="post" action="{{ url_for('update_cart_item', variant_id=item.MaBienThe) }}" class="cart-qty-form" style="display:inline-flex; align-items:center; gap:6px; margin: 4px 0;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label style="font-size: 0.85rem; color:#64748b;">Số lượng:</label>
+    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.SoLuongTon }}" {% if not item.SoLuongTon or not item.HienThi %}disabled{% endif %} style="width: 65px; padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+    <button type="submit" {% if not item.SoLuongTon or not item.HienThi %}disabled{% endif %} style="padding: 3px 8px; font-size: 0.8rem; background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;">Cập nhật</button>
+  </form>
+  {% if item.unavailable_reason %}
+    <p style="margin-top:4px;">Giá hiện tại: {{ item.GiaBan|vnd }} · <strong>Không tính vào tạm tính</strong></p>
+  {% else %}
+    <p style="margin-top:4px;">{{ item.GiaBan|vnd }} × {{ item.quantity }} = <strong>{{ item.subtotal|vnd }}</strong></p>
+  {% endif %}
+</div>
 <form method="post" action="{{ url_for('remove_from_cart', variant_id=item.MaBienThe) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="text-button delete-button" type="submit">Xóa</button></form></div>
-{% endfor %}</div><aside class="cart-summary"><h2>Tổng đơn hàng</h2><p class="summary-line"><span>Tạm tính</span><strong>{{ total|vnd }}</strong></p><p>Phí giao hàng: xác định theo lựa chọn ở bước thanh toán.</p><hr><p class="summary-line summary-total"><span>Tạm tính sản phẩm</span><strong>{{ total|vnd }}</strong></p><a href="{{ url_for('checkout') }}" class="action-primary">Tiếp tục xác nhận →</a></aside></div>
+{% endfor %}</div><aside class="cart-summary"><h2>Tổng đơn hàng</h2><p class="summary-line"><span>Tạm tính</span><strong>{{ total|vnd }}</strong></p><p>Phí giao hàng: xác định theo lựa chọn ở bước thanh toán.</p><hr><p class="summary-line summary-total"><span>Tạm tính sản phẩm</span><strong>{{ total|vnd }}</strong></p>{% if has_invalid %}<p class="cart-unavailable-warning" role="alert">Có sản phẩm không hợp lệ. Hãy cập nhật số lượng hoặc xóa sản phẩm trước khi thanh toán.</p>
+<span class="action-primary" aria-disabled="true" style="opacity:.55; cursor:not-allowed; display:inline-block">Chưa thể thanh toán</span>
+{% else %}<a href="{{ url_for('checkout') }}" class="action-primary">Tiếp tục xác nhận →</a>{% endif %}</aside></div>
 {% else %}<section class="empty-state"><h2>Giỏ hàng đang trống</h2><p>Hãy chọn sản phẩm và size phù hợp với bạn.</p><a href="{{ url_for('home') }}" class="action-primary">Xem sản phẩm</a></section>{% endif %}
 {% endblock %}

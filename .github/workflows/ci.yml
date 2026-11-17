@@ -1,0 +1,35 @@
+name: CI Test Suite - Shoes Store Nhóm 6
+
+on:
+  push:
+    branches: [ main, master, develop, "feature/**" ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  test:
+    name: Run Python Unittest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Smoke & Integration Tests (SQLite)
+        env:
+          DB_BACKEND: sqlite
+          FLASK_ENV: testing
+          SECRET_KEY: ci-test-secret-key-32-bytes-long-1234567890
+        run: |
+          python -m unittest discover -s tests -p "test*.py" -v

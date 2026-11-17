@@ -1,7 +1,205 @@
 {% extends 'admin_base.html' %}
-{% block admin_title %}Danh sách sản phẩm{% endblock %}
-{% block admin_content %}<div class="section-title"><div><span class="eyebrow">SẢN PHẨM</span><h1>Quản trị sản phẩm</h1></div><a href="{{ url_for('admin_w3.product_new') }}" class="action-primary">＋ Thêm sản phẩm</a></div>
-<p>Danh sách đọc từ cơ sở dữ liệu. Thêm, sửa và ẩn sản phẩm tại <a href="{{ url_for('admin_w3.products') }}">quản lý sản phẩm</a>.</p>
-<div class="table-wrap"><table class="admin-table"><thead><tr><th>Mã</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Tồn</th></tr></thead><tbody>
-{% for p in products %}<tr><td>SP{{ '%03d' % p.MaSanPham }}</td><td>{{ p.TenSanPham }}</td><td>{{ p.TenDanhMuc }}</td><td>{{ p.GiaBan|vnd }}</td><td>{{ p.TongTon }}</td></tr>{% endfor %}
-</tbody></table></div>{% endblock %}
+{% block admin_title %}Tổng quan cửa hàng - Shoes Store{% endblock %}
+
+{% block admin_content %}
+<section class="admin-dashboard-view" aria-labelledby="admin-dashboard-heading">
+  <!-- Tiêu đề trang -->
+  <header class="admin-page-header">
+    <h1 id="admin-dashboard-heading" class="admin-page-title">Tổng quan cửa hàng</h1>
+    <p class="admin-page-subtitle">Theo dõi đơn hàng, sản phẩm và tồn kho tại một nơi.</p>
+  </header>
+
+  <!-- 6 Thẻ KPI tổng quan -->
+  <div class="admin-kpi-grid-v2">
+    <!-- Card 1: Tổng sản phẩm -->
+    <article class="kpi-card-v2">
+      <div class="kpi-icon-wrap kpi-icon-green" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Tổng sản phẩm</span>
+        <strong class="kpi-value">{{ metrics.total_products }}</strong>
+      </div>
+    </article>
+
+    <!-- Card 2: Tổng đơn hàng -->
+    <article class="kpi-card-v2">
+      <div class="kpi-icon-wrap kpi-icon-green" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Tổng đơn hàng</span>
+        <strong class="kpi-value">{{ metrics.total_orders }}</strong>
+      </div>
+    </article>
+
+    <!-- Card 3: Giá trị đơn hoàn thành -->
+    <article class="kpi-card-v2">
+      <div class="kpi-icon-wrap kpi-icon-green" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="2" y1="12" x2="4" y2="12"/></svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Giá trị đơn hoàn thành</span>
+        <strong class="kpi-value">{{ metrics.completed_order_value|vnd }}</strong>
+        <small class="kpi-hint">{% if metrics.verified_revenue %}Chỉ đơn Hoàn thành, đã giao và đã ghi nhận thanh toán; đã trừ giá trị trả hàng được duyệt{% else %}Đã ghi nhận khi Hoàn thành; thanh toán thủ công/demo chưa phải doanh thu thực nhận đối soát ngân hàng{% endif %}</small>
+      </div>
+    </article>
+
+    <!-- Card 4: Đơn chờ xác nhận -->
+    <article class="kpi-card-v2">
+      <div class="kpi-icon-wrap kpi-icon-green" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Đơn chờ xác nhận</span>
+        <strong class="kpi-value">{{ metrics.pending_orders }}</strong>
+      </div>
+    </article>
+
+    <!-- Card 5: Sản phẩm hết hàng -->
+    <article class="kpi-card-v2 kpi-card-alert">
+      <div class="kpi-icon-wrap kpi-icon-red" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Sản phẩm hết hàng</span>
+        <strong class="kpi-value kpi-val-red">{{ metrics.out_of_stock }}</strong>
+      </div>
+    </article>
+
+    <!-- Card 6: Sản phẩm sắp hết hàng -->
+    <article class="kpi-card-v2 kpi-card-warn">
+      <div class="kpi-icon-wrap kpi-icon-amber" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Sản phẩm sắp hết hàng</span>
+        <strong class="kpi-value kpi-val-amber">{{ metrics.low_stock_count }}</strong>
+      </div>
+    </article>
+  </div>
+
+  <!-- Khối: Cảnh báo tồn kho -->
+  <section class="admin-block-card" aria-labelledby="stock-alert-heading">
+    <h2 id="stock-alert-heading" class="admin-block-title">Cảnh báo tồn kho</h2>
+    <div class="stock-alert-tabs" role="tablist">
+      <button type="button" class="stock-tab-btn active" data-tab-target="tab-out-of-stock" role="tab" aria-selected="true" id="tab-btn-out">
+        Hết hàng ({{ metrics.out_of_stock }})
+      </button>
+      <button type="button" class="stock-tab-btn" data-tab-target="tab-low-stock" role="tab" aria-selected="false" id="tab-btn-low">
+        Sắp hết ({{ metrics.low_stock_count }})
+      </button>
+    </div>
+
+    <!-- Tab 1: Danh sách sản phẩm hết hàng -->
+    <div class="stock-tab-content active" id="tab-out-of-stock" role="tabpanel" aria-labelledby="tab-btn-out">
+      {% if metrics.out_of_stock_products %}
+        <div class="stock-product-list">
+          {% for p in metrics.out_of_stock_products %}
+          <div class="stock-product-row">
+            <div class="stock-product-info">
+              <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="stock-product-img-wrap" title="Xem biến thể: {{ p.TenSanPham }}">
+                <img class="stock-product-img"
+                     src="{{ url_for('static', filename=p.AnhHienThi|default('images/no-product-image.svg', true)) }}"
+                     alt="{{ p.TenSanPham }}"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/no-product-image.svg') }}';">
+              </a>
+              <div class="stock-product-meta">
+                <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="stock-product-name-link" title="Xem chi tiết: {{ p.TenSanPham }}">
+                  <strong class="stock-product-name">{{ p.TenSanPham }}</strong>
+                </a>
+                <span class="stock-badge stock-badge-zero">Tồn: 0</span>
+              </div>
+            </div>
+            <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="admin-btn-outline-sm" title="Xem và cập nhật biến thể sản phẩm">
+              Xem sản phẩm
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="admin-empty-note">Hiện không có sản phẩm nào hết hàng.</p>
+      {% endif %}
+    </div>
+
+    <!-- Tab 2: Danh sách sản phẩm sắp hết hàng -->
+    <div class="stock-tab-content" id="tab-low-stock" role="tabpanel" aria-labelledby="tab-btn-low" hidden>
+      {% if metrics.low_stock_products %}
+        <div class="stock-product-list">
+          {% for p in metrics.low_stock_products %}
+          <div class="stock-product-row">
+            <div class="stock-product-info">
+              <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="stock-product-img-wrap" title="Xem biến thể: {{ p.TenSanPham }}">
+                <img class="stock-product-img"
+                     src="{{ url_for('static', filename=p.AnhHienThi|default('images/no-product-image.svg', true)) }}"
+                     alt="{{ p.TenSanPham }}"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/no-product-image.svg') }}';">
+              </a>
+              <div class="stock-product-meta">
+                <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="stock-product-name-link" title="Xem chi tiết: {{ p.TenSanPham }}">
+                  <strong class="stock-product-name">{{ p.TenSanPham }}</strong>
+                </a>
+                <span class="stock-badge stock-badge-low">Tồn: {{ p.TongTon }}</span>
+              </div>
+            </div>
+            <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="admin-btn-outline-sm" title="Xem và cập nhật biến thể sản phẩm">
+              Xem sản phẩm
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="admin-empty-note">Hiện không có sản phẩm nào trong ngưỡng sắp hết hàng.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Khối: Truy cập nhanh -->
+  <section class="admin-block-card" aria-labelledby="quick-access-heading">
+    <h2 id="quick-access-heading" class="admin-block-title">Truy cập nhanh</h2>
+    <div class="admin-quick-actions">
+      <a href="{{ url_for('w12.admin_orders') }}" class="admin-quick-btn admin-quick-btn-primary" title="Chuyển đến danh sách quản lý đơn hàng">
+        <span>🛒 Quản lý đơn hàng</span>
+      </a>
+      <a href="{{ url_for('admin_w3.product_new') }}" class="admin-quick-btn admin-quick-btn-secondary" title="Mở trang thêm sản phẩm mới">
+        <span>+ Thêm sản phẩm</span>
+      </a>
+      <a href="{{ url_for('w12.staff_create') }}" class="admin-quick-btn admin-quick-btn-secondary" title="Mở trang tạo tài khoản nhân viên mới">
+        <span>+ Tạo nhân viên</span>
+      </a>
+      <a href="{{ url_for('admin_w3.products') }}" class="admin-quick-btn admin-quick-btn-secondary" title="Quản trị sản phẩm" style="display:none;">
+        <span>Quản trị sản phẩm</span>
+      </a>
+    </div>
+  </section>
+</section>
+
+<script>
+// Tương tác chuyển đổi tab Cảnh báo tồn kho
+document.addEventListener('DOMContentLoaded', function() {
+  const tabButtons = document.querySelectorAll('.stock-tab-btn');
+  tabButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const targetId = btn.getAttribute('data-tab-target');
+      tabButtons.forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('.stock-tab-content').forEach(function(c) {
+        c.classList.remove('active');
+        c.hidden = true;
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      const targetPanel = document.getElementById(targetId);
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+        targetPanel.hidden = false;
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

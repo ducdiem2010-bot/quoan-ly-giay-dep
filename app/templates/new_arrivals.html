@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Sản phẩm mới nhất - Shoes Store{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/storefront_upgrade.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/new_arrivals.css') }}">
+{% endblock %}
+{% block content %}
+<section class="new-arrivals-page" aria-labelledby="new-arrivals-title">
+  <header class="featured-page-header">
+    <span class="eyebrow">MẪU MỚI VỀ</span>
+    <h1 id="new-arrivals-title">Sản phẩm mới nhất</h1>
+    <p>Những mẫu đang hiển thị được sắp theo thời điểm thêm mới.</p>
+  </header>
+  {% if products %}
+    <div class="product-grid storefront-featured-grid">
+      {% for product in products %}{% include '_product_card.html' %}{% endfor %}
+    </div>
+  {% else %}
+    <p class="storefront-featured-empty">Chưa có sản phẩm mới nhất để hiển thị.</p>
+  {% endif %}
+</section>
+{% endblock %}

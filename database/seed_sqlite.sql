@@ -63,3 +63,26 @@ INSERT INTO DonHang (MaNguoiDung, TrangThai) VALUES
 INSERT INTO ChiTietDonHang (MaDonHang, MaBienThe, SoLuong, DonGia) VALUES
 (1, 1, 2, 1250000),
 (1, 4, 1, 990000);
+
+
+-- W3-006 (AI-assisted): two extra shoe examples, unchanged original 10 IDs.
+INSERT INTO SanPham (MaDanhMuc, MaNguoiTao, TenSanPham, GiaBan, ThuongHieu, MoTa) VALUES
+(3,2,'Sandal Học Sinh Chống Trượt',290000,'LocalShoes','Test hết tồn'),
+(1,2,'Giày Thể Thao Mẫu Ẩn',590000,'LocalShoes','Test sản phẩm ẩn');
+INSERT INTO BienTheSanPham (MaSanPham,KichThuoc,MauSac,SoLuongTon) VALUES (11,'39','Đỏ',0),(11,'40','Xanh',0),(12,'41','Đen',8);
+UPDATE SanPham SET HienThi=0 WHERE TenSanPham='Giày Thể Thao Mẫu Ẩn';
+
+-- Ảnh sản phẩm thật ban đầu cho 12 sản phẩm
+INSERT INTO SanPhamHinhAnh (MaSanPham, TenTep, LaAnhDaiDien, ThuTu) VALUES
+(1, 'product-01.jpg', 1, 0),
+(2, 'product-02.jpg', 1, 0),
+(3, 'product-03.jpg', 1, 0),
+(4, 'product-04.jpg', 1, 0),
+(5, 'product-05.jpg', 1, 0),
+(6, 'product-06.jpg', 1, 0),
+(7, 'product-07.jpg', 1, 0),
+(8, 'product-08.jpg', 1, 0),
+(9, 'product-09.jpg', 1, 0),
+(10, 'product-10.jpg', 1, 0),
+(11, 'product-11.jpg', 1, 0),
+(12, 'product-12.jpg', 1, 0);

@@ -1,14 +1,23 @@
 """Truy vấn dữ liệu; JOIN lấy tên danh mục và tổng tồn trong cùng 1 query."""
 from .db import query_all, query_one
 
-SELECT_PRODUCT = """
- SELECT sp.MaSanPham, sp.TenSanPham, sp.HienThi, sp.GiaBan, sp.ThuongHieu, sp.MoTa,
-        sp.MaDanhMuc, dm.TenDanhMuc,
-        COALESCE(SUM(bt.SoLuongTon), 0) AS TongTon
- FROM SanPham sp
- JOIN DanhMuc dm ON dm.MaDanhMuc = sp.MaDanhMuc
- LEFT JOIN BienTheSanPham bt ON bt.MaSanPham = sp.MaSanPham
-"""
+def get_select_product_sql():
+    from flask import current_app
+    backend = current_app.config.get('DB_BACKEND', 'sqlite') if current_app else 'sqlite'
+    if backend == 'sqlserver':
+        sub_img = "(SELECT TOP 1 TenTep FROM SanPhamHinhAnh ia WHERE ia.MaSanPham=sp.MaSanPham AND ia.LaAnhDaiDien=1 ORDER BY ia.MaHinhAnh ASC)"
+    else:
+        sub_img = "(SELECT TenTep FROM SanPhamHinhAnh ia WHERE ia.MaSanPham=sp.MaSanPham AND ia.LaAnhDaiDien=1 ORDER BY ia.MaHinhAnh ASC LIMIT 1)"
+    return f"""
+     SELECT sp.MaSanPham, sp.TenSanPham, sp.HienThi, sp.GiaBan, sp.ThuongHieu, sp.MoTa,
+            sp.MaDanhMuc, dm.TenDanhMuc,
+            {sub_img} AS AnhDaiDien,
+            COALESCE(SUM(bt.SoLuongTon), 0) AS TongTon
+     FROM SanPham sp
+     JOIN DanhMuc dm ON dm.MaDanhMuc = sp.MaDanhMuc
+     LEFT JOIN BienTheSanPham bt ON bt.MaSanPham = sp.MaSanPham
+    """
+
 GROUP_PRODUCT = " GROUP BY sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.ThuongHieu, sp.MoTa, sp.MaDanhMuc, sp.HienThi, dm.TenDanhMuc "
 
 
@@ -24,12 +33,12 @@ def get_all_products(category_id=None, keyword=None):
     if keyword:
         where.append("(sp.TenSanPham LIKE ? OR sp.ThuongHieu LIKE ?)")
         args.extend([f"%{keyword}%", f"%{keyword}%"])
-    sql = SELECT_PRODUCT + (" WHERE " + " AND ".join(where) if where else "") + GROUP_PRODUCT + " ORDER BY sp.MaSanPham"
+    sql = get_select_product_sql() + (" WHERE " + " AND ".join(where) if where else "") + GROUP_PRODUCT + " ORDER BY sp.MaSanPham"
     return query_all(sql, tuple(args))
 
 
 def get_product_by_id(product_id):
-    return query_one(SELECT_PRODUCT + " WHERE sp.MaSanPham = ? AND sp.HienThi=1 " + GROUP_PRODUCT, (product_id,))
+    return query_one(get_select_product_sql() + " WHERE sp.MaSanPham = ? AND sp.HienThi=1 " + GROUP_PRODUCT, (product_id,))
 
 
 def get_products_by_category(category_id):

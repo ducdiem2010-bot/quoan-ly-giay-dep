@@ -5,7 +5,7 @@ SQL Server: quản trị viên PHẢI chạy migration_checkout_sqlserver.sql tr
 """
 import re
 from decimal import Decimal
-from flask import current_app
+from flask import current_app, has_request_context, session
 from .db import get_db_connection
 
 CHECKOUT_META_SQLITE = """
@@ -48,11 +48,12 @@ def validate_checkout(form):
     return data
 
 
-def create_pending_order(form_data, basket, user_id=None):
+def create_pending_order(form_data, basket, user_id=None, checkout_token=None):
     """Kiểm tra tồn kho trong transaction, lưu chi tiết và phương thức nhận/trả.
 
     Trả về mã đơn mới. Không có webhook/PSP; trạng thái thanh toán luôn CHƯA THANH TOÁN.
     Giá đặt chỉ gồm tiền sản phẩm; phí vận chuyển = NULL cho delivery (chờ xác nhận).
+    Hỗ trợ checkout_token để chống tạo đơn trùng an toàn tại database (idempotency).
     """
     items = {}
     for variant_id, amount in basket.items():
@@ -72,30 +73,53 @@ def create_pending_order(form_data, basket, user_id=None):
         if backend == 'sqlite':
             cur.execute('BEGIN IMMEDIATE')
             cur.execute(CHECKOUT_META_SQLITE)
+
+        # Chống tạo đơn trùng (idempotency check cấp database)
+        if checkout_token:
+            cur.execute('SELECT MaDonHang, MaNguoiDung FROM DonHang WHERE CheckoutToken = ?', (checkout_token,))
+            existing = cur.fetchone()
+            if existing:
+                owner_id = existing[1]
+                if owner_id is not None and (user_id is None or int(owner_id) != int(user_id)):
+                    raise CheckoutValidationError('Mã phiên đặt hàng không thuộc về tài khoản hiện tại.')
+                if owner_id is None and user_id is not None:
+                    raise CheckoutValidationError('Mã phiên đặt hàng không thuộc về tài khoản hiện tại.')
+                if owner_id is None and user_id is None:
+                    if has_request_context():
+                        active_tok = session.get('_active_checkout_token')
+                        proc_tok = session.get('_last_processed_checkout_token')
+                        if checkout_token != active_tok and checkout_token != proc_tok:
+                            raise CheckoutValidationError('Mã phiên đặt hàng không thuộc về phiên làm việc hiện tại.')
+                conn.commit()
+                return int(existing[0])
+
         total = Decimal('0')
         rows = []
         for vid, qty in items.items():
             lock = ' WITH (UPDLOCK, HOLDLOCK)' if backend == 'sqlserver' else ''
-            cur.execute('SELECT bt.MaBienThe, bt.SoLuongTon, sp.GiaBan FROM BienTheSanPham bt '
+            cur.execute('SELECT bt.MaBienThe, bt.SoLuongTon, sp.GiaBan, sp.TenSanPham, bt.MauSac, bt.KichThuoc FROM BienTheSanPham bt '
                         f'JOIN SanPham sp{lock} ON sp.MaSanPham=bt.MaSanPham '
                         'WHERE bt.MaBienThe=?', (vid,))
             r = cur.fetchone()
             if not r or int(r[1]) < qty:
                 raise CheckoutValidationError(f'Sản phẩm có mã biến thể {vid} đã hết hoặc không đủ hàng.')
             price = Decimal(str(r[2])).quantize(Decimal('0.01'))
-            rows.append((vid, qty, price))
+            p_name = str(r[3] or '')
+            p_color = str(r[4] or '')
+            p_size = str(r[5] or '')
+            rows.append((vid, qty, price, p_name, p_color, p_size))
             total += price * qty
         if backend == 'sqlite':
-            cur.execute("INSERT INTO DonHang (MaNguoiDung, TrangThai, TongTien) VALUES (?, 'Chờ xác nhận', ?)",
-                        (user_id, float(total)))
+            cur.execute("INSERT INTO DonHang (MaNguoiDung, TrangThai, TongTien, CheckoutToken) VALUES (?, 'Chờ xác nhận', ?, ?)",
+                        (user_id, float(total), checkout_token))
             order_id = cur.lastrowid
         else:
-            cur.execute("INSERT INTO DonHang (MaNguoiDung, TrangThai, TongTien) OUTPUT INSERTED.MaDonHang VALUES (?, N'Chờ xác nhận', ?)",
-                        (user_id, total))
+            cur.execute("INSERT INTO DonHang (MaNguoiDung, TrangThai, TongTien, CheckoutToken) OUTPUT INSERTED.MaDonHang VALUES (?, N'Chờ xác nhận', ?, ?)",
+                        (user_id, total, checkout_token))
             order_id = cur.fetchone()[0]
-        for vid, qty, price in rows:
-            cur.execute('INSERT INTO ChiTietDonHang (MaDonHang,MaBienThe,SoLuong,DonGia) VALUES (?,?,?,?)',
-                        (order_id, vid, qty, float(price) if backend == 'sqlite' else price))
+        for vid, qty, price, p_name, p_color, p_size in rows:
+            cur.execute('INSERT INTO ChiTietDonHang (MaDonHang,MaBienThe,SoLuong,DonGia,TenSanPham,MauSac,KichThuoc) VALUES (?,?,?,?,?,?,?)',
+                        (order_id, vid, qty, float(price) if backend == 'sqlite' else price, p_name, p_color, p_size))
         # Cập nhật tổng rõ ràng cho SQL Server (SQLite có trigger tính tự động).
         cur.execute('UPDATE DonHang SET TongTien=? WHERE MaDonHang=?',
                     (float(total) if backend == 'sqlite' else total, order_id))
@@ -109,8 +133,24 @@ def create_pending_order(form_data, basket, user_id=None):
              form_data['payment_method'], 'Chưa thanh toán', shipping_fee, form_data['note'] or None))
         conn.commit()
         return order_id
-    except Exception:
+    except Exception as exc:
         conn.rollback()
+        if checkout_token and ('UNIQUE constraint failed' in str(exc) or 'IX_DonHang_CheckoutToken' in str(exc)):
+            with get_db_connection() as rconn:
+                row = rconn.execute('SELECT MaDonHang, MaNguoiDung FROM DonHang WHERE CheckoutToken = ?', (checkout_token,)).fetchone()
+                if row:
+                    owner_id = row[1]
+                    if owner_id is not None and (user_id is None or int(owner_id) != int(user_id)):
+                        raise CheckoutValidationError('Mã phiên đặt hàng không thuộc về tài khoản hiện tại.')
+                    if owner_id is None and user_id is not None:
+                        raise CheckoutValidationError('Mã phiên đặt hàng không thuộc về tài khoản hiện tại.')
+                    if owner_id is None and user_id is None:
+                        if has_request_context():
+                            active_tok = session.get('_active_checkout_token')
+                            proc_tok = session.get('_last_processed_checkout_token')
+                            if checkout_token != active_tok and checkout_token != proc_tok:
+                                raise CheckoutValidationError('Mã phiên đặt hàng không thuộc về phiên làm việc hiện tại.')
+                    return int(row[0])
         raise
     finally:
         conn.close()

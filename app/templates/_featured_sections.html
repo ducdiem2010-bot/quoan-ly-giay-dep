@@ -1,0 +1,38 @@
+{# T1.2: không tự truy vấn/tạo số liệu. Hai biến do Minh/Nghĩa bàn giao độc lập. #}
+{% if latest_products is defined and latest_products is not none %}
+<section class="storefront-featured" id="san-pham-moi-nhat" aria-labelledby="storefront-latest-title">
+  <div class="section-title storefront-featured-heading">
+    <div><span class="eyebrow">KHÁM PHÁ</span><h2 id="storefront-latest-title">Sản phẩm mới nhất</h2></div>
+    {# Dùng endpoint new_arrivals.show đã đăng ký; không bắt backend truyền thêm URL. #}
+    {% if storefront_routes is defined and storefront_routes.latest %}
+      <a class="storefront-featured-link" href="{{ url_for(storefront_routes.latest) }}">Xem tất cả <span aria-hidden="true">↗</span></a>
+    {% endif %}
+  </div>
+  {% if latest_products %}
+  <div class="product-grid storefront-featured-grid">
+    {% for product in latest_products %}{% include '_product_card.html' %}{% endfor %}
+  </div>
+  {% else %}
+  <p class="storefront-featured-empty">Chưa có sản phẩm mới nhất để hiển thị.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+{% if best_selling_products is defined and best_selling_products is not none %}
+<section class="storefront-featured" id="san-pham-ban-chay" aria-labelledby="storefront-best-title">
+  <div class="section-title storefront-featured-heading">
+    <div><span class="eyebrow">ĐƯỢC QUAN TÂM</span><h2 id="storefront-best-title">Sản phẩm bán chạy</h2></div>
+    {# Dùng endpoint best_sellers.show đã đăng ký; không tạo route thay backend. #}
+    {% if storefront_routes is defined and storefront_routes.best %}
+      <a class="storefront-featured-link" href="{{ url_for(storefront_routes.best) }}">Xem tất cả <span aria-hidden="true">↗</span></a>
+    {% endif %}
+  </div>
+  {% if best_selling_products %}
+  <div class="product-grid storefront-featured-grid">
+    {% for product in best_selling_products %}{% include '_product_card.html' %}{% endfor %}
+  </div>
+  {% else %}
+  <p class="storefront-featured-empty">Chưa có dữ liệu sản phẩm bán chạy.</p>
+  {% endif %}
+</section>
+{% endif %}

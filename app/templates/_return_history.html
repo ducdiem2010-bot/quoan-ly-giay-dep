@@ -1,0 +1,28 @@
+{% if completed_returns %}
+<details class="return-history" open>
+  <summary><strong>Lịch sử trả hàng</strong> ({{ group_return_receipts(completed_returns)|length }} phiếu)</summary>
+  {% for receipt in group_return_receipts(completed_returns) %}
+  <div class="return-receipt-card">
+    <div class="return-receipt-title">
+      <div><strong>Phiếu #{{ receipt.receipt_id }}</strong> · {{ receipt.time|vn_datetime }}
+        {% if receipt.legacy_unverified %}<small title="Không có mã nhóm trong dữ liệu cũ">(Dữ liệu cũ: chưa xác minh nhóm phiếu)</small>{% endif %}
+      </div>
+      {% if not customer_view %}
+      <a class="print-link" href="{{ url_for('w12.print_return',order_id=receipt.lines[0].MaDonHang,return_id=receipt.receipt_id) }}" target="_blank" rel="noopener">🖨 In phiếu trả hàng</a>
+      {% endif %}
+    </div>
+    <div class="return-table-wrap">
+      <table class="admin-table return-history-table"><thead><tr><th>Mã dòng trả</th><th>Sản phẩm / biến thể</th><th class="num">Số đôi</th><th class="num">Đơn giá mua</th><th class="num">Tiền phải hoàn</th><th class="num">Đã nhập kho</th><th>Lý do</th>{% if not customer_view %}<th>Nhân viên xử lý</th>{% endif %}</tr></thead>
+      <tbody>{% for r in receipt.lines %}
+        <tr><td>#{{ r.MaTraHang }}</td><td><strong>{{ r.TenSanPham }}</strong><br>Size {{ r.KichThuoc }} · {{ r.MauSac }}</td>
+        <td class="num">{{ r.SoLuong }}</td><td class="num">{{ r.DonGia|vnd }}</td>
+        <td class="num"><strong>{{ r.TienGiamDoanhThu|vnd }}</strong></td><td class="num">{{ r.SoLuongTot }}{% if r.SoLuongHong %}<br><small>Hàng cũ không nhập kho: {{ r.SoLuongHong }}</small>{% endif %}</td>
+        <td>{{ r.LyDo or 'Không có lý do trong dữ liệu cũ' }}</td>
+        {% if not customer_view %}<td>{{ r.HoVaTenNguoiThucHien or '—' }}</td>{% endif %}</tr>
+      {% endfor %}</tbody>
+      <tfoot><tr><th colspan="4">Tổng tiền phải hoàn của phiếu</th><th class="num">{{ receipt.total|vnd }}</th><th colspan="{{ 3 if not customer_view else 2 }}"></th></tr></tfoot></table>
+    </div>
+  </div>{% endfor %}
+  <p class="w12-notice">Tiền hoàn được đối soát theo toàn bộ đơn hàng, không tự gán giao dịch hoàn tiền vào từng phiếu.</p>
+</details>
+{% endif %}

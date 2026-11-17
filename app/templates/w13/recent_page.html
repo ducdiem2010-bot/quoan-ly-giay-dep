@@ -1,0 +1,11 @@
+{% extends 'account_base.html' %}
+{% block title %}Sản phẩm vừa xem – Tài khoản – SHOES STORE{% endblock %}
+{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static', filename='css/w13_customer_ux.css') }}">{% endblock %}
+{% block account_body %}
+<section class="w13-recent-page">
+  <p class="w13-recent-description">Lịch sử sản phẩm đã mở trên trình duyệt này (tối đa 8 sản phẩm), không phải lịch sử mua hàng.</p>
+  {% include 'w13/_recently_viewed.html' %}
+  <p><a class="w13-btn w13-btn-secondary" href="{{ url_for('acct.profile') }}">← Quay lại tài khoản</a></p>
+</section>
+<script defer src="{{ url_for('static', filename='js/w13_recently_viewed.js') }}"></script>
+{% endblock %}

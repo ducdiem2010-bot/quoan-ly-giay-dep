@@ -1,0 +1,7 @@
+<div class="return-mini">
+  <strong>{{ o.return_label }}</strong>
+  <small>{{ o.refund_label }}</small>
+  {% if o.money_due or o.money_paid %}<small>Phải hoàn: {{ o.money_due|vnd }}</small>
+  <small>Đã hoàn: {{ o.money_paid|vnd }}</small>
+  <small>Còn: <b>{{ o.money_remaining|vnd }}</b></small>{% endif %}
+</div>

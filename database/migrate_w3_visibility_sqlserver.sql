@@ -5,3 +5,7 @@ BEGIN
  ALTER TABLE dbo.SanPham ADD HienThi BIT NOT NULL CONSTRAINT DF_SanPham_HienThi DEFAULT (1);
 END;
 GO
+-- Chỉ áp dụng dữ liệu DEMO có tên nhận diện này sau khi bổ sung W3-006.
+IF EXISTS (SELECT 1 FROM dbo.SanPham WHERE TenSanPham=N'Giày Thể Thao Mẫu Ẩn')
+  UPDATE dbo.SanPham SET HienThi=0 WHERE TenSanPham=N'Giày Thể Thao Mẫu Ẩn';
+GO

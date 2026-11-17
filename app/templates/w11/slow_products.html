@@ -1,0 +1,72 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Sản phẩm bán chậm - Theo dõi sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="w11-page">
+  <div class="w11-eyebrow">THEO DÕI SẢN PHẨM</div>
+  <h1>Sản phẩm bán chậm</h1>
+  <p class="w11-muted"><strong>Tiêu chí thống kê:</strong> Sản phẩm còn tồn kho và bán tối đa 2 đôi từ các đơn <strong>Hoàn thành</strong> trong khoảng thời gian đã chọn (không tính đơn hủy hoặc đơn chưa hoàn thành).</p>
+
+  <form class="w11-toolbar" action="{{ url_for('w11.slow_products') }}" method="get">
+    <label>Tên sản phẩm
+      <input type="search" name="q" value="{{ keyword }}" maxlength="80" placeholder="Tìm theo tên sản phẩm...">
+    </label>
+    <label>Khoảng thời gian
+      <select name="days">
+        <option value="7" {{ 'selected' if report.days == 7 }}>7 ngày gần nhất</option>
+        <option value="30" {{ 'selected' if report.days == 30 }}>30 ngày gần nhất</option>
+        <option value="90" {{ 'selected' if report.days == 90 }}>90 ngày gần nhất</option>
+      </select>
+    </label>
+    <label>Sắp xếp
+      <select name="sort">
+        <option value="sold_asc" {{ 'selected' if sort == 'sold_asc' }}>Bán ít nhất trước</option>
+        <option value="stock_desc" {{ 'selected' if sort == 'stock_desc' }}>Tồn kho nhiều nhất trước</option>
+      </select>
+    </label>
+    <label class="w11-check">
+      <input type="checkbox" name="only_zero" value="1" {{ 'checked' if only_zero }}> Chỉ hiện sản phẩm bán 0 đôi
+    </label>
+    <button class="w11-btn" type="submit">Áp dụng</button>
+  </form>
+
+  <div class="w11-panel">
+    <div class="w11-panel-top">
+      <h2>{{ report.total }} sản phẩm bán chậm</h2>
+      <span>Khoảng thời gian: {{ report.days }} ngày (tính từ {{ report.since }} UTC)</span>
+    </div>
+
+    {% if report['items'] %}
+      <div class="w11-table-wrap">
+        <table class="w11-table">
+          <thead>
+            <tr>
+              <th>Mã sản phẩm</th>
+              <th>Tên sản phẩm</th>
+              <th>Số lượng đã bán (trong {{ report.days }} ngày)</th>
+              <th>Tổng tồn kho</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in report['items'] %}
+            <tr>
+              <td><strong>SP{{ '%03d' % p.MaSanPham }}</strong></td>
+              <td><strong>{{ p.TenSanPham }}</strong></td>
+              <td><span style="font-weight:700; color:#112d21;">{{ p.sold_period }}</span></td>
+              <td><span style="font-weight:700;">{{ p.TongTon }}</span></td>
+              <td>
+                <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="admin-btn-outline-sm" title="Xem chi tiết tồn kho và biến thể">
+                  Xem tồn kho ↗
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="w11-empty">Không có sản phẩm nào thuộc diện bán chậm theo các tiêu chí đã chọn.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

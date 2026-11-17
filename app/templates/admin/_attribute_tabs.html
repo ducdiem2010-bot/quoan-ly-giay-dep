@@ -1,0 +1,16 @@
+<div class="admin-attr-tabs-container">
+  <nav class="admin-attr-tabs" aria-label="Phân loại thuộc tính sản phẩm">
+    <a href="{{ url_for('admin_catalog.categories') }}" class="admin-attr-tab {% if request.endpoint == 'admin_catalog.categories' %}active{% endif %}">
+      Loại / Danh mục
+    </a>
+    <a href="{{ url_for('admin_catalog.brands') }}" class="admin-attr-tab {% if request.endpoint == 'admin_catalog.brands' %}active{% endif %}">
+      Thương hiệu
+    </a>
+    <a href="{{ url_for('admin_catalog.colors') }}" class="admin-attr-tab {% if request.endpoint == 'admin_catalog.colors' %}active{% endif %}">
+      Màu sắc
+    </a>
+    <a href="{{ url_for('admin_catalog.sizes') }}" class="admin-attr-tab {% if request.endpoint == 'admin_catalog.sizes' %}active{% endif %}">
+      Kích thước
+    </a>
+  </nav>
+</div>

@@ -1,0 +1,65 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Sản phẩm hết hàng - Theo dõi sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="w11-page">
+  <div class="w11-eyebrow">THEO DÕI SẢN PHẨM</div>
+  <h1>Sản phẩm hết hàng</h1>
+  <p class="w11-muted">Danh sách sản phẩm có tổng số lượng tồn kho của tất cả biến thể màu và kích thước bằng 0. Sản phẩm còn ít nhất một biến thể có hàng không nằm trong danh sách này.</p>
+
+  <form class="w11-toolbar" action="{{ url_for('w11.out_of_stock_products') }}" method="get">
+    <label>Tìm kiếm sản phẩm
+      <input type="search" name="q" value="{{ keyword }}" maxlength="80" placeholder="Tìm theo tên hoặc mã SP...">
+    </label>
+    <button class="w11-btn" type="submit">Tìm kiếm</button>
+    {% if keyword %}
+      <a href="{{ url_for('w11.out_of_stock_products') }}" class="w11-btn-subtle" style="display:inline-flex; align-items:center; padding:8px 14px; text-decoration:none; color:#475569; font-weight:600; font-size:13px;">Xóa lọc</a>
+    {% endif %}
+  </form>
+
+  <div class="w11-panel">
+    <div class="w11-panel-top">
+      <h2>{{ products|length }} sản phẩm hết hàng</h2>
+      <span>Cập nhật theo dữ liệu tồn kho thực tế</span>
+    </div>
+
+    {% if products %}
+      <div class="w11-table-wrap">
+        <table class="w11-table">
+          <thead>
+            <tr>
+              <th>Mã sản phẩm</th>
+              <th>Tên sản phẩm</th>
+              <th>Danh mục</th>
+              <th>Tổng tồn kho</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in products %}
+            <tr>
+              <td><strong>SP{{ '%03d' % p.MaSanPham }}</strong></td>
+              <td><strong>{{ p.TenSanPham }}</strong></td>
+              <td>{{ p.TenDanhMuc }}</td>
+              <td><span style="font-weight:700; color:#dc2626;">0</span></td>
+              <td>
+                <span class="stock-badge stock-badge-zero" style="display:inline-block; background:#fee2e2; color:#b91c1c; padding:3px 10px; border-radius:6px; font-weight:700; font-size:12px;">
+                  Hết hàng
+                </span>
+              </td>
+              <td>
+                <a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}" class="admin-btn-outline-sm" title="Xem chi tiết biến thể và cập nhật tồn kho">
+                  Xem biến thể ↗
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="w11-empty">Hiện không có sản phẩm nào hết hàng. Tất cả sản phẩm đều có ít nhất một biến thể còn hàng.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

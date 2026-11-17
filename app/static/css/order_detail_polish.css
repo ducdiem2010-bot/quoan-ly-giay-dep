@@ -1,0 +1,16 @@
+/* Chỉ áp dụng chi tiết đơn; không thay layout admin toàn cục. */
+.admin-main-panel:has(.order-detail-panel){min-width:0;width:100%;}
+.order-detail-panel{width:100%;max-width:none!important;margin:0!important;padding:clamp(16px,2vw,28px)!important;min-width:0;font-size:14px;line-height:1.55;}
+.order-detail-panel h1{font-size:clamp(23px,2.2vw,30px)!important;}
+.order-detail-panel h2{font-size:1.2rem;margin:14px 0 12px;}
+.order-detail-panel h3{font-size:1.05rem;}
+.order-detail-panel section,.order-detail-panel div{min-width:0;}
+.order-detail-panel .table-wrap,.order-detail-panel .return-table-wrap{overflow-x:auto;max-width:100%;width:100%;}
+.order-detail-panel .admin-table{min-width:640px;width:100%;border-collapse:collapse;}
+.order-detail-panel .admin-table td,.order-detail-panel .admin-table th{padding:10px 12px;vertical-align:top;overflow-wrap:anywhere;}
+.order-detail-panel button,.order-detail-panel a.print-link{min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-size:14px;font-weight:650;border-radius:8px;padding:8px 13px;text-decoration:none;}
+.order-detail-panel .return-history-table{min-width:1000px;}
+.order-detail-panel .return-history-table td:nth-child(2),.order-detail-panel .return-history-table td:nth-child(7){min-width:160px;max-width:250px;white-space:normal;}
+.order-detail-panel .return-history-table .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.order-detail-panel .return-receipt-header{background:#f1f5f9;font-weight:750;border-top:2px solid #cbd5e1;}
+@media(max-width:720px){.order-detail-panel{padding:14px!important}.order-detail-panel .return-history-table{min-width:980px}}

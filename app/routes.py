@@ -86,7 +86,9 @@ def register_routes(app):
         placeholders = ",".join("?" for _ in ids)
         from .db import query_all
         rows = query_all("""SELECT bt.MaBienThe, bt.KichThuoc, bt.MauSac, bt.SoLuongTon,
-           sp.MaSanPham, sp.TenSanPham, sp.GiaBan FROM BienTheSanPham bt
+           sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.ThuongHieu, sp.HienThi,
+           (SELECT TenTep FROM SanPhamHinhAnh ia WHERE ia.MaSanPham=sp.MaSanPham ORDER BY ia.LaAnhDaiDien DESC, ia.ThuTu ASC, ia.MaHinhAnh ASC LIMIT 1) AS AnhDaiDien
+           FROM BienTheSanPham bt
            JOIN SanPham sp ON bt.MaSanPham=sp.MaSanPham
            WHERE bt.MaBienThe IN (""" + placeholders + ")", tuple(ids))
         total = 0

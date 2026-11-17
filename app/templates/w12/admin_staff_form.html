@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}{{ 'Sửa tài khoản nhân viên' if user else 'Tạo tài khoản nhân viên' }}{% endblock %}
+{% block admin_content %}
+<section class="w12-panel">
+  <h1>{{ 'Sửa tài khoản nhân viên' if user else 'Tạo tài khoản nhân viên mới' }}</h1>
+  <p class="w12-subtitle">Vai trò được tự động gán là <strong>Nhân viên bán hàng (Seller)</strong>. Mật khẩu được mã hóa an toàn bằng hàm băm.</p>
+
+  <form method="post" class="w12-form" style="max-width: 550px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    {% if user %}
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.9rem;">
+        <div><span>Mã nhân viên:</span> <strong>#{{ user.MaNguoiDung }}</strong></div>
+        <div><span>Vai trò:</span> <strong>Nhân viên bán hàng (Seller)</strong></div>
+        <div><span>Trạng thái:</span> <strong style="color:{{ '#16a34a' if user.TrangThai else '#dc2626' }};">{{ 'Hoạt động' if user.TrangThai else 'Đang bị khóa' }}</strong></div>
+      </div>
+    {% endif %}
+
+    <label>Họ và tên <span style="color:#ef4444;">*</span>
+      <input name="name" required minlength="2" maxlength="100" placeholder="Ví dụ: Nguyễn Văn An" value="{{ values.get('name', '') or values.get('HoVaTen', '') }}">
+    </label>
+
+    <label>Email đăng nhập <span style="color:#ef4444;">*</span>
+      <input type="email" name="email" required maxlength="150" placeholder="nhanvien@shop.vn" value="{{ values.get('email', '') or values.get('Email', '') }}">
+    </label>
+
+    <label>Số điện thoại <span style="color:#ef4444;">*</span>
+      <input type="tel" name="phone" required maxlength="20" placeholder="Ví dụ: 0912345678" value="{{ values.get('phone', '') or values.get('SoDienThoai', '') }}">
+    </label>
+
+    {% if not user %}
+      <label>Mật khẩu ban đầu (tối thiểu 8 ký tự) <span style="color:#ef4444;">*</span>
+        <input type="password" name="password" minlength="8" required autocomplete="new-password" placeholder="Nhập mật khẩu">
+      </label>
+
+      <label>Xác nhận mật khẩu <span style="color:#ef4444;">*</span>
+        <input type="password" name="confirm_password" minlength="8" required autocomplete="new-password" placeholder="Nhập lại mật khẩu ban đầu">
+      </label>
+    {% endif %}
+
+    <div style="margin-top: 16px;">
+      <button type="submit" class="action-primary">{{ 'Lưu thay đổi' if user else 'Tạo nhân viên' }}</button>
+      <a href="{{ url_for('w12.staff_list') }}" style="margin-left: 12px; color: #64748b; text-decoration: none;">Hủy / Trở lại danh sách</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

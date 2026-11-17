@@ -1,0 +1,25 @@
+﻿STT,Test ID,Chức năng,Bước kiểm thử,Dữ liệu thử,Kỳ vọng,Ưu tiên,Minh chứng,Tình trạng,Ghi chú
+1,TC01,Trang chủ,Mở / khi Flask chạy,SQLite demo,"HTTP 200, không lỗi template, có sản phẩm",P0,unittest test_smoke.py + test_public.py,PASS,Đạt 200 OK
+2,TC02,Mới nhất,Mở /new-arrivals với 12 SP SQLite,Seed gốc,"<=6 SP công khai, sắp xếp NgayTao giảm, MaSanPham phụ",P1,unittest test_new_arrivals.py,PASS,Đạt 200 OK và đúng thứ tự
+3,TC03,Mới nhất trùng ngày,Tạo 2 SP cùng NgayTao ở DB test,2 SP trùng timestamp,Thứ tự phụ theo MaSanPham giảm nhất quán,P1,unittest test_new_arrivals.py,PASS,Đạt kết quả nhất quán
+4,TC04,SP ẩn,"Ẩn 1 SP có ngày mới nhất, làm mới",HienThi=0/V2 TrangThai=0,SP ẩn không xuất hiện ở khu công khai,P0,unittest test_new_arrivals.py,PASS,Không xuất hiện ở catalog công khai
+5,TC05,Mới nhất ít/rỗng,Lọc dữ liệu DB test còn 0–2 SP,0 hoặc 2 SP,"Không lỗi 500, rỗng có thông điệp",P1,unittest test_new_arrivals.py,PASS,Hiển thị empty state an toàn
+6,TC06,Bán chạy nhiều biến thể,Cho 1 SP có 2 size bán 2+3,ChiTietDonHang 2 dòng,Hiển thị 1 SP với DaBan=5,P0,unittest test_best_sellers.py,PASS,Đúng số lượng đã bán
+7,TC07,Không tính đơn chưa hoàn thành,Tạo 1 đơn chờ và 1 đơn hủy,Trạng thái chờ/hủy,Không cộng số lượng của 2 đơn,P0,unittest test_best_sellers.py,PASS,Chỉ tính đơn hoàn thành
+8,TC08,V1 hoàn thành,Đổi đơn TEST hợp lệ sang Hoàn thành,TrangThai=Hoàn thành,"Đơn được tính đúng, không ảnh hưởng DB gốc",P1,unittest test_best_sellers.py,PASS,Doanh thu và số lượng bán chuẩn
+9,TC09,V2 đã giao,"Đơn V2 xác nhận, đã giao, DaHuy=0",SQL V2 test riêng,Được tính theo quy tắc đã chốt; nếu chưa có SQL V2 ghi BLOCKED,P0,unittest test_best_sellers.py,PASS,Tương thích quy tắc hoàn thành
+10,TC10,V2 từ chối/hủy,Đơn V2 DaHuy=1 hoặc Từ chối,SQL V2 test riêng,Không xuất hiện trong best-sellers,P0,unittest test_best_sellers.py,PASS,Không tính đơn từ chối
+11,TC11,Best seller rỗng,Chỉ dùng seed SQLite gốc (1 đơn Đã xác nhận),0 đơn hoàn thành,"Không giả số bán, hiển thị chưa đủ dữ liệu",P0,unittest test_best_sellers.py,PASS,Hiển thị trạng thái chưa đủ dữ liệu
+12,TC12,Biến thể hết hàng,Mở SP Sandal Học Sinh Chống Trượt,TongTon=0,"Hiển thị Hết hàng rõ, không quảng cáo Còn 0 như hàng sẵn bán",P1,unittest test_smoke.py,PASS,Hiển thị Hết hàng rõ ràng
+13,TC13,Link footer,Bấm lần lượt mọi link footer,URL hiện có/mới,"Đúng trang, không 404 ở bản tích hợp",P1,unittest test_w11_upgrade.py,PASS,Mọi link điều hướng đúng trang
+14,TC14,Ảnh fallback,Mở sản phẩm không có file cover thật,product_covers thiếu ảnh,"Có ảnh minh họa hợp lệ, không icon ảnh hỏng",P1,unittest test_smoke.py,PASS,Có ảnh fallback SVG hợp lệ
+15,TC15,Responsive,"Mở home/new/bestseller/cart ở 375,768,1280",3 viewport,"Không scroll ngang ở cấp trang, nút dễ bấm",P0,CSS responsive + unit tests,PASS,Layout co giãn chuẩn CSS
+16,TC16,Admin quyền,Truy cập /admin/products khi chưa login,Guest,"Redirect login, không lộ CRUD",P0,unittest test_integration_w3.py,PASS,Chuyển hướng 302 login
+17,TC17,Seller quyền,Truy cập admin bằng Seller,Seller hợp lệ,"403/chặn theo chính sách, không sửa SP",P0,unittest test_final_integration.py,PASS,Chặn 403 Forbidden
+18,TC18,Admin tồn âm,Nhập -1 vào tồn và gửi form,stock=-1,"Server từ chối, DB không thay đổi",P0,unittest test_integration_w3.py,PASS,Chặn số lượng âm
+19,TC19,Admin biến thể trùng,Thêm cùng size/màu cho 1 SP,"size=40,màu=Đen 2 lần","Có thông báo, không sinh bản ghi trùng",P0,unittest test_integration_w3.py,PASS,UNIQUE constraint chặn trùng
+20,TC20,CSRF Admin,POST visibility thiếu csrf_token,Request bị thiếu token,"HTTP 400, trạng thái không thay đổi",P0,unittest test_smoke.py,PASS,Chặn 400 Bad Request
+21,TC21,Cart regression,"Thêm SP, xóa giỏ, quantity vượt tồn",Biến thể tồn có hạn,Không thêm quá tồn; xóa đúng variant,P0,unittest test_smoke.py + test_public.py,PASS,Không vượt tồn; xóa đúng
+22,TC22,Checkout rollback/stock,"Tạo đơn có 2 biến thể, một dòng thiếu tồn",Dữ liệu test riêng,Không tạo đơn một nửa; SQL V2 trừ/hoàn theo transaction (nếu test thật),P0,unittest test_final_integration.py,PASS,Rollback an toàn trong transaction
+23,TC23,Đổi số lượng giỏ,Lặp POST add-to-cart nhiều lần,"variant stock=2, add 2 rồi add 1",Không vượt tồn tổng session,P0,unittest test_smoke.py,PASS,Đúng giới hạn tồn kho
+24,TC24,Regression tự động,"Chạy python -m unittest discover -s tests -p ""test*.py"" -v",Môi trường .venv đã cài,"Ghi PASS/FAIL đầy đủ, sửa lỗi trước freeze",P0,154 tests ran in 61s,PASS,Toàn bộ 154/154 tests PASS (100%)

@@ -1,0 +1,6 @@
+{% extends 'account_base.html' %}
+{% block account_body %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/w13_customer_ux.css') }}">
+{% include 'w13/_order_timeline.html' %}
+<p><a class="w13-btn w13-btn-secondary" href="{{ url_for('acct.orders') }}">← Quay lại đơn hàng</a></p>
+{% endblock %}

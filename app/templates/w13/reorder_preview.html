@@ -1,0 +1,47 @@
+{% extends 'account_base.html' %}
+{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static', filename='css/w13_customer_ux.css') }}">{% endblock %}
+{% block account_body %}
+<section class="w13-panel" aria-labelledby="reorder-title">
+  <h2 id="reorder-title">Mua lại sản phẩm từ đơn #{{ plan.order.MaDonHang }}</h2>
+  <p>Chọn số đôi muốn mua lại. <strong>Giá và tồn kho cập nhật theo thời điểm hiện tại.</strong> Bấm xác nhận chỉ thêm vào giỏ hàng, không tự đặt đơn.</p>
+  <form method="post" action="{{ url_for('w13_tuan.reorder', order_id=plan.order.MaDonHang) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="reorder_token" value="{{ reorder_token }}">
+    <div class="w13-table-scroll">
+      <table class="w13-table">
+        <thead><tr><th scope="col">Sản phẩm</th><th scope="col">Size / Màu</th><th scope="col">Đã mua</th><th scope="col">Trong giỏ</th><th scope="col">Giá hiện tại</th><th scope="col">Chọn mua lại</th><th scope="col">Trạng thái</th></tr></thead>
+        <tbody>
+        {% for item in plan['items'] %}
+          <tr>
+            <td><strong>{{ item.TenSanPham }}</strong></td>
+            <td>{{ item.KichThuoc or '—' }} / {{ item.MauSac or '—' }}</td>
+            <td class="w13-num">{{ item.SoLuongMua }}</td>
+            <td class="w13-num">{{ item.in_cart }}</td>
+            <td class="w13-num">{{ item.current_price|vnd if item.current_price is not none else 'Ngừng bán' }}</td>
+            <td>
+              {% if item.MaBienThe is not none %}
+              <label class="w13-qty-label" for="w13-qty-{{ item.MaBienThe }}">Số đôi</label>
+              <input class="w13-qty" id="w13-qty-{{ item.MaBienThe }}" type="number" name="qty_{{ item.MaBienThe }}"
+                min="0" max="{{ item.available_to_add }}" step="1" value="{{ item.available_to_add }}"
+                {% if item.available_to_add == 0 %}disabled{% endif %}
+                aria-label="Số đôi mua lại {{ item.TenSanPham }} size {{ item.KichThuoc }} màu {{ item.MauSac }}">
+              <small class="w13-limit">Tối đa {{ item.available_to_add }} đôi</small>
+              {% else %}—{% endif %}
+            </td>
+            <td>{{ item.reason or ('Đã đủ trong giỏ / hết lượng có thể thêm' if item.available_to_add == 0 else 'Có thể mua') }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="7">Đơn chưa có sản phẩm để mua lại.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="w13-note">Số 0 nghĩa là không mua lại dòng đó. Nếu tồn kho thay đổi trong lúc thao tác, hệ thống sẽ yêu cầu chọn lại. Giá và số lượng sẽ được kiểm tra tiếp khi đặt hàng.</p>
+    <div class="w13-actions">
+      <button type="submit" class="w13-btn" {% if not plan['items']|selectattr('available_to_add')|list %}disabled{% endif %}>Xác nhận thêm vào giỏ</button>
+      <a href="{{ url_for('acct.orders') }}" class="w13-btn w13-btn-secondary">Về lịch sử đơn hàng</a>
+      <a href="{{ url_for('view_cart') }}" class="w13-btn w13-btn-secondary">Xem giỏ hàng hiện tại</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

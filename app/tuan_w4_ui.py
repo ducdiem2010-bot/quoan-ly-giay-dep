@@ -85,6 +85,12 @@ def my_orders():
         return response
     provider = _provider()
     if provider is None:
+        # Không đổi contract W4 khi chạy bài test UI provider độc lập.
+        # Ở website thực, đi tới backend đơn hàng SQLite đã kết nối.
+        if current_app.config.get('LEGACY_ORDER_REDIRECT', True) and (
+                not current_app.config.get('TESTING') or
+                current_app.config.get('FORCE_LEGACY_ORDER_REDIRECT')):
+            return redirect(url_for('acct.orders'))
         return _unavailable()
     try:
         raw = provider.list_orders(user_id=uid)
