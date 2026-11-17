@@ -4,6 +4,12 @@
   <aside class="acct-side">
     <div class="acct-user"><span class="acct-initials" aria-hidden="true">{{ initials }}</span>
       <div><strong>{{ user.HoVaTen }}</strong><small>{{ user.Email }}</small></div></div>
+    <div class="acct-meta-card" style="padding: 12px 14px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 12px 0; font-size: 0.88rem; line-height: 1.6;">
+      <div><span style="color:#64748b;">Mã tài khoản:</span> <strong>#{{ user.MaNguoiDung }}</strong></div>
+      <div><span style="color:#64748b;">Vai trò:</span> <strong>{% if user.TenVaiTro == 'Admin' %}Quản trị viên{% elif user.TenVaiTro == 'Seller' %}Nhân viên bán hàng{% else %}Khách hàng{% endif %}</strong></div>
+      <div><span style="color:#64748b;">Trạng thái:</span> <strong style="color: {% if user.TrangThai %}#16a34a{% else %}#dc2626{% endif %};">{{ 'Hoạt động' if user.TrangThai else 'Đang bị khóa' }}</strong></div>
+      <div><span style="color:#64748b;">Ngày tạo:</span> <span>{{ user.NgayTao or '—' }}</span></div>
+    </div>
     <nav class="acct-menu" aria-label="Mục tài khoản">
       <a href="#thong-tin" class="active"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>Thông tin tài khoản</a>
       <a href="#dia-chi"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Địa chỉ giao hàng</a>
@@ -15,6 +21,11 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <section id="thong-tin">
       <div class="acct-head"><h2>Thông tin cá nhân</h2><button type="button" id="edit-toggle" class="acct-edit">Chỉnh sửa</button></div>
+      <div class="acct-row acct-row-3" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-bottom: 18px; font-size: 0.9rem;">
+        <div><span style="color:#64748b; display:block; font-size:0.8rem;">MÃ TÀI KHOẢN</span><strong>#{{ user.MaNguoiDung }}</strong></div>
+        <div><span style="color:#64748b; display:block; font-size:0.8rem;">VAI TRÒ HỆ THỐNG</span><strong>{{ user.TenVaiTro }}</strong></div>
+        <div><span style="color:#64748b; display:block; font-size:0.8rem;">TRẠNG THÁI</span><strong>{{ 'Hoạt động' if user.TrangThai else 'Đang bị khóa' }}</strong></div>
+      </div>
       <div class="acct-row acct-row-3">
         <div><label for="ten">Tên <i>*</i></label><input id="ten" name="ten" data-editable maxlength="60" required autocomplete="given-name" value="{{ v.ten }}"></div>
         <div><label for="ho">Họ <i>*</i></label><input id="ho" name="ho" data-editable maxlength="60" required autocomplete="family-name" value="{{ v.ho }}"></div>

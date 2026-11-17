@@ -1,0 +1,110 @@
+{# Phần đánh giá sản phẩm (#reviews). Dữ liệu do app/services/reviews.py cung cấp. #}
+{% macro stars(n) -%}
+<span class="rv-stars" role="img" aria-label="{{ n }} trên 5 sao">{% for i in range(1, 6) %}<span class="{{ 'on' if i <= n else '' }}" aria-hidden="true">★</span>{% endfor %}</span>
+{%- endmacro %}
+<section id="reviews" class="rv-section" aria-labelledby="reviews-title">
+  <h2 id="reviews-title" class="detail-subtitle">Đánh giá sản phẩm</h2>
+  {% if review_unavailable %}
+  <p class="notice notice-warning">Chức năng đánh giá tạm thời chưa khả dụng.</p>
+  {% else %}
+  {% set sm = review_summary %}
+  <div class="rv-overview">
+    <div class="rv-score">
+      <strong>{{ '%.1f'|format(sm.average) }}</strong>
+      {{ stars(sm.average|round(0, 'floor')|int) }}
+      <span>{{ sm.total }} lượt đánh giá</span>
+    </div>
+    <ul class="rv-bars" aria-label="Phân bổ số sao">
+      {% for star in [5, 4, 3, 2, 1] %}
+      <li>
+        <a href="{{ url_for('product_detail', product_id=product.MaSanPham, rating=star) }}#reviews"
+           {% if reviews.rating == star %}aria-current="true"{% endif %}>{{ star }} ★</a>
+        <span class="rv-track"><span style="width: {{ sm.percent[star] }}%"></span></span>
+        <span class="rv-count">{{ sm.distribution[star] }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <form method="get" action="{{ url_for('product_detail', product_id=product.MaSanPham) }}#reviews" class="rv-filter">
+    <label for="rv-rating">Lọc theo sao</label>
+    <select id="rv-rating" name="rating" onchange="this.form.submit()">
+      <option value="">Tất cả</option>
+      {% for star in [5, 4, 3, 2, 1] %}<option value="{{ star }}" {% if reviews.rating == star %}selected{% endif %}>{{ star }} sao</option>{% endfor %}
+    </select>
+    <label for="rv-sort">Sắp xếp</label>
+    <select id="rv-sort" name="sort" onchange="this.form.submit()">
+      {% for key, label in review_sort_labels.items() %}<option value="{{ key }}" {% if reviews.sort == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <noscript><button type="submit" class="action-secondary">Áp dụng</button></noscript>
+  </form>
+
+  {% if reviews.rows %}
+  <ul class="rv-list">
+    {% for r in reviews.rows %}
+    <li class="rv-item" id="review-{{ r.MaDanhGia }}">
+      <div class="rv-head">
+        <strong>{{ r.HoVaTen }}</strong>
+        <span class="rv-badge">Đã mua hàng</span>
+        <time class="rv-date">{{ r.NgayHienThi }}</time>
+      </div>
+      {{ stars(r.SoSao) }}
+      {% if r.PhanLoai %}<p class="rv-variant">Phân loại: {{ r.PhanLoai }}</p>{% endif %}
+      {% if r.TieuDe %}<h3 class="rv-title">{{ r.TieuDe }}</h3>{% endif %}
+      <p class="rv-body">{{ r.NoiDung }}</p>
+      {% if r.PhanHoiShop %}
+      <div class="rv-reply"><strong>Phản hồi của shop</strong>{% if r.NgayPhanHoiHienThi %} <time>{{ r.NgayPhanHoiHienThi }}</time>{% endif %}<p>{{ r.PhanHoiShop }}</p></div>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% if reviews.pages > 1 %}
+  <nav class="rv-pager" aria-label="Phân trang đánh giá">
+    {% if reviews.page > 1 %}<a href="{{ url_for('product_detail', product_id=product.MaSanPham, rating=reviews.rating, sort=reviews.sort, page=reviews.page - 1) }}#reviews" rel="prev">‹ Trước</a>{% endif %}
+    <span>Trang {{ reviews.page }} / {{ reviews.pages }}</span>
+    {% if reviews.page < reviews.pages %}<a href="{{ url_for('product_detail', product_id=product.MaSanPham, rating=reviews.rating, sort=reviews.sort, page=reviews.page + 1) }}#reviews" rel="next">Sau ›</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <p class="rv-empty">{% if reviews.rating %}Chưa có đánh giá {{ reviews.rating }} sao nào.{% else %}Chưa có đánh giá nào cho sản phẩm này.{% endif %}</p>
+  {% endif %}
+
+  <div class="rv-write">
+    <h3>Viết đánh giá của bạn</h3>
+    {% if not session.get('user_id') %}
+    <p class="rv-hint">Vui lòng <a href="{{ url_for('login', next=url_for('product_detail', product_id=product.MaSanPham)) }}">đăng nhập</a> để đánh giá. Chỉ khách đã nhận hàng (đơn hoàn thành) mới được đánh giá.</p>
+    {% elif session.get('role') != 'Customer' %}
+    <p class="rv-hint">Chỉ tài khoản khách hàng mới có thể gửi đánh giá.</p>
+    {% elif review_can_submit %}
+    <form method="post" action="{{ url_for('reviews.submit_review', product_id=product.MaSanPham) }}" class="rv-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <fieldset class="rv-rate">
+        <legend>Số sao <span aria-hidden="true">*</span></legend>
+        <div class="rv-rate-stars">
+        {% for star in [5, 4, 3, 2, 1] %}
+        <input type="radio" id="rv-star-{{ star }}" name="so_sao" value="{{ star }}" {% if star == 5 %}required{% endif %}>
+        <label for="rv-star-{{ star }}" title="{{ star }} sao"><span class="sr-only">{{ star }} sao</span>★</label>
+        {% endfor %}
+        </div>
+      </fieldset>
+      {% if review_eligible_orders|length > 1 %}
+      <label for="rv-order">Đơn hàng</label>
+      <select id="rv-order" name="ma_don_hang">
+        <option value="">Đơn hoàn thành gần nhất</option>
+        {% for o in review_eligible_orders %}<option value="{{ o.MaDonHang }}">Đơn #{{ o.MaDonHang }}</option>{% endfor %}
+      </select>
+      {% endif %}
+      <label for="rv-title-in">Tiêu đề (không bắt buộc)</label>
+      <input id="rv-title-in" name="tieu_de" maxlength="150" autocomplete="off">
+      <label for="rv-content">Nhận xét <span aria-hidden="true">*</span></label>
+      <textarea id="rv-content" name="noi_dung" rows="4" minlength="10" maxlength="1000" required placeholder="Chia sẻ trải nghiệm của bạn (10–1000 ký tự)"></textarea>
+      <button type="submit" class="action-primary">Gửi đánh giá</button>
+    </form>
+    {% elif review_already_done %}
+    <p class="rv-hint">Bạn đã đánh giá sản phẩm này. Cảm ơn bạn!</p>
+    {% else %}
+    <p class="rv-hint">Bạn có thể đánh giá sau khi đơn hàng chứa sản phẩm này được giao và hoàn thành.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>

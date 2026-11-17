@@ -1,0 +1,5 @@
+﻿Owner,Branch theo Excel,Commit SHA thực tế,Tình trạng review,Phát hiện,Kết luận
+Minh,feature/minh-new-arrivals,CHƯA XÁC MINH,CHƯA KIỂM CHỨNG,Không truy cập được nội dung nhánh mới nhất từ môi trường đóng gói,BLOCKED - đợi review PR thật
+Nghĩa,feature/nghia-best-sellers,CHƯA XÁC MINH,CHƯA KIỂM CHỨNG,Không truy cập được nội dung nhánh mới nhất từ môi trường đóng gói,BLOCKED - đợi review PR thật
+Khải,feature/khai-admin-ux,CHƯA XÁC MINH,CHƯA KIỂM CHỨNG,Không truy cập được nội dung nhánh mới nhất từ môi trường đóng gói,BLOCKED - đợi review PR thật
+Tuấn,feature/tuan-storefront,CHƯA XÁC MINH,CHƯA KIỂM CHỨNG,Không truy cập được nội dung nhánh mới nhất từ môi trường đóng gói,BLOCKED - đợi review PR thật

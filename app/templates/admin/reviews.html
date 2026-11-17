@@ -1,0 +1,31 @@
+{% extends 'admin_base.html' %}{% block admin_title %}Quản lý đánh giá{% endblock %}
+{% block admin_content %}<link rel="stylesheet" href="{{ url_for('static', filename='css/product_reviews.css') }}">
+<section class="w12-panel"><h1>Quản lý đánh giá sản phẩm</h1>
+<p>Ẩn/hiện đánh giá không phù hợp và phản hồi khách hàng. Đánh giá bị ẩn sẽ biến mất khỏi trang sản phẩm.</p>
+<form method="get" class="w12-filter">
+  <label>Tìm kiếm<input name="q" value="{{ keyword }}" maxlength="80" placeholder="Sản phẩm, khách hàng, nội dung"></label>
+  <label>Trạng thái<select name="status"><option value="">Tất cả</option><option value="1" {% if status == '1' %}selected{% endif %}>Đang hiển thị</option><option value="0" {% if status == '0' %}selected{% endif %}>Đã ẩn</option></select></label>
+  <label>Số sao<select name="rating"><option value="">Tất cả</option>{% for s in [5,4,3,2,1] %}<option value="{{ s }}" {% if rating == s %}selected{% endif %}>{{ s }} sao</option>{% endfor %}</select></label>
+  <button type="submit">Lọc</button>
+</form>
+<div class="rv-admin-list">
+{% for r in items %}
+<article class="rv-admin-card {{ '' if r.TrangThaiHienThi else 'is-hidden' }}">
+  <header><strong>{{ r.TenSanPham }}</strong> · {{ r.HoVaTen }} · đơn #{{ r.MaDonHang }} · {{ r.NgayHienThi }}
+    <span class="rv-badge {{ '' if r.TrangThaiHienThi else 'rv-badge-off' }}">{{ 'Đang hiển thị' if r.TrangThaiHienThi else 'Đã ẩn' }}</span></header>
+  <p class="rv-stars" aria-label="{{ r.SoSao }} sao">{% for i in range(1,6) %}<span class="{{ 'on' if i <= r.SoSao else '' }}">★</span>{% endfor %}</p>
+  {% if r.TieuDe %}<p><strong>{{ r.TieuDe }}</strong></p>{% endif %}
+  <p>{{ r.NoiDung }}</p>
+  <form method="post" class="rv-admin-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Phản hồi của shop (tối đa 500 ký tự)
+      <textarea name="phan_hoi_shop" rows="2" maxlength="500">{{ r.PhanHoiShop or '' }}</textarea></label>
+    <div class="rv-admin-actions">
+      <button type="submit" formaction="{{ url_for('reviews.reply_review', review_id=r.MaDanhGia) }}">Lưu phản hồi</button>
+      <button type="submit" formaction="{{ url_for('reviews.toggle_review', review_id=r.MaDanhGia) }}">{{ 'Ẩn đánh giá' if r.TrangThaiHienThi else 'Hiện lại' }}</button>
+      <a href="{{ url_for('product_detail', product_id=r.MaSanPham) }}#review-{{ r.MaDanhGia }}">Xem trên trang sản phẩm</a>
+    </div>
+  </form>
+</article>
+{% else %}<p>Chưa có đánh giá nào{% if status or rating or keyword %} khớp bộ lọc{% endif %}.</p>{% endfor %}
+</div></section>{% endblock %}

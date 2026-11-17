@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Khu vực nhân viên · Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/w12_admin.css') }}">{% endblock %}
+{% block content %}
+<section class="w12-panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+    <div>
+      <span class="eyebrow" style="color:#64748b; font-size:0.8rem; font-weight:700;">DÀNH CHO SELLER</span>
+      <h1>Khu vực làm việc của nhân viên</h1>
+      <p class="w12-subtitle">Xem tồn kho, tra cứu đơn hàng của tất cả khách hàng và xử lý đơn theo đúng quy trình.</p>
+    </div>
+    <a class="action-primary" href="{{ url_for('w12.staff_orders') }}">▤ Tra cứu &amp; Xử lý đơn hàng →</a>
+    <a class="action-primary" href="{{ url_for('reviews.admin_reviews') }}">★ Quản lý đánh giá →</a>
+  </div>
+
+  {# Khối thống kê đơn hàng cho nhân viên #}
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
+    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <span style="font-size:0.85rem; color:#64748b; display:block;">ĐƠN CẦN XÁC NHẬN</span>
+      <strong style="font-size:1.8rem; color:#b45309;">{{ stats.get('pending_count', 0) }}</strong>
+      <p style="margin:4px 0 0; font-size:0.8rem; color:#64748b;">Đơn mới chờ nhân viên duyệt trừ kho</p>
+    </div>
+    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <span style="font-size:0.85rem; color:#64748b; display:block;">ĐƠN ĐÃ XÁC NHẬN</span>
+      <strong style="font-size:1.8rem; color:#3730a3;">{{ stats.get('confirmed_count', 0) }}</strong>
+      <p style="margin:4px 0 0; font-size:0.8rem; color:#64748b;">Đơn đang chờ giao / hoàn thành</p>
+    </div>
+    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <span style="font-size:0.85rem; color:#64748b; display:block;">TỔNG SỐ ĐƠN HÀNG</span>
+      <strong style="font-size:1.8rem; color:#0f172a;">{{ stats.get('total_orders', 0) }}</strong>
+      <p style="margin:4px 0 0; font-size:0.8rem; color:#64748b;">Toàn bộ đơn hàng trong hệ thống</p>
+    </div>
+  </div>
+
+  <h2>Bảng tra cứu tồn kho sản phẩm</h2>
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Mã SP</th>
+          <th>Tên sản phẩm</th>
+          <th>Danh mục</th>
+          <th>Giá bán</th>
+          <th>Tổng tồn kho</th>
+          <th>Trạng thái hiển thị</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>#{{ p.MaSanPham }}</td>
+            <td><strong>{{ p.TenSanPham }}</strong></td>
+            <td>{{ p.TenDanhMuc or '—' }}</td>
+            <td>{{ p.GiaBan|vnd }}</td>
+            <td>
+              {% if p.TongTon <= 0 %}
+                <strong style="color:#dc2626;">0 (Hết hàng)</strong>
+              {% elif p.TongTon <= 5 %}
+                <strong style="color:#d97706;">{{ p.TongTon }} (Sắp hết)</strong>
+              {% else %}
+                <span style="color:#16a34a; font-weight:600;">{{ p.TongTon }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if p.HienThi %}
+                <span style="color:#16a34a;">Đang bán</span>
+              {% else %}
+                <span style="color:#94a3b8;">Tạm ẩn</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align:center; padding:20px;">Chưa có sản phẩm trong hệ thống.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

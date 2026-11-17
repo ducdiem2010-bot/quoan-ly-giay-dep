@@ -11,7 +11,12 @@
 <label>Giá bán (VNĐ) * <input name="price" type="number" min="0" step="0.01" required value="{{product.GiaBan if product else request.form.get('price','')}}"></label>
 <label>Danh mục * <select name="category_id" required><option value="">Chọn danh mục</option>
 {% for c in categories %}<option value="{{c.MaDanhMuc}}" {% if (product and c.MaDanhMuc==product.MaDanhMuc) or (not product and request.form.get('category_id')==c.MaDanhMuc|string) %}selected{% endif %}>{{c.TenDanhMuc}}</option>{% endfor %}</select></label>
-<label>Thương hiệu <input name="brand" maxlength="100" value="{{product.ThuongHieu or '' if product else request.form.get('brand','')}}"></label>
+<label>Thương hiệu
+  <input name="brand" list="brand-options" maxlength="100" placeholder="Chọn hoặc nhập thương hiệu (VD: Nike, Adidas...)" value="{{product.ThuongHieu or '' if product else request.form.get('brand','')}}">
+  <datalist id="brand-options">
+    {% for b in brands %}<option value="{{ b.TenThuongHieu }}"></option>{% endfor %}
+  </datalist>
+</label>
 <label>Mô tả <textarea name="description" maxlength="5000" rows="4">{{product.MoTa or '' if product else request.form.get('description','')}}</textarea></label>
 <section class="upload-panel">
   <div><h2>Hình ảnh sản phẩm</h2><p>Chọn một hoặc nhiều ảnh. Định dạng JPG, PNG, WebP · tối đa 5 MB/ảnh.</p></div>
@@ -20,8 +25,18 @@
   {% if images %}<h3>Ảnh hiện có</h3><div class="saved-images">{% for image in images %}<div class="saved-image"><img src="{{url_for('static',filename=image.filename)}}" alt="Ảnh sản phẩm"><div><b>{{'Ảnh đại diện' if image.is_cover else 'Ảnh phụ'}}</b>{% if not image.is_cover %}<button type="submit" class="image-action" formaction="{{url_for('admin_w3.image_cover',product_id=product.MaSanPham,image_id=image.MaHinhAnh)}}">Đặt làm đại diện</button>{% endif %}<button type="submit" class="image-action danger" formaction="{{url_for('admin_w3.image_delete',product_id=product.MaSanPham,image_id=image.MaHinhAnh)}}" onclick="return confirm('Bạn có chắc muốn xóa ảnh này?')">Xóa ảnh</button></div></div>{% endfor %}</div>{% endif %}
 </section>
 {% if not product %}<fieldset><legend>Biến thể đầu tiên (không bắt buộc)</legend>
-<label>Size đầu tiên <input name="initial_size" maxlength="30" value="{{request.form.get('initial_size','')}}"></label>
-<label>Màu đầu tiên <input name="initial_color" maxlength="50" value="{{request.form.get('initial_color','')}}"></label>
+<label>Size đầu tiên
+  <input name="initial_size" list="size-options" maxlength="30" placeholder="VD: 39, 40, 41..." value="{{request.form.get('initial_size','')}}">
+  <datalist id="size-options">
+    {% for s in sizes %}<option value="{{ s.TenKichThuoc }}"></option>{% endfor %}
+  </datalist>
+</label>
+<label>Màu đầu tiên
+  <input name="initial_color" list="color-options" maxlength="50" placeholder="VD: Đen, Trắng, Đỏ..." value="{{request.form.get('initial_color','')}}">
+  <datalist id="color-options">
+    {% for m in colors %}<option value="{{ m.TenMau }}"></option>{% endfor %}
+  </datalist>
+</label>
 <label>Tồn ban đầu <input name="initial_stock" type="number" min="0" value="{{request.form.get('initial_stock','0')}}"></label>
 </fieldset>{% endif %}
 <div class="w3-actions"><button class="action-primary" type="submit">{{'Lưu thay đổi' if product else 'Thêm sản phẩm'}}</button><a href="{{url_for('admin_w3.products')}}">Quay lại danh sách</a></div>

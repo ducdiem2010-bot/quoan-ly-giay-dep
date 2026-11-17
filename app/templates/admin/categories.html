@@ -1,0 +1,77 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Quản lý Loại & Danh mục sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="admin-ux-page">
+  <div class="w3-header">
+    <div>
+      <span class="eyebrow">QUẢN LÝ DỮ LIỆU</span>
+      <h1>Loại & Danh mục sản phẩm</h1>
+      <p>Quản lý phân loại sản phẩm trên hệ thống; kiểm tra an toàn trước khi xóa.</p>
+    </div>
+  </div>
+
+  <div style="background:#fff;padding:20px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:24px;">
+    <h3 style="margin-top:0;font-size:1.1rem;color:#1e293b;">＋ Thêm danh mục mới</h3>
+    <form method="post" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div style="flex:1;min-width:200px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Tên danh mục *</label>
+        <input name="name" required maxlength="100" placeholder="VD: Giày Thể Thao" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div style="flex:2;min-width:250px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Mô tả</label>
+        <input name="description" maxlength="255" placeholder="Mô tả danh mục (tùy chọn)" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div>
+        <button type="submit" class="action-primary" style="padding:9px 18px;">Thêm danh mục</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Mã</th>
+          <th>Tên danh mục</th>
+          <th>Mô tả</th>
+          <th style="width:110px;">Số SP</th>
+          <th style="width:200px;">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>DM{{ '%02d' % item.MaDanhMuc }}</td>
+          <td>
+            <input form="edit-cat-{{ item.MaDanhMuc }}" name="name" value="{{ item.TenDanhMuc }}" required maxlength="100" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;width:100%;">
+          </td>
+          <td>
+            <input form="edit-cat-{{ item.MaDanhMuc }}" name="description" value="{{ item.MoTa or '' }}" maxlength="255" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;width:100%;">
+          </td>
+          <td>
+            <span style="display:inline-block;padding:2px 8px;border-radius:12px;background:#e0f2fe;color:#0369a1;font-weight:600;font-size:0.85rem;">
+              {{ item.SoSanPham }} SP
+            </span>
+          </td>
+          <td>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <form id="edit-cat-{{ item.MaDanhMuc }}" method="post" action="{{ url_for('admin_catalog.category_edit', category_id=item.MaDanhMuc) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #94a3b8;background:#f8fafc;cursor:pointer;">Lưu</button>
+              </form>
+              <form method="post" action="{{ url_for('admin_catalog.category_delete', category_id=item.MaDanhMuc) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #f87171;background:#fef2f2;color:#b91c1c;cursor:pointer;">Xóa</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Chưa có danh mục nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

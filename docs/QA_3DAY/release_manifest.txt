@@ -1,0 +1,12 @@
+BẢN ỨNG VIÊN TÍCH HỢP NHÓM 6 — CHƯA NGHIỆM THU
+SOURCE_SHA256=2f8a0edd7073b269ed25f81dc50f80b55568c8ebe8f795f6e92e951146e7ff66
+SOURCE_COMMIT_SHA=KHÔNG XÁC MINH (ZIP không có .git)
+FLASK_RUNTIME=CHƯA KIỂM CHỨNG
+SQLITE_QUERY_FIXTURE=PASS
+SQLSERVER_V2=BLOCKED
+515c15279202ead5428d123d93c9b68a6aa9de09f11d954c453cab7a6f99bf1f  app/__init__.py
+a26b60ddb342dcc5c1333aa298fb68faba94ccb0c3c2e68d6dc52722d4da45ba  app/routes/public.py
+82ac609406fda1df0a284bc8d78c6ea27b8fb5e0bde2f04abc5832cd694420ee  app/services/new_arrivals.py
+83b87965e9482bc3421f931efc615e38b66a08613d6851c037985b3e35eab38d  app/services/best_sellers.py
+2ed69651c341fc2cbc136b0074760bbb1ca6cb33e5c76a01ea6d2775ed4a2244  app/templates/index.html
+9ef52abe0c004d9df4a7f9a6965f076c9a558c14462df25db49d3e90fc9a6853  app/templates/base.html

@@ -20,7 +20,7 @@
       <p>Khám phá các mẫu giày dép và chọn sản phẩm để xem chi tiết.</p>
     </div>
     {% if session.get('role') == 'Customer' and favorite_list_url|default('') %}<a class="favorite-login" href="{{ favorite_list_url }}">Xem yêu thích</a>{% endif %}
-    <span class="catalog-total">{{ pagination.total }} sản phẩm</span>
+    <a class="w11-btn" href="{{ url_for('w11.shoe_finder') }}">✦ Trợ lý tìm giày</a><span class="catalog-total">{{ pagination.total }} sản phẩm</span>
   </header>
 
   {% include "product_filters.html" %}

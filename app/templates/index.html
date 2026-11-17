@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Trang chủ - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/storefront_upgrade.css') }}">{% endblock %}
 {% block content %}
+
 <section class="hero-slider" id="hero-slider" aria-roledescription="carousel" aria-label="Quảng cáo cửa hàng">
   <div class="hero-track">
     <article class="hero hero-slide slide-trend" aria-roledescription="slide" aria-label="1 trên 3: Xu hướng"><div class="hero-copy"><span class="hero-pill">XU HƯỚNG • 2026</span>
@@ -22,6 +24,8 @@
     </div><div class="hero-art"><img src="{{ url_for('static', filename='images/shoe-3.svg') }}" alt="Minh họa ưu đãi"></div></article>
   </div>
 </section>
+{% include '_featured_sections.html' %}
+<section class="w11-home-cta" aria-label="Tìm giày phù hợp"><div><span class="w11-eyebrow">LỰA CHỌN THÔNG MINH</span><h2>Chưa biết chọn đôi nào?</h2><p>Chọn loại giày, màu và size. Cửa hàng sẽ lọc những mẫu đang còn hàng phù hợp với bạn.</p></div><a class="w11-btn" href="{{ url_for('w11.shoe_finder') }}">Thử trợ lý chọn giày ↗</a></section>
 <section id="san-pham" class="section-products"><div class="section-title"><div><span class="eyebrow">GIÀY • DÉP • SANDAL</span><h2>Tất cả sản phẩm</h2></div><span>{{ products|length }} sản phẩm</span></div>
   <form method="get" action="{{ url_for('home') }}" class="search-row" role="search">
     <label for="searchInput" class="sr-only">Tìm kiếm theo tên hoặc thương hiệu</label>

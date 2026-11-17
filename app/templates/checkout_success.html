@@ -9,6 +9,13 @@
   <p><strong>Phương thức thanh toán:</strong> {{ 'Chuyển khoản ngân hàng – chờ hướng dẫn/xác nhận' if payment_method == 'bank_transfer' else 'Thanh toán khi nhận hàng' }}</p>
   <p><strong>Trạng thái thanh toán:</strong> Chưa thanh toán.</p>
   <p>Phí giao hàng (nếu có) chưa được tính; cửa hàng cần xác nhận đơn và mức phí trước khi hoàn tất. <strong>Không có giao dịch thanh toán online nào được thực hiện.</strong></p>
-  <a href="{{ url_for('home') }}" class="action-primary">Tiếp tục xem sản phẩm</a>
+  <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+    <a href="{{ url_for('acct.orders') }}" class="action-primary" style="background:#2563eb; color:#fff; text-decoration:none; padding:10px 18px; border-radius:6px; font-weight:600; display:inline-block;">
+      📦 Theo dõi đơn hàng
+    </a>
+    <a href="{{ url_for('home') }}" class="w4-secondary" style="text-decoration:none; display:inline-block; padding:10px 18px; border:1px solid #cbd5e1; border-radius:6px; color:#1e293b; background:#f8fafc; font-weight:600;">
+      Tiếp tục xem sản phẩm
+    </a>
+  </div>
 </section>
 {% endblock %}

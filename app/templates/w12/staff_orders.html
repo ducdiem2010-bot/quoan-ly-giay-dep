@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}Đơn hàng · Khu vực nhân viên - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/w12_admin.css') }}">{% endblock %}
+{% block content %}
+<section class="w12-panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <div>
+      <span class="eyebrow" style="color:#64748b; font-size:0.8rem; font-weight:700;">KHU VỰC NHÂN VIÊN</span>
+      <h1>Danh sách đơn hàng của khách hàng</h1>
+      <p class="w12-subtitle">Nhân viên tra cứu, xem chi tiết và thực hiện xác nhận / hoàn thành / hủy / ghi nhận thanh toán theo đúng quy trình.</p>
+    </div>
+    <a href="{{ url_for('w12.staff_home') }}" style="color:#2563eb; text-decoration:none;">← Quay lại bảng điều khiển nhân viên</a>
+  </div>
+
+  <form method="get" class="w12-filter" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin:16px 0;">
+    <label>Tìm kiếm (Mã đơn / Tên / SĐT)
+      <input name="q" value="{{ q }}" placeholder="Mã đơn, tên, số điện thoại...">
+    </label>
+    <label>Trạng thái đơn
+      <select name="status">
+        <option value="">Tất cả trạng thái</option>
+        {% for s in ['Chờ xác nhận', 'Đã xác nhận', 'Hoàn thành', 'Đã hủy'] %}
+          <option value="{{ s }}" {% if s==status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Thanh toán
+      <select name="pay_status">
+        <option value="">Tất cả thanh toán</option>
+        <option value="Chưa thanh toán" {% if pay_status=='Chưa thanh toán' %}selected{% endif %}>Chưa thanh toán</option>
+        <option value="Đã thanh toán" {% if pay_status=='Đã thanh toán' %}selected{% endif %}>Đã thanh toán</option>
+      </select>
+    </label>
+    <label>Sắp xếp
+      <select name="sort">
+        <option value="newest" {% if sort!='oldest' %}selected{% endif %}>Mới nhất</option>
+        <option value="oldest" {% if sort=='oldest' %}selected{% endif %}>Cũ nhất</option>
+      </select>
+    </label>
+    <button type="submit">Lọc danh sách</button>
+    {% if q or status or pay_status or sort=='oldest' %}
+      <a href="{{ url_for('w12.staff_orders') }}" style="color:#64748b; margin-left:6px; font-size:0.9rem;">Đặt lại</a>
+    {% endif %}
+  </form>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Ngày đặt</th>
+          <th>Khách hàng</th>
+          <th>Người nhận / SĐT</th>
+          <th>Tổng tiền</th>
+          <th>Trạng thái đơn</th>
+          <th>Thanh toán</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td><strong>#{{ o.MaDonHang }}</strong></td>
+            <td style="font-size:0.85rem; color:#64748b;">{{ o.NgayDat }}</td>
+            <td>{{ o.KhachHang or 'Khách vãng lai' }}</td>
+            <td>
+              <div>{{ o.TenNguoiNhan or '—' }}</div>
+              <small style="color:#64748b;">{{ o.SdtNguoiNhan or o.SdtKhach or '' }}</small>
+            </td>
+            <td><strong>{{ o.TongTien|vnd }}</strong></td>
+            <td>
+              {% if o.TrangThai == 'Chờ xác nhận' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#fef3c7; color:#b45309; font-weight:600;">Chờ xác nhận</span>
+              {% elif o.TrangThai == 'Đã xác nhận' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#e0e7ff; color:#3730a3; font-weight:600;">Đã xác nhận</span>
+              {% elif o.TrangThai == 'Hoàn thành' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#dcfce7; color:#15803d; font-weight:600;">Hoàn thành</span>
+              {% else %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#fee2e2; color:#b91c1c; font-weight:600;">Đã hủy</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if o.TrangThaiThanhToan == 'Đã thanh toán' %}
+                <span style="color:#16a34a; font-weight:600; font-size:0.85rem;">✓ Đã thanh toán</span>
+              {% else %}
+                <span style="color:#64748b; font-size:0.85rem;">Chưa thanh toán</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('w12.staff_order_detail', order_id=o.MaDonHang) }}" style="color:#2563eb; text-decoration:none; font-weight:600;">Xem chi tiết &amp; Xử lý →</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="8" style="text-align:center; padding:24px; color:#64748b;">Không tìm thấy đơn hàng nào.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Phân trang #}
+  {% if pagination and pagination.page_count > 1 %}
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+      <span style="font-size:0.9rem; color:#64748b;">Tổng cộng {{ pagination.total }} đơn hàng · Trang {{ pagination.page }} / {{ pagination.page_count }}</span>
+      <div style="display:flex; gap:8px;">
+        {% if pagination.prev_url %}
+          <a href="{{ pagination.prev_url }}" style="padding:4px 10px; border:1px solid #cbd5e1; border-radius:4px; text-decoration:none;">← Trang trước</a>
+        {% endif %}
+        {% if pagination.next_url %}
+          <a href="{{ pagination.next_url }}" style="padding:4px 10px; border:1px solid #cbd5e1; border-radius:4px; text-decoration:none;">Trang sau →</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

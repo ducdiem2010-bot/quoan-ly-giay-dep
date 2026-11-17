@@ -1,7 +1,33 @@
 {% extends 'admin_base.html' %}
-{% block admin_title %}Danh sách sản phẩm{% endblock %}
-{% block admin_content %}<div class="section-title"><div><span class="eyebrow">SẢN PHẨM</span><h1>Quản trị sản phẩm</h1></div><a href="{{ url_for('admin_product_add') }}" class="action-primary">＋ Thêm sản phẩm</a></div>
-<p>Danh sách đọc từ cơ sở dữ liệu; CRUD sản phẩm được triển khai ở tuần tiếp theo.</p>
-<div class="table-wrap"><table class="admin-table"><thead><tr><th>Mã</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Tồn</th></tr></thead><tbody>
-{% for p in products %}<tr><td>SP{{ '%03d' % p.MaSanPham }}</td><td>{{ p.TenSanPham }}</td><td>{{ p.TenDanhMuc }}</td><td>{{ p.GiaBan|vnd }}</td><td>{{ p.TongTon }}</td></tr>{% endfor %}
-</tbody></table></div>{% endblock %}
+{% block admin_title %}Tổng quan cửa hàng{% endblock %}
+{% block admin_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+<section class="admin-kpi" aria-labelledby="admin-kpi-title">
+  <header class="admin-kpi-header">
+    <span class="eyebrow">SHOES STORE · NHÓM 6</span>
+    <h1 id="admin-kpi-title">Tổng quan cửa hàng</h1>
+    <p>Các chỉ số đọc từ dữ liệu hiện có; không làm thay đổi đơn hàng hay tồn kho.</p>
+  </header>
+  <div class="admin-kpi-grid">
+    <article class="admin-kpi-card"><span>Tổng sản phẩm</span><strong>{{ metrics.total_products }}</strong><small>Gồm sản phẩm đang ẩn; không đếm trùng màu/size</small></article>
+    <article class="admin-kpi-card"><span>Tổng đơn hàng</span><strong>{{ metrics.total_orders }}</strong><small>Bao gồm mọi trạng thái đơn hàng</small></article>
+    <article class="admin-kpi-card admin-kpi-card--money">
+      <span>{{ 'Doanh thu đã xác nhận' if metrics.verified_revenue else 'Giá trị đơn hoàn thành' }}</span>
+      <strong>{{ metrics.completed_order_value|vnd }}</strong>
+      <small>{% if metrics.verified_revenue %}Đã thanh toán và giao thành công{% else %}SQLite không lưu trạng thái thanh toán; đây chưa phải doanh thu thực nhận{% endif %}</small>
+    </article>
+    <article class="admin-kpi-card"><span>Đơn chờ xác nhận</span><strong>{{ metrics.pending_orders }}</strong><small>Cần được xử lý theo quy trình hiện tại</small></article>
+    <article class="admin-kpi-card admin-kpi-card--alert"><span>Sản phẩm hết hàng</span><strong>{{ metrics.out_of_stock }}</strong><small>Tổng tồn tất cả biến thể bằng 0</small></article>
+    <article class="admin-kpi-card admin-kpi-card--low"><span>Sản phẩm sắp hết hàng</span><strong>{{ metrics.low_stock_count }}</strong><small>Còn từ 1 đến {{ metrics.stock_threshold }} sản phẩm</small></article>
+  </div>
+  <div class="admin-kpi-section">
+    <div><h2>Những sản phẩm cần nhập thêm</h2><p>Chỉ hiển thị tối đa 5 sản phẩm sắp hết hàng.</p></div>
+    {% if metrics.low_stock_products %}
+      <div class="table-wrap"><table class="admin-table"><thead><tr><th>Sản phẩm</th><th>Tồn kho</th><th>Quản lý</th></tr></thead><tbody>
+        {% for p in metrics.low_stock_products %}<tr><td>{{ p.TenSanPham }}</td><td>{{ p.TongTon }}</td><td><a href="{{ url_for('admin_w3.variants', product_id=p.MaSanPham) }}">Xem biến thể</a></td></tr>{% endfor %}
+      </tbody></table></div>
+    {% else %}<p class="admin-kpi-empty">Hiện chưa có sản phẩm trong ngưỡng sắp hết hàng.</p>{% endif %}
+    <a href="{{ url_for('admin_w3.products') }}" class="action-primary">Quản trị sản phẩm</a>
+  </div>
+</section>
+{% endblock %}

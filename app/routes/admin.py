@@ -109,7 +109,23 @@ def _parse():
 @admin_w3.get('')
 @admin_only
 def products():
-    return render_template('admin/w3_products.html',products=all_products())
+    keyword = request.args.get('q', '', type=str).strip()[:80]
+    sort = request.args.get('sort', 'newest', type=str)
+    if sort not in ('newest', 'oldest', 'name_asc', 'name_desc', 'price_asc', 'price_desc'):
+        abort(400, description='Tiêu chí sắp xếp không hợp lệ.')
+    products = all_products()
+    if keyword:
+        products = [p for p in products if keyword.casefold() in p['TenSanPham'].casefold()
+                    or (keyword.isdigit() and int(p['MaSanPham']) == int(keyword))]
+    if sort == 'oldest':
+        products.sort(key=lambda p:p['MaSanPham'])
+    elif sort in ('name_asc', 'name_desc'):
+        products.sort(key=lambda p:(p['TenSanPham'].casefold(), p['MaSanPham']),
+                      reverse=(sort=='name_desc'))
+    elif sort in ('price_asc', 'price_desc'):
+        products.sort(key=lambda p:(float(p['GiaBan']), p['MaSanPham']),
+                      reverse=(sort=='price_desc'))
+    return render_template('admin/w3_products.html', products=products, keyword=keyword, sort=sort)
 
 @admin_w3.route('/new',methods=['GET','POST'])
 @admin_only
@@ -122,6 +138,16 @@ def product_new():
             conn=get_db_connection()
             try:
                 cur=conn.cursor()
+                # Tự động đồng bộ Thương hiệu vào bảng ThuongHieu nếu chưa có
+                ma_th = None
+                if data['brand']:
+                    th_row = query_one('SELECT MaThuongHieu FROM ThuongHieu WHERE LOWER(TenThuongHieu)=LOWER(?)', (data['brand'],))
+                    if th_row:
+                        ma_th = th_row['MaThuongHieu']
+                    else:
+                        cur.execute('INSERT INTO ThuongHieu(TenThuongHieu) VALUES(?)', (data['brand'],))
+                        ma_th = cur.lastrowid if current_app.config['DB_BACKEND'] == 'sqlite' else None
+
                 args=(data['category_id'],session['user_id'],data['name'],
                       float(data['price']) if current_app.config['DB_BACKEND']=='sqlite' else data['price'],
                       data['brand'],data['description'])
@@ -132,6 +158,11 @@ def product_new():
                 else:
                     cur.execute('INSERT INTO SanPham(MaDanhMuc,MaNguoiTao,TenSanPham,GiaBan,ThuongHieu,MoTa) VALUES(?,?,?,?,?,?)',args)
                     new_id=cur.lastrowid
+                if ma_th:
+                    try:
+                        cur.execute('UPDATE SanPham SET MaThuongHieu=? WHERE MaSanPham=?', (ma_th, new_id))
+                    except Exception:
+                        pass
                 # Optional first variant is inserted before commit, so a failed
                 # variant insert rolls back the product too (W3-042).
                 if request.form.get('initial_size','').strip() or request.form.get('initial_color','').strip():
@@ -155,7 +186,12 @@ def product_new():
                 conn.rollback();current_app.logger.exception('Không lưu được sản phẩm')
                 flash('Lỗi lưu sản phẩm, dữ liệu đã rollback.','warning')
             finally:conn.close()
-    return render_template('admin/w3_product_form.html',categories=query_all('SELECT * FROM DanhMuc'),product=None,images=[])
+    return render_template('admin/w3_product_form.html',
+        categories=query_all('SELECT * FROM DanhMuc ORDER BY TenDanhMuc'),
+        brands=query_all('SELECT * FROM ThuongHieu ORDER BY TenThuongHieu'),
+        colors=query_all('SELECT * FROM MauSac ORDER BY TenMau'),
+        sizes=query_all('SELECT * FROM KichThuoc ORDER BY TenKichThuoc'),
+        product=None, images=[])
 
 @admin_w3.route('/<int:product_id>/edit',methods=['GET','POST'])
 @admin_only
@@ -169,10 +205,24 @@ def product_edit(product_id):
         else:
             conn=get_db_connection()
             try:
+                ma_th = None
+                if data['brand']:
+                    th_row = query_one('SELECT MaThuongHieu FROM ThuongHieu WHERE LOWER(TenThuongHieu)=LOWER(?)', (data['brand'],))
+                    if th_row:
+                        ma_th = th_row['MaThuongHieu']
+                    else:
+                        conn.cursor().execute('INSERT INTO ThuongHieu(TenThuongHieu) VALUES(?)', (data['brand'],))
+                        ma_th = conn.cursor().lastrowid if current_app.config['DB_BACKEND'] == 'sqlite' else None
+
                 conn.cursor().execute('''UPDATE SanPham SET MaDanhMuc=?,TenSanPham=?,GiaBan=?,ThuongHieu=?,MoTa=?
                     WHERE MaSanPham=?''',(data['category_id'],data['name'],
                      float(data['price']) if current_app.config['DB_BACKEND']=='sqlite' else data['price'],
                      data['brand'],data['description'],product_id))
+                if ma_th:
+                    try:
+                        conn.cursor().execute('UPDATE SanPham SET MaThuongHieu=? WHERE MaSanPham=?', (ma_th, product_id))
+                    except Exception:
+                        pass
                 conn.commit()
                 try:
                     _save_product_images(product_id)
@@ -184,7 +234,12 @@ def product_edit(product_id):
             except Exception:
                 conn.rollback();current_app.logger.exception('Lỗi sửa sản phẩm');flash('Lỗi cập nhật.','warning')
             finally:conn.close()
-    return render_template('admin/w3_product_form.html',categories=query_all('SELECT * FROM DanhMuc'),product=product,images=_product_images(product_id))
+    return render_template('admin/w3_product_form.html',
+        categories=query_all('SELECT * FROM DanhMuc ORDER BY TenDanhMuc'),
+        brands=query_all('SELECT * FROM ThuongHieu ORDER BY TenThuongHieu'),
+        colors=query_all('SELECT * FROM MauSac ORDER BY TenMau'),
+        sizes=query_all('SELECT * FROM KichThuoc ORDER BY TenKichThuoc'),
+        product=product, images=_product_images(product_id))
 
 @admin_w3.post('/<int:product_id>/images/<int:image_id>/cover')
 @admin_only
@@ -249,6 +304,11 @@ def variants(product_id):
         else:
             conn=get_db_connection()
             try:
+                # Đồng bộ Màu sắc và Size vào bảng danh mục nếu chưa có
+                if not query_one('SELECT 1 FROM MauSac WHERE LOWER(TenMau)=LOWER(?)', (color,)):
+                    conn.cursor().execute('INSERT INTO MauSac(TenMau) VALUES(?)', (color,))
+                if not query_one('SELECT 1 FROM KichThuoc WHERE LOWER(TenKichThuoc)=LOWER(?)', (size,)):
+                    conn.cursor().execute('INSERT INTO KichThuoc(TenKichThuoc) VALUES(?)', (size,))
                 conn.cursor().execute('''INSERT INTO BienTheSanPham(MaSanPham,KichThuoc,MauSac,SoLuongTon)
                     VALUES (?,?,?,?)''',(product_id,size,color,stock))
                 conn.commit();flash('Đã thêm biến thể.','success')
@@ -256,7 +316,11 @@ def variants(product_id):
                 conn.rollback();flash('Không thêm được: có thể trùng màu và size.','warning')
             finally:conn.close()
         return redirect(url_for('admin_w3.variants',product_id=product_id))
-    return render_template('admin/w3_variants.html',product=product,variants=query_all('SELECT * FROM BienTheSanPham WHERE MaSanPham=? ORDER BY MaBienThe',(product_id,)))
+    return render_template('admin/w3_variants.html',
+        product=product,
+        variants=query_all('SELECT * FROM BienTheSanPham WHERE MaSanPham=? ORDER BY MaBienThe',(product_id,)),
+        colors=query_all('SELECT * FROM MauSac ORDER BY TenMau'),
+        sizes=query_all('SELECT * FROM KichThuoc ORDER BY TenKichThuoc'))
 
 
 @admin_w3.post('/<int:product_id>/variants/<int:variant_id>/edit')
@@ -293,3 +357,78 @@ def variant_edit(product_id, variant_id):
     finally:
         conn.close()
     return redirect(url_for('admin_w3.variants', product_id=product_id))
+
+
+@admin_w3.post('/<int:product_id>/delete')
+@admin_only
+def product_delete(product_id):
+    """Xóa sản phẩm an toàn: giữ lịch sử nếu đã có đơn hàng; xóa hoàn toàn nếu chưa."""
+    product = _fetch(product_id)
+    if not product:
+        abort(404)
+    # Kiểm tra liên kết đơn hàng
+    has_orders = query_one('''SELECT 1 FROM ChiTietDonHang ct
+        JOIN BienTheSanPham bt ON ct.MaBienThe=bt.MaBienThe
+        WHERE bt.MaSanPham=?''', (product_id,))
+    conn = get_db_connection()
+    try:
+        cur = conn.cursor()
+        if has_orders:
+            # Chuyển sang ẩn / ngừng bán để bảo toàn dữ liệu lịch sử đơn hàng
+            cur.execute('UPDATE SanPham SET HienThi=0 WHERE MaSanPham=?', (product_id,))
+            conn.commit()
+            flash('Sản phẩm đã phát sinh đơn hàng, hệ thống đã chuyển sang trạng thái Ẩn/Ngừng bán để bảo toàn dữ liệu lịch sử.', 'info')
+        else:
+            # Xóa các file ảnh vật lý
+            img_rows = query_all('SELECT TenTep FROM SanPhamHinhAnh WHERE MaSanPham=?', (product_id,))
+            upload_dir = Path(current_app.static_folder) / 'uploads' / 'products'
+            for img in img_rows:
+                try:
+                    (upload_dir / img['TenTep']).unlink(missing_ok=True)
+                except OSError:
+                    pass
+            cur.execute('DELETE FROM SanPhamHinhAnh WHERE MaSanPham=?', (product_id,))
+            cur.execute('DELETE FROM BienTheSanPham WHERE MaSanPham=?', (product_id,))
+            cur.execute('DELETE FROM SanPham WHERE MaSanPham=?', (product_id,))
+            conn.commit()
+            flash('Đã xóa hoàn toàn sản phẩm và các biến thể chưa có giao dịch.', 'success')
+    except Exception:
+        conn.rollback()
+        current_app.logger.exception('Lỗi khi xóa sản phẩm')
+        flash('Lỗi khi xóa sản phẩm.', 'warning')
+    finally:
+        conn.close()
+    return redirect(url_for('admin_w3.products'))
+
+
+@admin_w3.post('/<int:product_id>/variants/<int:variant_id>/delete')
+@admin_only
+def variant_delete(product_id, variant_id):
+    """Xóa biến thể an toàn: giữ lịch sử nếu đã có đơn hàng; xóa hoàn toàn nếu chưa."""
+    if not _fetch(product_id):
+        abort(404)
+    variant = query_one('SELECT MaBienThe FROM BienTheSanPham WHERE MaBienThe=? AND MaSanPham=?', (variant_id, product_id))
+    if not variant:
+        abort(404)
+    has_orders = query_one('SELECT 1 FROM ChiTietDonHang WHERE MaBienThe=?', (variant_id,))
+    conn = get_db_connection()
+    try:
+        cur = conn.cursor()
+        if has_orders:
+            # Nếu đã có đơn hàng -> đặt tồn kho về 0 để ngừng bán biến thể này
+            cur.execute('UPDATE BienTheSanPham SET SoLuongTon=0 WHERE MaBienThe=? AND MaSanPham=?', (variant_id, product_id))
+            conn.commit()
+            flash('Biến thể đã có trong lịch sử đơn hàng; đã cập nhật số lượng tồn về 0 để ngừng bán thay vì xóa.', 'info')
+        else:
+            cur.execute('DELETE FROM BienTheSanPham WHERE MaBienThe=? AND MaSanPham=?', (variant_id, product_id))
+            conn.commit()
+            flash('Đã xóa biến thể thành công.', 'success')
+    except Exception:
+        conn.rollback()
+        current_app.logger.exception('Lỗi khi xóa biến thể')
+        flash('Không thể xóa biến thể.', 'warning')
+    finally:
+        conn.close()
+    return redirect(url_for('admin_w3.variants', product_id=product_id))
+
+

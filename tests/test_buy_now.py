@@ -1,4 +1,8 @@
 """Kiểm thử nút Mua ngay: đi thẳng tới thanh toán, không thêm vào giỏ hàng."""
+from contextlib import closing
+from html import unescape
+import re
+from urllib.parse import parse_qs, urlsplit
 import sqlite3
 import tempfile
 import unittest
@@ -54,7 +58,7 @@ class BuyNowTests(unittest.TestCase):
         r = self.c.post('/checkout', data=self.order_form())
         self.assertEqual(r.status_code, 302)
         self.assertIn('/checkout/success', r.headers['Location'])
-        with sqlite3.connect(self.db) as c:
+        with closing(sqlite3.connect(self.db)) as c, c:
             n = c.execute('SELECT COUNT(*) FROM ChiTietDonHang WHERE MaBienThe=1 AND SoLuong=2 AND MaDonHang=(SELECT MAX(MaDonHang) FROM DonHang)').fetchone()[0]
         self.assertEqual(n, 1)
 
@@ -112,7 +116,14 @@ class BuyNowLoginTests(BuyNowTests):
         self.assertIn('Sản phẩm mua ngay', page)
         self.assertIn('Khách Mới', page)  # đã đăng nhập nên điền sẵn tên
 
-    def test_header_login_form_keeps_query_in_next(self):
+    def test_checkout_login_link_keeps_query_in_next(self):
         self.buy()
         page = self.c.get('/checkout?buy_now=1').get_data(as_text=True)
-        self.assertIn('name="next" value="/checkout?buy_now=1"', page)
+        match = re.search(r'href="([^"]+)"[^>]*>Đăng nhập</a> để tự động điền', page)
+        self.assertIsNotNone(match, 'Trang checkout phải có liên kết đăng nhập')
+        login_url = unescape(match.group(1))
+        self.assertEqual(urlsplit(login_url).path, '/login')
+        self.assertEqual(parse_qs(urlsplit(login_url).query).get('next'),
+                         ['/checkout?buy_now=1'])
+        login_form = self.c.get(login_url).get_data(as_text=True)
+        self.assertIn('name="next" value="/checkout?buy_now=1"', login_form)

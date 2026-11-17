@@ -10,6 +10,8 @@ from ..data import (get_all_products, get_categories, get_product_by_id,
 from ..db import get_db_connection, query_one, query_all
 from ..services.checkout import create_pending_order, validate_checkout, CheckoutValidationError
 from ..services.account import checkout_defaults, get_profile, has_default_contact, save_checkout_defaults
+from ..services.new_arrivals import get_latest_products
+from ..services.best_sellers import get_best_selling_products
 
 
 def register_routes(app):
@@ -18,8 +20,30 @@ def register_routes(app):
         if "_csrf" not in session:
             session["_csrf"] = secrets.token_hex(20)
         if request.method in {"POST", "PUT", "PATCH", "DELETE"}:
-            if not secrets.compare_digest(session["_csrf"], request.form.get("csrf_token", "")):
+            # Form: csrf_token; API JSON: header X-CSRF-Token hoặc trường csrf_token trong body.
+            sent = request.form.get("csrf_token") or request.headers.get("X-CSRF-Token")
+            if not sent and request.is_json:
+                body = request.get_json(silent=True)
+                sent = body.get("csrf_token") if isinstance(body, dict) else None
+            if not secrets.compare_digest(session["_csrf"], str(sent or "")):
                 abort(400, description="Biểu mẫu đã hết hạn hoặc thiếu mã xác thực.")
+
+    @app.before_request
+    def enforce_active_session():
+        # Các test contract W4 cũ cố ý tạo session giả không gắn tài khoản DB.
+        # Ở môi trường chạy thực, tài khoản bị khóa phải mất quyền ngay cả với cookie cũ.
+        if session.get('user_id') and (not app.config.get('TESTING') or
+                                       app.config.get('FORCE_ACCOUNT_STATUS_GUARD')):
+            try:
+                user = query_one('SELECT TrangThai FROM NguoiDung WHERE MaNguoiDung=?',
+                                 (session['user_id'],))
+            except Exception:
+                app.logger.exception('Không thể xác thực trạng thái phiên đăng nhập')
+                abort(503)
+            if not user or not user['TrangThai']:
+                session.clear()
+                flash('Tài khoản đã bị khóa hoặc không còn tồn tại.', 'warning')
+                return redirect(url_for('login'))
 
     @app.context_processor
     def inject_common():
@@ -56,7 +80,12 @@ def register_routes(app):
         # Slide "giới thiệu sản phẩm" trên banner: sản phẩm hiển thị mới nhất.
         in_stock = [p for p in catalog if int(p["TongTon"]) > 0] or catalog
         featured = max(in_stock, key=lambda p: p["MaSanPham"]) if in_stock else None
-        return render_template("index.html", products=products, keyword=keyword, featured=featured)
+        # Trang chủ chỉ nhận dữ liệu thật; rỗng được xử lý trong partial.
+        latest_products = get_latest_products()
+        best_selling_products = get_best_selling_products()
+        return render_template("index.html", products=products, keyword=keyword,
+                               featured=featured, latest_products=latest_products,
+                               best_selling_products=best_selling_products)
 
     @app.get("/category/<int:category_id>")
     def category(category_id):
@@ -72,7 +101,15 @@ def register_routes(app):
             abort(404)
         images = query_all("SELECT TenTep, LaAnhDaiDien, ThuTu FROM SanPhamHinhAnh WHERE MaSanPham=? ORDER BY LaAnhDaiDien DESC, ThuTu, MaHinhAnh", (product_id,))
         product_images = [{'filename': 'uploads/products/' + x['TenTep'], 'is_cover': bool(x['LaAnhDaiDien']), 'alt': product['TenSanPham']} for x in images]
-        return render_template("product_detail.html", product=product, variants=get_variants(product_id), product_images=product_images)
+        try:
+            from ..services.reviews import build_review_context
+            review_ctx = build_review_context(product_id, request.args, session)
+        except Exception:
+            # Chưa chạy migration DanhGiaSanPham: vẫn hiển thị sản phẩm bình thường.
+            app.logger.warning("DanhGiaSanPham chưa sẵn sàng; chạy database/migrate_product_reviews_sqlserver.sql", exc_info=True)
+            review_ctx = {"review_unavailable": True}
+        return render_template("product_detail.html", product=product, variants=get_variants(product_id),
+                               product_images=product_images, **review_ctx)
 
     @app.get("/api/products/<int:product_id>/variants")
     def api_product_variants(product_id):
@@ -179,7 +216,7 @@ def register_routes(app):
         placeholders = ",".join("?" for _ in ids)
         from ..db import query_all
         rows = query_all("""SELECT bt.MaBienThe, bt.KichThuoc, bt.MauSac, bt.SoLuongTon,
-           sp.MaSanPham, sp.TenSanPham, sp.GiaBan, (SELECT TenTep FROM SanPhamHinhAnh ia WHERE ia.MaSanPham=sp.MaSanPham AND ia.LaAnhDaiDien=1) AS AnhDaiDien FROM BienTheSanPham bt
+           sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.HienThi, (SELECT TenTep FROM SanPhamHinhAnh ia WHERE ia.MaSanPham=sp.MaSanPham AND ia.LaAnhDaiDien=1) AS AnhDaiDien FROM BienTheSanPham bt
            JOIN SanPham sp ON bt.MaSanPham=sp.MaSanPham
            WHERE bt.MaBienThe IN (""" + placeholders + ")", tuple(ids))
         total = 0
@@ -194,11 +231,41 @@ def register_routes(app):
         items, total = build_cart()
         return render_template("cart.html", cart_items=items, total=total)
 
+    @app.post("/cart/update/<int:variant_id>")
+    def update_cart_item(variant_id):
+        try:
+            qty = int(request.form.get("quantity", "1"))
+        except (ValueError, TypeError):
+            abort(400, description="Số lượng không hợp lệ")
+        cart = session.get("cart", {}).copy()
+        if qty <= 0:
+            cart.pop(str(variant_id), None)
+            flash("Đã xóa sản phẩm khỏi giỏ hàng.", "success")
+        else:
+            variant = query_one("""SELECT bt.SoLuongTon, sp.TenSanPham, sp.HienThi
+                                   FROM BienTheSanPham bt
+                                   JOIN SanPham sp ON sp.MaSanPham=bt.MaSanPham
+                                   WHERE bt.MaBienThe=?""", (variant_id,))
+            if not variant:
+                abort(404)
+            if not bool(variant["HienThi"]):
+                cart.pop(str(variant_id), None)
+                flash(f"Sản phẩm '{variant['TenSanPham']}' hiện đã ngừng kinh doanh và được xóa khỏi giỏ.", "warning")
+            elif qty > int(variant["SoLuongTon"]):
+                cart[str(variant_id)] = int(variant["SoLuongTon"])
+                flash(f"Kho chỉ còn {variant['SoLuongTon']} sản phẩm cho mẫu '{variant['TenSanPham']}'. Đã cập nhật theo số lượng tối đa.", "warning")
+            else:
+                cart[str(variant_id)] = min(qty, 99)
+                flash("Đã cập nhật số lượng trong giỏ hàng.", "success")
+        session["cart"] = cart
+        return redirect(url_for("view_cart"))
+
     @app.post("/cart/remove/<int:variant_id>")
     def remove_from_cart(variant_id):
         cart = session.get("cart", {}).copy()
         cart.pop(str(variant_id), None)
         session["cart"] = cart
+        flash("Đã xóa sản phẩm khỏi giỏ hàng.", "success")
         return redirect(url_for("view_cart"))
 
     @app.route("/checkout", methods=["GET", "POST"])
@@ -208,19 +275,44 @@ def register_routes(app):
         items, total = build_cart(basket)
         if not items:
             return redirect(url_for("view_cart"))
+
+        # Bắt buộc đăng nhập nếu cấu hình REQUIRE_LOGIN_TO_CHECKOUT được bật
         user_id = session.get("user_id")
+        if app.config.get("REQUIRE_LOGIN_TO_CHECKOUT", False) and not user_id:
+            flash("Vui lòng đăng nhập tài khoản trước khi tiến hành đặt hàng.", "warning")
+            next_url = url_for("checkout", buy_now=1 if buy_now_mode else None)
+            return redirect(url_for("login", next=next_url))
+
+        # Kiểm tra trạng thái tài khoản đang hoạt động (chặn phiên cũ của tài khoản bị khóa)
+        if user_id:
+            user_acc = query_one("SELECT TrangThai FROM NguoiDung WHERE MaNguoiDung=?", (user_id,))
+            if not user_acc or not user_acc["TrangThai"]:
+                session.clear()
+                flash("Tài khoản của bạn đã bị khóa. Không thể thực hiện đặt hàng.", "warning")
+                return redirect(url_for("login"))
+
+        # Kiểm tra sản phẩm ngừng bán / tạm ẩn
+        hidden_items = [it for it in items if not bool(it.get("HienThi", 1))]
+        if hidden_items:
+            names = ", ".join(f"'{x['TenSanPham']}'" for x in hidden_items)
+            flash(f"Sản phẩm {names} hiện đang tạm ẩn hoặc ngừng kinh doanh. Vui lòng xóa khỏi giỏ hàng trước khi đặt hàng.", "warning")
+            if request.method == "POST":
+                return redirect(url_for("view_cart"))
+
         profile = get_profile(user_id) if user_id else None
         has_default = bool(profile and has_default_contact(profile))
         prefilled = False
+
         if request.method == "POST":
             form_data = request.form
             save_default = bool(request.form.get("save_default"))
-        else:
-            # Khách đã đăng nhập: điền sẵn từ hồ sơ, vẫn sửa được. Lần mua đầu tự đề nghị lưu mặc định.
-            form_data = checkout_defaults(profile) if profile else {}
-            prefilled = has_default
-            save_default = not has_default
-        if request.method == "POST":
+
+            # Chống tạo đơn trùng (idempotency check)
+            token = request.form.get("checkout_token", "").strip()
+            if token and token == session.get("_last_processed_checkout_token"):
+                flash("Đơn hàng này đã được tiếp nhận xử lý từ trước.", "info")
+                return redirect(url_for("checkout_success"))
+
             try:
                 validated = validate_checkout(request.form)
                 order_id = create_pending_order(validated, basket, user_id)
@@ -230,6 +322,8 @@ def register_routes(app):
                 app.logger.exception("Không lưu được yêu cầu đặt hàng")
                 flash("Chưa lưu được yêu cầu đặt hàng. Kiểm tra database và migration checkout trước khi thử lại.", "warning")
             else:
+                if token:
+                    session["_last_processed_checkout_token"] = token
                 if user_id and save_default:
                     try:
                         save_checkout_defaults(user_id, validated)
@@ -243,8 +337,16 @@ def register_routes(app):
                     "order_id": int(order_id), "fulfillment": validated["fulfillment"],
                     "payment_method": validated["payment_method"]}
                 return redirect(url_for("checkout_success"))
+        else:
+            # Khách đã đăng nhập: điền sẵn từ hồ sơ, vẫn sửa được. Lần mua đầu tự đề nghị lưu mặc định.
+            form_data = checkout_defaults(profile) if profile else {}
+            prefilled = has_default
+            save_default = not has_default
+            session["_active_checkout_token"] = secrets.token_hex(16)
+
         return render_template("checkout.html", cart_items=items, total=total, form_data=form_data,
-                               prefilled=prefilled, save_default=save_default, buy_now=buy_now_mode)
+                               prefilled=prefilled, save_default=save_default, buy_now=buy_now_mode,
+                               checkout_token=session.get("_active_checkout_token", secrets.token_hex(16)))
 
     @app.get("/checkout/success")
     def checkout_success():
@@ -260,8 +362,10 @@ def register_routes(app):
             password = request.form.get("password", "")
             account = query_one("""SELECT nd.MaNguoiDung, nd.HoVaTen, nd.MatKhauHash, nd.TrangThai, vt.TenVaiTro
               FROM NguoiDung nd JOIN VaiTro vt ON vt.MaVaiTro=nd.MaVaiTro WHERE nd.Email=?""", (email,))
-            if not account or not account["TrangThai"] or not check_password_hash(account["MatKhauHash"], password):
+            if not account or not check_password_hash(account["MatKhauHash"], password):
                 flash("Email hoặc mật khẩu chưa đúng.", "warning")
+            elif not account["TrangThai"]:
+                flash("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.", "warning")
             else:
                 keep_cart = session.get("cart", {})
                 keep_buy_now = session.get("buy_now")  # đang "Mua ngay" dở thì không được mất
@@ -277,7 +381,9 @@ def register_routes(app):
                 # Chỉ điều hướng nội bộ, ngăn open redirect.
                 if target.startswith("/") and not target.startswith("//") and not urlsplit(target).netloc:
                     return redirect(target)
-                return redirect(url_for("admin_dashboard") if session["role"] == "Admin" else url_for("home"))
+                return redirect(url_for('admin_dashboard') if session['role'] == 'Admin'
+                                else url_for('w12.staff_home') if session['role'] == 'Seller'
+                                else url_for('home'))
         return render_template("login.html", next_path=request.values.get("next", ""))
 
     @app.route("/register", methods=["GET", "POST"])
@@ -316,27 +422,16 @@ def register_routes(app):
     @app.get("/admin")
     @admin_required
     def admin_dashboard():
-        return render_template("admin/index.html", products=get_all_products())
+        from ..services.dashboard import get_dashboard_stats
+        return render_template("admin/index.html", metrics=get_dashboard_stats())
 
     @app.route("/admin/product/add", methods=["GET", "POST"])
     @admin_required
     def admin_product_add():
-        if request.method == "POST":
-            try:
-                price = float(request.form.get("price", ""))
-                stock = int(request.form.get("stock", ""))
-                category_id = int(request.form.get("category_id", ""))
-            except ValueError:
-                flash("Giá, số lượng tồn hoặc danh mục không đúng.", "warning")
-            else:
-                name = request.form.get("name", "").strip()
-                image = request.form.get("image", "").strip()
-                valid_category = category_id in {c["MaDanhMuc"] for c in get_categories()}
-                if name and price >= 0 and stock >= 0 and valid_category and image:
-                    flash("Biểu mẫu đạt kiểm tra đầu vào. Tuần 2 mới chuẩn bị form, CHƯA lưu sản phẩm.", "success")
-                else:
-                    flash("Điền đủ tên, giá, tồn kho, danh mục và tên ảnh.", "warning")
-        return render_template("admin/product_add.html")
+        # Route W2 chỉ là form mẫu, không lưu dữ liệu; dẫn tới luồng W3 duy nhất.
+        if request.method == 'POST':
+            flash('Form cũ đã ngừng sử dụng. Vui lòng nhập lại trên form thêm sản phẩm chính.', 'warning')
+        return redirect(url_for('admin_w3.product_new'))
 
     @app.errorhandler(400)
     def bad_request(error):

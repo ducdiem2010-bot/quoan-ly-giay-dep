@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Tìm đôi giày dành cho bạn – Shoes Store{% endblock %}
+{% block content %}
+<section class="w11-finder w11-page">
+  <div class="w11-eyebrow">SHOES STORE · TRẢI NGHIỆM MỚI</div>
+  <h1>Tìm đôi giày dành cho bạn</h1>
+  <p class="w11-muted">Ba bước đơn giản để lọc mẫu giày đang bán theo nhu cầu. Đề xuất dựa vào dữ liệu sản phẩm thật, không phải AI.</p>
+  <div class="w11-steps" aria-label="Tiến độ lựa chọn"><span class="active">01 · Loại giày</span><span>02 · Phong cách</span><span>03 · Size</span></div>
+  <form class="w11-finder-form" action="{{ url_for('w11.shoe_finder') }}" method="get" data-w11-finder>
+    <input type="hidden" name="show" value="1">
+    <fieldset class="w11-step" data-w11-step="0"><legend><span>01</span> Bạn muốn loại giày nào?</legend>
+      <label for="w11-category">Danh mục</label><select name="category" id="w11-category"><option value="">Tất cả danh mục</option>{% for c in categories %}<option value="{{ c.MaDanhMuc }}" {{ 'selected' if selected.category == c.MaDanhMuc|string }}>{{ c.TenDanhMuc }}</option>{% endfor %}</select>
+      <p class="w11-muted">Chỉ sử dụng danh mục hiện có trong cửa hàng.</p>
+      <div class="w11-step-actions"><button type="button" class="w11-btn" data-w11-next>Tiếp theo →</button></div>
+    </fieldset>
+    <fieldset class="w11-step" data-w11-step="1" hidden><legend><span>02</span> Thương hiệu hoặc màu bạn thích?</legend>
+      <div class="w11-two"><label>Thương hiệu<select name="brand"><option value="">Không giới hạn thương hiệu</option>{% for brand in brands %}<option value="{{ brand }}" {{ 'selected' if selected.brand == brand }}>{{ brand }}</option>{% endfor %}</select></label>
+      <label>Màu sắc<select name="color"><option value="">Không giới hạn màu sắc</option>{% for color in colors %}<option value="{{ color }}" {{ 'selected' if selected.color == color }}>{{ color }}</option>{% endfor %}</select></label></div>
+      <p class="w11-muted">Có thể chọn một hoặc cả hai tiêu chí, hoặc bỏ qua.</p>
+      <div class="w11-step-actions"><button type="button" class="w11-btn-outline" data-w11-prev>← Quay lại</button><button type="button" class="w11-btn" data-w11-next>Tiếp theo →</button></div>
+    </fieldset>
+    <fieldset class="w11-step" data-w11-step="2" hidden><legend><span>03</span> Bạn cần size nào?</legend>
+      <label for="w11-size">Size giày</label><select name="size" id="w11-size"><option value="">Không giới hạn size</option>{% for size in sizes %}<option value="{{ size }}" {{ 'selected' if selected.size == size }}>{{ size }}</option>{% endfor %}</select>
+      <p class="w11-muted">Kết quả chỉ lấy những biến thể còn hàng theo size/màu đã chọn.</p>
+      <div class="w11-step-actions"><button type="button" class="w11-btn-outline" data-w11-prev>← Quay lại</button><button class="w11-btn" type="submit">Xem giày phù hợp ↗</button></div>
+    </fieldset>
+    <a href="{{ url_for('w11.shoe_finder') }}" class="w11-reset">↺ Bắt đầu lại</a>
+  </form>
+  {% if products is not none %}
+  <div class="w11-results" id="w11-finder-results"><div class="w11-panel-top"><div><div class="w11-eyebrow">KẾT QUẢ</div><h2>{{ products|length }} mẫu giày phù hợp</h2></div><a href="{{ url_for('w11.shoe_finder') }}">Thử lựa chọn khác ↗</a></div>
+    {% if products %}<div class="product-grid">{% for product in products %}{% include '_product_card.html' %}{% endfor %}</div>
+    {% else %}<div class="w11-empty"><p>Chưa tìm được sản phẩm phù hợp. Hãy chọn lại và bỏ bớt một số tiêu chí như màu hoặc size.</p><a class="w11-btn" href="{{ url_for('w11.shoe_finder') }}">Tìm lại từ đầu</a></div>{% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

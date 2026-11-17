@@ -21,8 +21,12 @@ PROVINCES = [
 ]
 GENDERS = ("Nam", "Nữ")
 
-PROFILE_SQL = ("SELECT MaNguoiDung, HoVaTen, Ho, Ten, Email, SoDienThoai, DiaChi, "
-               "GioiTinh, NgaySinh, TinhThanh, PhuongXa FROM NguoiDung WHERE MaNguoiDung=?")
+PROFILE_SQL = ("""SELECT nd.MaNguoiDung, nd.MaVaiTro, vt.TenVaiTro, nd.HoVaTen, nd.Ho, nd.Ten, nd.Email,
+               nd.SoDienThoai, nd.DiaChi, nd.GioiTinh, nd.NgaySinh, nd.TinhThanh, nd.PhuongXa,
+               nd.TrangThai, nd.NgayTao
+               FROM NguoiDung nd
+               LEFT JOIN VaiTro vt ON vt.MaVaiTro = nd.MaVaiTro
+               WHERE nd.MaNguoiDung=?""")
 
 
 class ProfileValidationError(ValueError):
@@ -46,6 +50,8 @@ def get_profile(user_id):
     if not row.get("Ho") and not row.get("Ten"):
         row["Ho"], row["Ten"] = split_name(row.get("HoVaTen"))
     row["NgaySinh"] = str(row["NgaySinh"])[:10] if row.get("NgaySinh") else ""
+    row["NgayTao"] = str(row["NgayTao"])[:19] if row.get("NgayTao") else ""
+    row["TenVaiTro"] = row.get("TenVaiTro") or ("Admin" if row.get("MaVaiTro") == 1 else "Seller" if row.get("MaVaiTro") == 2 else "Customer")
     for key in ("SoDienThoai", "DiaChi", "GioiTinh", "TinhThanh", "PhuongXa"):
         row[key] = row.get(key) or ""
     return row
@@ -154,13 +160,17 @@ def save_checkout_defaults(user_id, order):
 
 
 def list_orders(user_id, limit=50):
-    orders = query_all("SELECT MaDonHang, NgayDat, TrangThai, TongTien FROM DonHang "
-                       "WHERE MaNguoiDung=? ORDER BY MaDonHang DESC", (user_id,))[:limit]
+    orders = query_all("""SELECT dh.MaDonHang, dh.NgayDat, dh.TrangThai, dh.TongTien,
+                                 tg.TrangThaiThanhToan, tg.PhuongThucThanhToan, tg.HinhThucNhanHang,
+                                 tg.DiaChiGiaoHang, tg.HoTen, tg.SoDienThoai
+                          FROM DonHang dh
+                          LEFT JOIN ThongTinGiaoDich tg ON tg.MaDonHang = dh.MaDonHang
+                          WHERE dh.MaNguoiDung=? ORDER BY dh.MaDonHang DESC""", (user_id,))[:limit]
     if not orders:
         return []
     ids = [int(o["MaDonHang"]) for o in orders]
     rows = query_all("""SELECT ct.MaDonHang, sp.MaSanPham, sp.TenSanPham, bt.KichThuoc, bt.MauSac,
-                        ct.SoLuong, ct.DonGia
+                        ct.SoLuong, ct.DonGia, (ct.SoLuong * ct.DonGia) AS ThanhTien
                         FROM ChiTietDonHang ct JOIN BienTheSanPham bt ON bt.MaBienThe=ct.MaBienThe
                         JOIN SanPham sp ON sp.MaSanPham=bt.MaSanPham
                         WHERE ct.MaDonHang IN (""" + ",".join("?" for _ in ids) + ") ORDER BY ct.MaChiTietDon",
@@ -170,4 +180,7 @@ def list_orders(user_id, limit=50):
         grouped[int(r["MaDonHang"])].append(r)
     for o in orders:
         o["items"] = grouped.get(int(o["MaDonHang"]), [])
+        pay_status = o.get("TrangThaiThanhToan") or "Chưa thanh toán"
+        o["TrangThaiThanhToan"] = pay_status
+        o["can_cancel"] = (o["TrangThai"] == "Chờ xác nhận" and pay_status == "Chưa thanh toán")
     return orders

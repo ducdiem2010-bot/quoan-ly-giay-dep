@@ -1,4 +1,5 @@
 """Kiểm thử trang tài khoản khách hàng và thông tin mặc định khi đặt hàng (SQLite demo)."""
+from contextlib import closing
 import sqlite3
 import tempfile
 import unittest
@@ -36,7 +37,7 @@ class AccountTests(unittest.TestCase):
         return d
 
     def row(self, email='an@example.com'):
-        with sqlite3.connect(self.db) as c:
+        with closing(sqlite3.connect(self.db)) as c, c:
             c.row_factory = sqlite3.Row
             return dict(c.execute('SELECT * FROM NguoiDung WHERE Email=?', (email,)).fetchone())
 

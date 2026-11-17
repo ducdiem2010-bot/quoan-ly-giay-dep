@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm sản phẩm - Shoes Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SHOES ADMIN</h1>
+        <h2>Thêm sản phẩm mới</h2>
+
+        <form id="productForm">
+            <label for="name">Tên sản phẩm</label>
+            <input id="name" name="name" type="text"
+                   maxlength="150" required>
+
+            <label for="description">Mô tả</label>
+            <textarea id="description" name="description"
+                      maxlength="2000" required></textarea>
+
+            <label for="price">Giá bán (VNĐ)</label>
+            <input id="price" name="price" type="number"
+                   min="1" step="1" required>
+
+            <label for="brand">Thương hiệu</label>
+            <select id="brand" name="brand" required>
+                <option value="">-- Chọn thương hiệu --</option>
+                <option value="Nike">Nike</option>
+                <option value="Adidas">Adidas</option>
+                <option value="Puma">Puma</option>
+                <option value="Asics">Asics</option>
+                <option value="Lacoste">Lacoste</option>
+            </select>
+
+            <label for="type">Loại sản phẩm</label>
+            <select id="type" name="type" required>
+                <option value="">-- Chọn loại --</option>
+                <option value="Giày thể thao">Giày thể thao</option>
+                <option value="Giày da">Giày da</option>
+                <option value="Dép">Dép</option>
+            </select>
+
+            <label for="gender">Đối tượng</label>
+            <select id="gender" name="gender" required>
+                <option value="">-- Chọn đối tượng --</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Unisex">Unisex</option>
+            </select>
+
+            <label for="status">Trạng thái</label>
+            <select id="status" name="status" required>
+                <option value="Đang bán">Đang bán</option>
+                <option value="Ẩn">Ẩn</option>
+            </select>
+
+            <button type="submit">Thêm sản phẩm</button>
+            <p id="message" role="status"></p>
+        </form>
+
+        <h2>Danh sách sản phẩm</h2>
+        <div id="productList"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Quản lý Màu sắc sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="admin-ux-page">
+  <div class="w3-header">
+    <div>
+      <span class="eyebrow">QUẢN LÝ DỮ LIỆU</span>
+      <h1>Màu sắc sản phẩm</h1>
+      <p>Quản lý các tông màu cho biến thể giày dép; kiểm tra biến thể trước khi xóa.</p>
+    </div>
+  </div>
+
+  <div style="background:#fff;padding:20px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:24px;">
+    <h3 style="margin-top:0;font-size:1.1rem;color:#1e293b;">＋ Thêm màu sắc mới</h3>
+    <form method="post" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div style="flex:1;min-width:200px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Tên màu *</label>
+        <input name="name" required maxlength="50" placeholder="VD: Đen, Trắng, Đỏ..." style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div style="width:160px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Mã Hex màu</label>
+        <input name="hex" maxlength="7" placeholder="#000000" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div>
+        <button type="submit" class="action-primary" style="padding:9px 18px;">Thêm màu</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Mã</th>
+          <th>Tên màu</th>
+          <th style="width:140px;">Mã Hex</th>
+          <th style="width:120px;">Số biến thể</th>
+          <th style="width:200px;">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>M{{ '%02d' % item.MaMau }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              {% if item.MaHex %}
+              <span style="display:inline-block;width:18px;height:18px;border-radius:50%;background-color:{{ item.MaHex }};border:1px solid #94a3b8;"></span>
+              {% endif %}
+              <input form="edit-col-{{ item.MaMau }}" name="name" value="{{ item.TenMau }}" required maxlength="50" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;flex:1;">
+            </div>
+          </td>
+          <td>
+            <input form="edit-col-{{ item.MaMau }}" name="hex" value="{{ item.MaHex or '' }}" maxlength="7" placeholder="#hex" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;width:100%;">
+          </td>
+          <td>
+            <span style="display:inline-block;padding:2px 8px;border-radius:12px;background:#f3e8ff;color:#6b21a8;font-weight:600;font-size:0.85rem;">
+              {{ item.SoBienThe }} biến thể
+            </span>
+          </td>
+          <td>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <form id="edit-col-{{ item.MaMau }}" method="post" action="{{ url_for('admin_catalog.color_edit', color_id=item.MaMau) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #94a3b8;background:#f8fafc;cursor:pointer;">Lưu</button>
+              </form>
+              <form method="post" action="{{ url_for('admin_catalog.color_delete', color_id=item.MaMau) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa màu này?');" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #f87171;background:#fef2f2;color:#b91c1c;cursor:pointer;">Xóa</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Chưa có màu sắc nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

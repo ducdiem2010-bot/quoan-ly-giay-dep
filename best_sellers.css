@@ -1,0 +1,13 @@
+/* Vị trí lưu: app/static/css/best_sellers.css */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #ffc107;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+.badge.bg-success {
+    font-size: 1.1em;
+    padding: 8px 12px;
+}

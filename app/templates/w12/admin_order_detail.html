@@ -1,0 +1,180 @@
+{% if is_staff %}
+  {% extends 'base.html' %}
+{% else %}
+  {% extends 'admin_base.html' %}
+{% endif %}
+
+{% block title %}Chi tiết đơn hàng #{{ order.MaDonHang }} - Shoes Store{% endblock %}
+{% block admin_title %}Chi tiết đơn hàng #{{ order.MaDonHang }}{% endblock %}
+
+{% block extra_css %}
+  {% if is_staff %}<link rel="stylesheet" href="{{ url_for('static', filename='css/w12_admin.css') }}">{% endif %}
+{% endblock %}
+
+{% macro order_content() %}
+<section class="w12-panel" style="max-width: 900px; margin: 0 auto;">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px;">
+    <div>
+      <span class="eyebrow" style="color:#64748b; font-size:0.8rem; font-weight:700;">CHI TIẾT ĐƠN HÀNG</span>
+      <h1 style="margin:4px 0;">Đơn hàng #{{ order.MaDonHang }}</h1>
+      <span style="font-size:0.85rem; color:#64748b;">Ngày đặt: {{ order.NgayDat }}</span>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      {# Trạng thái đơn #}
+      {% if order.TrangThai == 'Chờ xác nhận' %}
+        <span style="display:inline-block; padding:4px 12px; border-radius:6px; font-size:0.88rem; background:#fef3c7; color:#b45309; font-weight:700;">Chờ xác nhận</span>
+      {% elif order.TrangThai == 'Đã xác nhận' %}
+        <span style="display:inline-block; padding:4px 12px; border-radius:6px; font-size:0.88rem; background:#e0e7ff; color:#3730a3; font-weight:700;">Đã xác nhận</span>
+      {% elif order.TrangThai == 'Hoàn thành' %}
+        <span style="display:inline-block; padding:4px 12px; border-radius:6px; font-size:0.88rem; background:#dcfce7; color:#15803d; font-weight:700;">Hoàn thành</span>
+      {% else %}
+        <span style="display:inline-block; padding:4px 12px; border-radius:6px; font-size:0.88rem; background:#fee2e2; color:#b91c1c; font-weight:700;">Đã hủy</span>
+      {% endif %}
+
+      {# Trạng thái thanh toán #}
+      {% if order.TrangThaiThanhToan == 'Đã thanh toán' %}
+        <span style="display:inline-block; padding:4px 10px; border-radius:6px; font-size:0.88rem; background:#dcfce7; color:#16a34a; font-weight:600;">✓ Đã thanh toán</span>
+      {% else %}
+        <span style="display:inline-block; padding:4px 10px; border-radius:6px; font-size:0.88rem; background:#f1f5f9; color:#475569; font-weight:600;">Chưa thanh toán</span>
+      {% endif %}
+    </div>
+  </div>
+
+  {# Khối thông tin khách hàng & giao nhận #}
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px; margin-bottom:20px; font-size:0.9rem;">
+    <div>
+      <h3 style="font-size:0.95rem; margin-top:0; color:#1e293b;">Thông tin người đặt &amp; nhận</h3>
+      <div><span style="color:#64748b;">Tài khoản đặt:</span> <strong>{{ order.KhachHang or 'Khách vãng lai' }}</strong></div>
+      <div><span style="color:#64748b;">Người nhận:</span> <strong>{{ order.TenNguoiNhan or order.KhachHang or '—' }}</strong></div>
+      <div><span style="color:#64748b;">Số điện thoại:</span> <strong>{{ order.SdtNguoiNhan or order.SdtKhach or '—' }}</strong></div>
+      <div><span style="color:#64748b;">Email:</span> <span>{{ order.EmailNguoiNhan or order.EmailKhach or '—' }}</span></div>
+    </div>
+    <div>
+      <h3 style="font-size:0.95rem; margin-top:0; color:#1e293b;">Giao nhận &amp; Thanh toán</h3>
+      <div><span style="color:#64748b;">Hình thức:</span> <strong>{{ 'Nhận tại cửa hàng' if order.HinhThucNhanHang == 'pickup' else 'Giao hàng tận nơi' }}</strong></div>
+      <div><span style="color:#64748b;">Địa chỉ:</span> <span>{{ order.DiaChiGiaoHang or 'Nhận tại cửa hàng' }}</span></div>
+      <div><span style="color:#64748b;">Phương thức:</span> <span>{{ 'Thanh toán COD' if order.PhuongThucThanhToan == 'cod' else 'Chuyển khoản ngân hàng' }}</span></div>
+      {% if order.GhiChu %}
+        <div style="margin-top:4px;"><span style="color:#64748b;">Ghi chú:</span> <em>{{ order.GhiChu }}</em></div>
+      {% endif %}
+    </div>
+    <div>
+      <h3 style="font-size:0.95rem; margin-top:0; color:#1e293b;">Lịch sử thao tác</h3>
+      <div><span style="color:#64748b;">Người xử lý:</span> <strong>{{ order.TenNguoiXuLy or 'Chưa phân công' }}</strong></div>
+      {% if order.ThoiGianXuLy %}
+        <div><span style="color:#64748b;">Thời gian xử lý:</span> <span>{{ order.ThoiGianXuLy }}</span></div>
+      {% endif %}
+      {% if order.TenNguoiThuTien %}
+        <div><span style="color:#64748b;">Người thu tiền:</span> <strong>{{ order.TenNguoiThuTien }}</strong></div>
+        <div><span style="color:#64748b;">Thời gian thu tiền:</span> <span>{{ order.ThoiGianThanhToan }}</span></div>
+      {% endif %}
+    </div>
+  </div>
+
+  {# Bảng sản phẩm #}
+  <h2>Danh sách mặt hàng</h2>
+  <div class="table-wrap" style="margin-bottom:16px;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Màu sắc / Size</th>
+          <th>Số lượng</th>
+          <th>Đơn giá</th>
+          <th>Thành tiền</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in items %}
+          <tr>
+            <td><strong>{{ i.TenSanPham }}</strong></td>
+            <td>{{ i.MauSac }} · Size {{ i.KichThuoc }}</td>
+            <td><strong>{{ i.SoLuong }}</strong></td>
+            <td>{{ i.DonGia|vnd }}</td>
+            <td><strong>{{ i.ThanhTien|vnd }}</strong></td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5">Không có chi tiết mặt hàng trong đơn.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div style="text-align:right; margin-bottom:24px;">
+    <span style="font-size:1.1rem; color:#64748b;">Tổng tiền sản phẩm: </span>
+    <strong style="font-size:1.4rem; color:#0f172a;">{{ order.TongTien|vnd }}</strong>
+  </div>
+
+  {# Khu vực nút xử lý đơn theo quyền #}
+  <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:16px; margin-bottom:20px;">
+    <h3 style="font-size:1rem; margin-top:0; color:#1e293b;">Thao tác xử lý đơn hàng</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+      {# Xác nhận đơn (chỉ khi Chờ xác nhận) #}
+      {% if order.TrangThai == 'Chờ xác nhận' %}
+        <form method="post" action="{{ url_for('w12.order_action_confirm', order_id=order.MaDonHang) }}" style="display:inline-block;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="return confirm('Xác nhận đơn hàng #{{ order.MaDonHang }}? Thao tác này sẽ chính thức kiểm tra và trừ hàng trong kho.')">
+            ✓ Xác nhận đơn (Trừ kho)
+          </button>
+        </form>
+      {% endif %}
+
+      {# Hoàn thành đơn (chỉ khi Đã xác nhận) #}
+      {% if order.TrangThai == 'Đã xác nhận' %}
+        <form method="post" action="{{ url_for('w12.order_action_complete', order_id=order.MaDonHang) }}" style="display:inline-block;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" style="background:#16a34a; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="return confirm('Đánh dấu đơn hàng #{{ order.MaDonHang }} đã Hoàn thành?')">
+            ★ Đánh dấu Hoàn thành
+          </button>
+        </form>
+      {% endif %}
+
+      {# Ghi nhận đã thu tiền (chỉ khi chưa thanh toán và đơn chưa hủy) #}
+      {% if order.TrangThaiThanhToan != 'Đã thanh toán' and order.TrangThai != 'Đã hủy' %}
+        <form method="post" action="{{ url_for('w12.order_action_pay', order_id=order.MaDonHang) }}" style="display:inline-block;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" style="background:#0284c7; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;" onclick="return confirm('Xác nhận đã thu tiền đơn hàng #{{ order.MaDonHang }}? Thông tin người thu tiền sẽ được lưu lại.')">
+            $ Ghi nhận đã thu tiền
+          </button>
+        </form>
+      {% endif %}
+
+      {# Hủy đơn (khi đơn chưa hoàn thành và chưa hủy) #}
+      {% if order.TrangThai in ['Chờ xác nhận', 'Đã xác nhận'] %}
+        <form method="post" action="{{ url_for('w12.order_action_cancel', order_id=order.MaDonHang) }}" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #{{ order.MaDonHang }}? {% if order.TrangThai == 'Đã xác nhận' %}Hệ thống sẽ tự động HOÀN LẠI số lượng tồn kho.{% endif %}')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">
+            ✕ Hủy đơn hàng {% if order.TrangThai == 'Đã xác nhận' %}(Hoàn kho){% endif %}
+          </button>
+        </form>
+      {% endif %}
+
+      {# Nút In phiếu #}
+      <button type="button" onclick="window.print()" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; padding:8px 16px; border-radius:6px; cursor:pointer;">
+        🖨 In phiếu đơn hàng
+      </button>
+
+      {# Link quay lại #}
+      {% if is_staff %}
+        <a href="{{ url_for('w12.staff_orders') }}" style="color:#64748b; text-decoration:none; margin-left:8px;">← Quay lại danh sách đơn</a>
+      {% else %}
+        <a href="{{ url_for('w12.admin_orders') }}" style="color:#64748b; text-decoration:none; margin-left:8px;">← Quay lại danh sách đơn</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endmacro %}
+
+{% if is_staff %}
+  {% block content %}
+    <div class="container main-area" style="padding-top:20px;">
+      {{ order_content() }}
+    </div>
+  {% endblock %}
+{% else %}
+  {% block admin_content %}
+    {{ order_content() }}
+  {% endblock %}
+{% endif %}

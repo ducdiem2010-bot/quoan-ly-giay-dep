@@ -1,11 +1,12 @@
-"""Kiểm tra form đặt hàng và tạo đơn chờ xác nhận (demo). Không thu tiền thật.
+"""Ghi yêu cầu đặt hàng (demo). Không thu tiền, không trừ kho khi chờ xác nhận.
 
-Từ W4-008: tạo đơn TRỪ tồn kho trong transaction; hủy / từ chối / thanh toán thất bại sẽ hoàn lại
-(xem order_inventory.py). SQLite tự tạo bảng phụ ThongTinGiaoDich khi đặt hàng.
-SQL Server: chạy migration_checkout_sqlserver.sql rồi migration_w4_giao_dich_sqlserver.sql trước.
+SQLite tự tạo bảng metadata khi đặt hàng để giữ nguyên 9 bảng của bộ kiểm thử W2 ban đầu.
+SQL Server: quản trị viên PHẢI chạy migration_checkout_sqlserver.sql trước.
 """
 import re
-from .order_inventory import InventoryError, place_order
+from decimal import Decimal
+from flask import current_app
+from ..db import get_db_connection
 
 CHECKOUT_META_SQLITE = """
 CREATE TABLE IF NOT EXISTS ThongTinGiaoDich (
@@ -48,14 +49,72 @@ def validate_checkout(form):
 
 
 def create_pending_order(form_data, basket, user_id=None):
-    """Tạo đơn chờ xác nhận. Toàn bộ nằm trong MỘT transaction (xem order_inventory.place_order):
-    kiểm tra + TRỪ tồn theo biến thể, ghi đơn/chi tiết/giao dịch thanh toán; thiếu hàng ở bất kỳ dòng nào thì
-    rollback hết (không có đơn, không dòng nào bị trừ). Trả về mã đơn mới.
+    """Kiểm tra tồn kho trong transaction, lưu chi tiết và phương thức nhận/trả.
 
-    Không có webhook/PSP: trạng thái thanh toán luôn CHƯA THANH TOÁN, giao dịch thanh toán ở 'Chờ xử lý'.
-    Phí vận chuyển = 0 (chưa tính) cho đến khi cửa hàng xác nhận.
+    Trả về mã đơn mới. Không có webhook/PSP; trạng thái thanh toán luôn CHƯA THANH TOÁN.
+    Giá đặt chỉ gồm tiền sản phẩm; phí vận chuyển = NULL cho delivery (chờ xác nhận).
     """
+    items = {}
+    for variant_id, amount in basket.items():
+        try:
+            vid, qty = int(variant_id), int(amount)
+        except (TypeError, ValueError):
+            raise CheckoutValidationError('Giỏ hàng có dữ liệu không hợp lệ.')
+        if vid < 1 or qty < 1 or qty > 99 or vid in items:
+            raise CheckoutValidationError('Số lượng hoặc biến thể không hợp lệ.')
+        items[vid] = qty
+    if not items:
+        raise CheckoutValidationError('Giỏ hàng đang trống.')
+    backend = current_app.config['DB_BACKEND']
+    conn = get_db_connection()
     try:
-        return place_order(form_data, basket, user_id)
-    except InventoryError as exc:        # InsufficientStockError cũng là InventoryError
-        raise CheckoutValidationError(str(exc)) from exc
+        cur = conn.cursor()
+        if backend == 'sqlite':
+            cur.execute('BEGIN IMMEDIATE')
+            cur.execute(CHECKOUT_META_SQLITE)
+        total = Decimal('0')
+        rows = []
+        for vid, qty in items.items():
+            lock = ' WITH (UPDLOCK, HOLDLOCK)' if backend == 'sqlserver' else ''
+            cur.execute('SELECT bt.MaBienThe, bt.SoLuongTon, sp.GiaBan, sp.HienThi, sp.TenSanPham FROM BienTheSanPham bt '
+                        f'JOIN SanPham sp{lock} ON sp.MaSanPham=bt.MaSanPham '
+                        'WHERE bt.MaBienThe=?', (vid,))
+            r = cur.fetchone()
+            if not r:
+                raise CheckoutValidationError(f'Sản phẩm có mã biến thể #{vid} không tồn tại.')
+            if not bool(r[3]):
+                raise CheckoutValidationError(f'Sản phẩm "{r[4]}" đã ngừng kinh doanh hoặc tạm ẩn, không thể đặt hàng.')
+            if int(r[1]) < qty:
+                raise CheckoutValidationError(f'Sản phẩm "{r[4]}" có biến thể #{vid} không đủ hàng (còn {r[1]}, cần {qty}).')
+            price = Decimal(str(r[2])).quantize(Decimal('0.01'))
+            rows.append((vid, qty, price))
+            total += price * qty
+        if backend == 'sqlite':
+            cur.execute("INSERT INTO DonHang (MaNguoiDung, TrangThai, TongTien) VALUES (?, 'Chờ xác nhận', ?)",
+                        (user_id, float(total)))
+            order_id = cur.lastrowid
+        else:
+            cur.execute("INSERT INTO DonHang (MaNguoiDung, TrangThai, TongTien) OUTPUT INSERTED.MaDonHang VALUES (?, N'Chờ xác nhận', ?)",
+                        (user_id, total))
+            order_id = cur.fetchone()[0]
+        for vid, qty, price in rows:
+            cur.execute('INSERT INTO ChiTietDonHang (MaDonHang,MaBienThe,SoLuong,DonGia) VALUES (?,?,?,?)',
+                        (order_id, vid, qty, float(price) if backend == 'sqlite' else price))
+        # Cập nhật tổng rõ ràng cho SQL Server (SQLite có trigger tính tự động).
+        cur.execute('UPDATE DonHang SET TongTien=? WHERE MaDonHang=?',
+                    (float(total) if backend == 'sqlite' else total, order_id))
+        shipping_fee = 0 if form_data['fulfillment'] == 'pickup' else None
+        cur.execute("""INSERT INTO ThongTinGiaoDich
+            (MaDonHang,HoTen,SoDienThoai,Email,HinhThucNhanHang,DiaChiGiaoHang,
+             PhuongThucThanhToan,TrangThaiThanhToan,PhiVanChuyen,GhiChu)
+            VALUES (?,?,?,?,?,?,?,?,?,?)""",
+            (order_id, form_data['full_name'], form_data['phone'], form_data['email'] or None,
+             form_data['fulfillment'], form_data['address'] or None,
+             form_data['payment_method'], 'Chưa thanh toán', shipping_fee, form_data['note'] or None))
+        conn.commit()
+        return order_id
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()

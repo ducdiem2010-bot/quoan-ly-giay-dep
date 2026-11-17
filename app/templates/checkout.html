@@ -7,6 +7,7 @@
 <div class="checkout-layout checkout-updated">
   <form id="checkout-form" class="panel checkout-form" method="post" action="{{ url_for('checkout') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="checkout_token" value="{{ checkout_token }}">
     {% if buy_now %}<input type="hidden" name="buy_now" value="1">{% endif %}
     <h2>Thông tin người nhận</h2>
     <p class="notice notice-warning">Chức năng đặt hàng đang chạy ở chế độ thử nghiệm. Hệ thống không tự thu tiền trực tuyến.</p>
@@ -43,7 +44,7 @@
     <textarea id="note" name="note" rows="3" maxlength="500" placeholder="Yêu cầu khác (nếu có)">{{ form_data.get('note','') }}</textarea>
     {% if session.get('user_id') %}<label class="choice-line save-default"><input type="checkbox" name="save_default" value="1" {{ 'checked' if save_default else '' }}> Lưu họ tên, số điện thoại, địa chỉ này làm thông tin mặc định cho lần mua sau</label>{% endif %}
     <button class="action-primary checkout-submit" type="submit">Gửi yêu cầu đặt hàng</button>
-    <p class="checkout-help">Gửi yêu cầu không đồng nghĩa đơn đã được xác nhận hoặc đã thanh toán. Số lượng bạn đặt được giữ (trừ tồn) ngay khi gửi yêu cầu và được hoàn lại nếu đơn bị hủy, bị từ chối hoặc thanh toán thất bại.</p>
+    <p class="checkout-help">Gửi yêu cầu không đồng nghĩa đơn đã được xác nhận hoặc đã thanh toán. Hàng chưa được trừ kho ở bước này.</p>
   </form>
   <aside class="panel cart-summary">
     <h2>{{ 'Sản phẩm mua ngay' if buy_now else 'Thông tin giỏ hàng' }}</h2>
