@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Bộ sưu tập giày - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/discovery.css') }}">{% endblock %}
+{% block content %}
+<section class="discovery-hero"><span class="eyebrow">A3 · SHOES STORE</span><h1>Bộ sưu tập giày</h1><p>Khám phá các mẫu giày theo từng danh mục, sản phẩm mới và những lựa chọn được yêu thích.</p><a class="action-primary" href="{{ url_for('w3_catalog.product_list') }}">Khám phá tất cả sản phẩm ↗</a></section>
+{% if latest_products %}<section class="discovery-section"><div class="section-title"><h2>Mới cập nhật</h2><a href="{{ url_for('new_arrivals.show') }}">Xem tất cả ↗</a></div><div class="product-grid">{% for product in latest_products %}{% include '_product_card.html' %}{% endfor %}</div></section>{% endif %}
+{% if best_selling_products %}<section class="discovery-section"><div class="section-title"><h2>Được lựa chọn nhiều</h2><a href="{{ url_for('best_sellers.show') }}">Xem tất cả ↗</a></div><div class="product-grid">{% for product in best_selling_products %}{% include '_product_card.html' %}{% endfor %}</div></section>{% endif %}
+{% for group in groups %}<section class="discovery-section"><div class="section-title"><h2>{{ group.category.TenDanhMuc }}</h2><a href="{{ url_for('category', category_id=group.category.MaDanhMuc) }}">Xem danh mục ↗</a></div><div class="product-grid">{% for product in group.products %}{% include '_product_card.html' %}{% endfor %}</div></section>{% else %}<p class="empty-state">Chưa có sản phẩm trong bộ sưu tập.</p>{% endfor %}
+{% endblock %}

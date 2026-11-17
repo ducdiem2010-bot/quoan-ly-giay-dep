@@ -1,0 +1,17 @@
+services:
+  shoes-store:
+    build: .
+    container_name: shoes-store-demo
+    ports:
+      - "5000:5000"
+    environment:
+      DB_BACKEND: sqlite
+      DB_PATH: /app/instance/demo.sqlite3
+      SECRET_KEY: ${SECRET_KEY:-change-this-local-demo-secret}
+    volumes:
+      - shoes_data:/app/instance
+      - shoes_uploads:/app/app/static/uploads
+    restart: unless-stopped
+volumes:
+  shoes_data:
+  shoes_uploads:

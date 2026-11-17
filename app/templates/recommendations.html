@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Gợi ý sản phẩm - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/discovery.css') }}">{% endblock %}
+{% block content %}
+<section class="discovery-hero"><span class="eyebrow">A6 · ĐỀ XUẤT DÀNH CHO BẠN</span><h1>Gợi ý sản phẩm</h1><p>{% if personalized %}Dựa trên danh mục sản phẩm bạn đã yêu thích hoặc thêm vào giỏ hàng, kết hợp với sản phẩm bán chạy và mới nhất.{% else %}Khám phá những sản phẩm mới nhất và bán chạy tại cửa hàng. Đăng nhập, yêu thích hoặc thêm sản phẩm vào giỏ để nhận gợi ý phù hợp hơn.{% endif %}</p></section>
+<section class="discovery-section"><div class="section-title"><h2>Có thể bạn sẽ thích</h2><span>{{ products|length }} gợi ý</span></div>{% if products %}<div class="product-grid">{% for product in products %}{% include '_product_card.html' %}{% endfor %}</div>{% else %}<p class="empty-state">Hiện chưa có gợi ý phù hợp. Hãy xem tất cả sản phẩm để khám phá thêm.</p>{% endif %}</section>
+{% endblock %}
