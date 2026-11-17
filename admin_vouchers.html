@@ -1,0 +1,111 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="w6-container">
+  <div class="w6-header">
+    <h2>Quản lý Mã giảm giá (Voucher / Coupon)</h2>
+  </div>
+
+  <div class="w6-card">
+    <h3>Tạo / Cập nhật mã giảm giá</h3>
+    <form method="POST" action="{{ url_for('w6.admin_vouchers') }}" class="w6-form-grid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div>
+        <label>Mã Code *</label>
+        <input type="text" name="code" placeholder="VD: SALE20" required style="text-transform:uppercase;">
+      </div>
+      <div>
+        <label>Tên chương trình *</label>
+        <input type="text" name="title" placeholder="Giảm 20% mừng khai trương" required>
+      </div>
+      <div>
+        <label>Loại giảm</label>
+        <select name="discount_type">
+          <option value="FIXED">Giảm tiền cố định (VNĐ)</option>
+          <option value="PERCENT">Giảm theo phần trăm (%)</option>
+        </select>
+      </div>
+      <div>
+        <label>Giá trị giảm *</label>
+        <input type="number" name="discount_value" min="1" step="any" required>
+      </div>
+      <div>
+        <label>Giảm tối đa (nếu chọn %)</label>
+        <input type="number" name="max_discount_amount" min="0" placeholder="VD: 100000">
+      </div>
+      <div>
+        <label>Đơn hàng tối thiểu (VNĐ)</label>
+        <input type="number" name="min_order_amount" min="0" value="0">
+      </div>
+      <div>
+        <label>Tổng lượt dùng</label>
+        <input type="number" name="usage_limit" min="1" value="100">
+      </div>
+      <div>
+        <label>Lượt / khách hàng</label>
+        <input type="number" name="per_user_limit" min="1" value="1">
+      </div>
+      <div>
+        <label>Ngày bắt đầu *</label>
+        <input type="datetime-local" name="start_date" required>
+      </div>
+      <div>
+        <label>Ngày kết thúc *</label>
+        <input type="datetime-local" name="end_date" required>
+      </div>
+      <div class="w6-form-actions">
+        <button type="submit" class="w6-btn w6-btn-primary">Lưu mã giảm giá</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="w6-card">
+    <h3>Danh sách mã hiện có</h3>
+    <table class="w6-table">
+      <thead>
+        <tr>
+          <th>Mã</th>
+          <th>Chương trình</th>
+          <th>Mức giảm</th>
+          <th>Đơn tối thiểu</th>
+          <th>Đã dùng</th>
+          <th>Hiệu lực</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in vouchers %}
+        <tr>
+          <td><strong>{{ v.code }}</strong></td>
+          <td>{{ v.title }}</td>
+          <td>
+            {% if v.discount_type == 'PERCENT' %}
+              {{ v.discount_value|int }}% {% if v.max_discount_amount %}(tối đa {{ "{:,.0f}".format(v.max_discount_amount) }}đ){% endif %}
+            {% else %}
+              {{ "{:,.0f}".format(v.discount_value) }}đ
+            {% endif %}
+          </td>
+          <td>{{ "{:,.0f}".format(v.min_order_amount) }}đ</td>
+          <td>{{ v.used_count }} / {{ v.usage_limit }}</td>
+          <td><small>{{ v.start_date }} <br>→ {{ v.end_date }}</small></td>
+          <td>
+            <span class="w6-badge {{ 'w6-badge-success' if v.is_active else 'w6-badge-muted' }}">
+              {{ 'Đang bật' if v.is_active else 'Tạm khóa' }}
+            </span>
+          </td>
+          <td>
+            <form method="POST" action="{{ url_for('w6.admin_toggle_voucher', voucher_id=v.id) }}">
+              <button type="submit" class="w6-btn w6-btn-sm">
+                {{ 'Khóa mã' if v.is_active else 'Kích hoạt' }}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;">Chưa có mã giảm giá nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

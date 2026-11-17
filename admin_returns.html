@@ -1,0 +1,59 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="w6-container">
+  <div class="w6-header">
+    <h2>Quản lý Yêu cầu Đổi trả / Hoàn tiền</h2>
+  </div>
+
+  <div class="w6-card">
+    <table class="w6-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Đơn hàng</th>
+          <th>Khách hàng</th>
+          <th>Loại yêu cầu</th>
+          <th>Lý do</th>
+          <th>Tiền hoàn</th>
+          <th>Trạng thái</th>
+          <th>Xử lý</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in returns %}
+        <tr>
+          <td>#{{ r.id }}</td>
+          <td><a href="/admin/orders/{{ r.order_id }}">Đơn #{{ r.order_id }}</a></td>
+          <td>{{ r.customer_name }}</td>
+          <td>{{ 'Trả hàng & Hoàn tiền' if r.request_type == 'RETURN' else 'Đổi size/mẫu' }}</td>
+          <td>
+            {{ r.reason }}
+            {% if r.evidence_url %}<br><a href="{{ r.evidence_url }}" target="_blank">Xem minh chứng</a>{% endif %}
+          </td>
+          <td>{{ "{:,.0f}".format(r.refund_amount or 0) }}đ</td>
+          <td>
+            {% if r.status == 'PENDING' %}<span class="w6-badge w6-badge-warning">Chờ duyệt</span>
+            {% elif r.status == 'APPROVED' %}<span class="w6-badge w6-badge-success">Đã duyệt</span>
+            {% else %}<span class="w6-badge w6-badge-danger">Từ chối</span>{% endif %}
+          </td>
+          <td>
+            {% if r.status == 'PENDING' %}
+            <form method="POST" action="{{ url_for('w6.admin_process_return', return_id=r.id) }}" class="w6-inline-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="text" name="admin_note" placeholder="Ghi chú phản hồi..." class="w6-input-sm">
+              <button type="submit" name="action" value="APPROVED" class="w6-btn w6-btn-success w6-btn-sm">Duyệt</button>
+              <button type="submit" name="action" value="REJECTED" class="w6-btn w6-btn-danger w6-btn-sm">Từ chối</button>
+            </form>
+            {% else %}
+            <small>{{ r.admin_note or 'Đã xử lý' }}</small>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;">Chưa có yêu cầu đổi/trả nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
