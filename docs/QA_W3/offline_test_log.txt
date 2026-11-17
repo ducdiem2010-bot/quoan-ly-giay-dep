@@ -1,0 +1,13 @@
+test_at_least_twelve_footwear_products (__main__.OfflineSchemaW3.test_at_least_twelve_footwear_products) ... ok
+test_atomic_rollback_sample (__main__.OfflineSchemaW3.test_atomic_rollback_sample) ... ok
+test_favorite_owner_and_uniqueness (__main__.OfflineSchemaW3.test_favorite_owner_and_uniqueness) ... ok
+test_hidden_product_in_seed (__main__.OfflineSchemaW3.test_hidden_product_in_seed) ... ok
+test_out_of_stock_variant (__main__.OfflineSchemaW3.test_out_of_stock_variant) ... ok
+test_python_syntax (__main__.OfflineSchemaW3.test_python_syntax) ... ok
+test_same_variant_row_required (__main__.OfflineSchemaW3.test_same_variant_row_required) ... ok
+test_variant_uniqueness_and_check (__main__.OfflineSchemaW3.test_variant_uniqueness_and_check) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.026s
+
+OK

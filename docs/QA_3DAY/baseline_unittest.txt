@@ -1,0 +1,5 @@
+BASELINE UNITTEST — CHƯA THỰC THI TRÊN ZIP NÀY
+Lý do: môi trường hiện tại thiếu package Flask; không có môi trường SQL Server.
+Có log lịch sử riêng (96 test, 21 FAIL, 46 ERROR) nhưng không cùng phiên bản ZIP,
+không thể sử dụng làm kết quả chính thức của bản chỉnh sửa hiện tại.
+Lệnh trên máy Windows: $env:DB_BACKEND="sqlite"; python -m unittest discover -s tests -p "test*.py" -v

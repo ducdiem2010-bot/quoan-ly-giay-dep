@@ -1,0 +1,7 @@
+M3.2 - KẾT QUẢ KIỂM TRA
+- Kiểm tra câu SQL SQLite trực tiếp bằng sqlite3 trên bộ fixture tạm: PASS, trả 6 sản phẩm.
+- Python compileall: PASS (chỉ cú pháp).
+- GET /, /new-arrivals, /best-sellers, /products trên Flask thực tế: CHƯA KIỂM CHỨNG.
+- 7 test_new_arrivals.py: ĐÃ TẠO, CHƯA CHẠY DO MÔI TRƯỜNG KHÔNG CÓ FLASK.
+- SQL Server V2: BLOCKED - chưa có kết nối/DDL thực nghiệm.
+- Git commit SHA: Không có .git trong ZIP, không tự bịa SHA.

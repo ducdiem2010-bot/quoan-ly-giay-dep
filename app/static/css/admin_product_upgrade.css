@@ -1,0 +1,17 @@
+/* Khải K1-K2: quy tắc giới hạn trong nội dung Admin W3. */
+.admin-ux-status { display: inline-block; padding: 5px 9px; border-radius: 7px;
+  font-size: 12px; font-weight: 700; line-height: 1.4; }
+.admin-ux-stock--empty, .admin-ux-status--hidden { color: #8f3428; background: #fff0eb; }
+.admin-ux-stock--available, .admin-ux-status--visible { color: #24613f; background: #e6f5e9; }
+.admin-ux-row--hidden { background: #f8f8f8; }
+.admin-ux-form-message { margin-block: 9px; font-size: 13px; color: #982f26; }
+.admin-ux-variant-form input:invalid { outline: 1px solid #bb4949; }
+.admin-ux-inline { display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 480px) {
+  .admin-ux-page .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .admin-ux-page .admin-table { min-width: 760px; }
+  .admin-ux-page .w3-header { flex-wrap: wrap; }
+}
+
+/* W10: nhãn vàng khi tổng tồn còn 1..5. */
+.admin-ux-page .admin-ux-stock--low { color: #80570a; background: #fff0c4; }

@@ -1,0 +1,30 @@
+KẾT QUẢ TÁI CẤU TRÚC – NHÓM 6
+Kiểm tra trong sandbox, không thay cho nghiệm thu của Điểm.
+
+PASS: moved app/routes.py – app/routes/public.py
+PASS: moved app/catalog_w3.py – app/routes/catalog.py
+PASS: moved app/admin_w3.py – app/routes/admin.py
+PASS: moved app/checkout_service.py – app/services/checkout.py
+PASS: moved verify_w3_offline.py – scripts/verify_w3_offline.py
+PASS: preserve run.py – exact byte content
+PASS: preserve requirements.txt – exact byte content
+PASS: preserve .env.example – exact byte content
+PASS: preserve app/db.py – exact byte content
+PASS: preserve app/data.py – exact byte content
+PASS: preserve database/schema.sql – exact byte content
+PASS: preserve database/seed.sql – exact byte content
+PASS: preserve tests/test_smoke.py – exact byte content
+PASS: preserve app/templates/base.html – exact byte content
+PASS: no top-level function/class semantics altered app/routes.py – exact AST function bodies
+PASS: no top-level function/class semantics altered app/catalog_w3.py – exact AST function bodies
+PASS: no top-level function/class semantics altered app/admin_w3.py – exact AST function bodies
+PASS: no top-level function/class semantics altered app/checkout_service.py – exact AST function bodies
+PASS: Flask decorator parity app/routes.py – 15 endpoint decorators
+PASS: Flask decorator parity app/catalog_w3.py – 1 endpoint decorators
+PASS: Flask decorator parity app/admin_w3.py – 6 endpoint decorators
+PASS: relative imports resolve as Python modules – 13 imports
+PASS: no stale module import paths – []
+PASS: Python files compile – 17 files
+PASS: offline verification after reorg – OK
+BLOCKED: Flask unittest / browser runtime – Flask is not installed in this sandbox; repeat on Windows venv
+BLOCKED: SQL Server real integration – No SQL Server/ODBC server access was supplied

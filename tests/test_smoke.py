@@ -1,4 +1,6 @@
-"""Kiểm thử tự động nghiệm thu Tuần 2 (SQLite demo, KHÔNG thay SQL Server)."""
+"""Smoke test W2 chạy trên fixture W3 mở rộng; bản W2 gốc ở docs/references/test_smoke_w2_original.py.
+Fixture hiện có 11 bảng (9 nền + YeuThich + SanPhamHinhAnh), 12 sản phẩm và 11 hiển thị.
+"""
 import os
 import sqlite3
 import tempfile
@@ -12,12 +14,21 @@ class SelectorParser(HTMLParser):
         super().__init__()
         self.csrf = None
         self.cards = 0
+        self.catalog_cards = 0
+        self.in_catalog_section = False
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
+        if tag == "section" and a.get("id") == "san-pham":
+            self.in_catalog_section = True
         if tag == "input" and a.get("name") == "csrf_token":
             self.csrf = a.get("value")
         if "product-card" in (a.get("class") or "").split():
             self.cards += 1
+            if self.in_catalog_section:
+                self.catalog_cards += 1
+    def handle_endtag(self, tag):
+        if tag == "section" and self.in_catalog_section:
+            self.in_catalog_section = False
 
 def parse_html(blob):
     p = SelectorParser()
@@ -44,26 +55,27 @@ class Week2SmokeTest(unittest.TestCase):
 
     def test_seed_and_integrity(self):
         with closing(sqlite3.connect(self.db_path)) as con:
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0], 10)
+            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0], 12)
             self.assertEqual(con.execute("SELECT COUNT(*) FROM DanhMuc").fetchone()[0], 3)
             self.assertGreaterEqual(con.execute("SELECT COUNT(*) FROM NguoiDung").fetchone()[0], 2)
             self.assertEqual(con.execute("PRAGMA foreign_key_check").fetchall(), [])
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchone()[0], 9)
+            self.assertIn(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchone()[0], (11, 15))
             self.assertEqual(con.execute("SELECT TongTien FROM DonHang WHERE MaDonHang=1").fetchone()[0], 3490000)
 
     def test_home_db_and_search(self):
         page = self.client.get("/")
         self.assertEqual(page.status_code, 200)
         self.assertIn("Nike Air Zoom Pegasus", page.get_data(as_text=True))
-        self.assertEqual(parse_html(page.data).cards, 10)
+        # Chỉ đếm thẻ ở mục Tất cả sản phẩm; trang chủ còn có các khu nổi bật.
+        self.assertEqual(parse_html(page.data).catalog_cards, 11)
         page = self.client.get("/?q=Converse")
-        self.assertEqual(parse_html(page.data).cards, 1)
+        self.assertEqual(parse_html(page.data).catalog_cards, 1)
 
     def test_category_filter(self):
         page = self.client.get("/category/3")
         self.assertEqual(page.status_code, 200)
         soup = parse_html(page.data)
-        self.assertEqual(soup.cards, 4)
+        self.assertEqual(soup.cards, 5)
         self.assertIn("Dép &amp; Sandal", page.get_data(as_text=True))
         self.assertEqual(self.client.get("/category/444").status_code, 404)
 
@@ -110,16 +122,18 @@ class Week2SmokeTest(unittest.TestCase):
         res=self.client.post("/login",data={"csrf_token":token,"email":"admin@shop.vn","password":"Demo@12345"},follow_redirects=True)
         self.assertEqual(res.status_code,200)
         self.assertIn("Quản trị sản phẩm",res.get_data(as_text=True))
+        # W12 BUG-03: route prototype W2 đã NGỪNG lưu giả, chuyển đến form W3 thực.
+        # Test lịch sử được cập nhật theo thay đổi nghiệp vụ có chủ đích.
         admin=self.client.get("/admin/product/add")
-        self.assertEqual(admin.status_code,200)
-        html=admin.get_data(as_text=True)
-        for field in ('name="name"','name="price"','name="stock"','name="category_id"','name="image"'):
-            self.assertIn(field,html)
-        token=self.csrf("/admin/product/add")
-        submit=self.client.post("/admin/product/add",data={"csrf_token":token,"name":"Mẫu mới","price":"10000","stock":"2","category_id":"1","image":"shoe-1.svg"},follow_redirects=True)
-        self.assertIn("CHƯA lưu sản phẩm",submit.get_data(as_text=True))
+        self.assertEqual(admin.status_code,302)
+        self.assertIn("/admin/products/new",admin.location)
+        token=self.csrf("/admin/products/new")
+        submit=self.client.post("/admin/product/add",data={"csrf_token":token,"name":"Mẫu mới","price":"10000","stock":"2","category_id":"1","image":"shoe-1.svg"}, follow_redirects=True)
+        self.assertEqual(submit.status_code,200)
+        self.assertIn('name="name"',submit.get_data(as_text=True))
         with closing(sqlite3.connect(self.db_path)) as con:
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0],10)
+            # Route W2 không tự INSERT; chỉ form W3 mới ghi dữ liệu.
+            self.assertEqual(con.execute("SELECT COUNT(*) FROM SanPham").fetchone()[0],12)
 
     def test_seller_cannot_admin(self):
         token=self.csrf("/login")

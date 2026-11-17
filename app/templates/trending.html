@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Xu hướng - Shoes Store{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('home') }}">Trang chủ</a> / Xu hướng</div>
+<section class="trend-hero">
+  <div class="trend-copy">
+    <span class="hero-pill">XU HƯỚNG • 2026</span>
+    <h1>Đôi giày <em>đang được chọn</em> nhiều nhất.</h1>
+    <p>Những mẫu được khách đặt nhiều và những mẫu mới về của cửa hàng, cập nhật theo dữ liệu đơn hàng.</p>
+    <a href="#top-xu-huong" class="action-primary">Xem top xu hướng <span>↓</span></a>
+  </div>
+  <div class="trend-art"><img src="{{ url_for('static', filename='images/shoe-2.svg') }}" alt="Minh họa giày xu hướng"></div>
+</section>
+<section id="top-xu-huong">
+  <div class="section-title"><div><span class="eyebrow">TOP XU HƯỚNG</span><h2>Sản phẩm nổi bật</h2></div><span>{{ products|length }} sản phẩm</span></div>
+  {% if products %}
+  <div class="product-grid">
+    {% for product in products %}
+    <div class="trend-item">
+      <span class="trend-rank">#{{ loop.index }}</span>
+      {% include '_product_card.html' %}
+      {% if product.DaBan > 0 %}<p class="trend-sold">Đã bán {{ product.DaBan }}</p>{% else %}<p class="trend-sold trend-new">Hàng mới về</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}<div class="empty-state">Chưa có sản phẩm xu hướng.</div>{% endif %}
+  <p class="trend-note">Xếp hạng theo số lượng đã đặt (không tính đơn đã hủy); mẫu chưa có đơn được xếp theo độ mới.</p>
+</section>
+<section class="trend-more">
+  <h3>Khám phá theo danh mục</h3>
+  <div class="category-pills">{% for cat in categories %}<a href="{{ url_for('category', category_id=cat.MaDanhMuc) }}" class="pill">{{ cat.TenDanhMuc }}</a>{% endfor %}<a href="{{ url_for('w3_catalog.product_list') }}" class="pill active">Tất cả sản phẩm</a></div>
+</section>
+{% endblock %}

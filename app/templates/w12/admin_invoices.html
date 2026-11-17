@@ -1,0 +1,3 @@
+{% extends 'admin_base.html' %}{% block admin_title %}Phiếu đơn hàng{% endblock %}
+{% block admin_content %}<section class="w12-panel"><h1>Phiếu bán hàng từ đơn đã lưu</h1><p>Dùng dữ liệu đơn hàng hiện hữu, không phát hành hóa đơn thuế.</p>
+<div class="table-wrap"><table class="admin-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>Trạng thái</th><th>Tổng tiền</th><th>In phiếu</th></tr></thead><tbody>{% for o in orders %}<tr><td>#{{ o.MaDonHang }}</td><td>{{ o.NgayDat }}</td><td>{{ o.TrangThai }}</td><td>{{ o.TongTien|vnd }}</td><td><a href="{{ url_for('w12.admin_order_detail', order_id=o.MaDonHang) }}">Xem/In</a></td></tr>{% else %}<tr><td colspan="5">Chưa có đơn hàng.</td></tr>{% endfor %}</tbody></table></div></section>{% endblock %}

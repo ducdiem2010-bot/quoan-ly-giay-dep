@@ -1,0 +1,6 @@
+PASS 01: 6 latest public products on base seed
+PASS 02: no fake bestseller with 0 completed orders
+PASS 03: tie sorted by higher MaSanPham, hidden excluded
+PASS 04: 2+3 completed items =5; canceled 9 not counted; one row
+PASS 05: hidden bestseller excluded
+SQLITE QUERY SMOKE: 5/5 PASS (NOT FLASK UNITTEST)

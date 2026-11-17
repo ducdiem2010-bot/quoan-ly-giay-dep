@@ -1,0 +1,83 @@
+{% extends 'account_base.html' %}
+{% block account_body %}
+<div class="acct-orders">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h2>Đơn hàng của tôi</h2>
+    <a href="{{ url_for('w3_catalog.product_list') }}" style="color:#2563eb; text-decoration:none; font-size:0.9rem;">+ Mua thêm sản phẩm</a>
+  </div>
+
+  {% if orders %}
+    {% for o in orders %}
+      <article class="order-card" style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px; margin-bottom:16px;">
+        <header style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid #f1f5f9; padding-bottom:10px; margin-bottom:12px;">
+          <div>
+            <strong style="font-size:1.05rem;">Đơn #{{ o.MaDonHang }}</strong>
+            <small style="display:block; color:#64748b; margin-top:2px;">Ngày đặt: {{ o.NgayDat }}</small>
+            {% if o.DiaChiGiaoHang %}
+              <small style="display:block; color:#64748b;">Địa chỉ giao: {{ o.DiaChiGiaoHang }}</small>
+            {% endif %}
+          </div>
+          <div style="text-align:right;">
+            <div style="margin-bottom:4px;">
+              {% if o.TrangThai == 'Chờ xác nhận' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#fef3c7; color:#b45309; font-weight:600;">Chờ xác nhận</span>
+              {% elif o.TrangThai == 'Đã xác nhận' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#e0e7ff; color:#3730a3; font-weight:600;">Đã xác nhận</span>
+              {% elif o.TrangThai == 'Hoàn thành' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#dcfce7; color:#15803d; font-weight:600;">Hoàn thành</span>
+              {% else %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#fee2e2; color:#b91c1c; font-weight:600;">Đã hủy</span>
+              {% endif %}
+            </div>
+            <div>
+              {% if o.TrangThaiThanhToan == 'Đã thanh toán' %}
+                <span style="font-size:0.8rem; color:#16a34a; font-weight:600;">✓ Đã thanh toán</span>
+              {% else %}
+                <span style="font-size:0.8rem; color:#64748b;">Chưa thanh toán</span>
+              {% endif %}
+            </div>
+          </div>
+        </header>
+
+        <ul style="list-style:none; padding:0; margin:0 0 12px;">
+          {% for it in o["items"] %}
+            <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed #f1f5f9; font-size:0.92rem;">
+              <div>
+                <a href="{{ url_for('product_detail', product_id=it.MaSanPham) }}" style="color:#0f172a; font-weight:600; text-decoration:none;">{{ it.TenSanPham }}</a>
+                <span style="color:#64748b; font-size:0.85rem; margin-left:6px;">({{ it.MauSac }} · Size {{ it.KichThuoc }})</span>
+                <span style="color:#64748b; font-size:0.85rem; margin-left:6px;">× {{ it.SoLuong }} (Đơn giá: {{ it.DonGia|vnd }})</span>
+              </div>
+              <strong>{{ (it.DonGia * it.SoLuong)|vnd }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <footer style="display:flex; justify-content:space-between; align-items:center; padding-top:8px;">
+          <div>
+            {% if o.can_cancel %}
+              <form method="post" action="{{ url_for('acct.cancel_pending_order', order_id=o.MaDonHang) }}"
+                    onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:4px 10px; border-radius:4px; font-size:0.85rem; cursor:pointer;">
+                  Hủy đơn hàng
+                </button>
+              </form>
+            {% elif o.TrangThai == 'Đã xác nhận' %}
+              <small style="color:#64748b;">Đơn đã được xác nhận. Vui lòng liên hệ cửa hàng nếu muốn đổi/hủy.</small>
+            {% endif %}
+          </div>
+          <div>
+            <span style="color:#64748b; font-size:0.9rem;">Tổng tiền: </span>
+            <strong style="font-size:1.15rem; color:#0f172a;">{{ o.TongTien|vnd }}</strong>
+          </div>
+        </footer>
+      </article>
+    {% endfor %}
+  {% else %}
+    <div class="acct-empty" style="text-align:center; padding:32px 0;">
+      <p style="color:#64748b;">Bạn chưa có đơn hàng nào.</p>
+      <a class="action-primary" href="{{ url_for('w3_catalog.product_list') }}">Khám phá sản phẩm</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Kiểm tra dữ liệu sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="w11-page">
+  <div class="w11-eyebrow">W11 · QUẢN TRỊ CHẤT LƯỢNG</div>
+  <h1>Trung tâm kiểm tra sản phẩm</h1>
+  <p class="w11-muted">Kiểm tra dữ liệu hiện có, chỉ đọc. Ảnh minh họa hợp lệ của cửa hàng không bị tính là lỗi.</p>
+  <div class="w11-kpis">
+    <div><span>Đã kiểm tra</span><strong>{{ report.total }}</strong><small>Sản phẩm</small></div>
+    <div><span>Cần xem xét</span><strong>{{ report.flagged }}</strong><small>Sản phẩm có cảnh báo</small></div>
+    <div><span>Cảnh báo nghiêm trọng</span><strong>{{ report.high }}</strong><small>Cần kiểm tra trước</small></div>
+    <div><span>Chưa tải ảnh riêng</span><strong>{{ report.without_uploaded_image }}</strong><small>Đang dùng ảnh nội bộ/dự phòng; không mặc định là lỗi</small></div>
+  </div>
+  <div class="w11-panel">
+    <h2>Danh sách cảnh báo</h2>
+    {% if report.records %}
+    <div class="w11-table-wrap"><table class="w11-table">
+      <thead><tr><th>Mã</th><th>Sản phẩm</th><th>Mức độ</th><th>Vấn đề cần kiểm tra</th><th>Đi tới</th></tr></thead>
+      <tbody>{% for p in report.records %}
+        <tr><td>SP{{ '%03d' % p.MaSanPham }}</td><td><strong>{{ p.TenSanPham }}</strong></td>
+          <td><span class="w11-pill {{ 'w11-pill-high' if p.severity == 'high' else 'w11-pill-warn' }}">{{ 'Cần xử lý' if p.severity == 'high' else 'Cần xem' }}</span></td>
+          <td><ul class="w11-issues">{% for issue in p.issues %}<li>{{ issue.description }}</li>{% endfor %}</ul></td>
+          <td><a href="{{ url_for('admin_w3.product_edit', product_id=p.MaSanPham) }}">Sửa sản phẩm ↗</a></td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="w11-empty">Không phát hiện dữ liệu bất thường theo các quy tắc đang hỗ trợ.</p>{% endif %}
+  </div>
+  <p class="w11-muted">Lưu ý: Hết hàng là trạng thái kinh doanh có thể hợp lệ; cảnh báo chỉ nhắc quản trị viên xem xét, không tự thay đổi dữ liệu.</p>
+</div>
+{% endblock %}

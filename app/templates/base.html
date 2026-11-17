@@ -1,3 +1,18 @@
+{# Chỉ đọc route đã đăng ký; không tạo Blueprint, truy vấn DB hoặc đổi backend. #}
+{% set storefront_routes = namespace(orders=none, profile=none, staff=none, latest=none, best=none, deals=none, trending=none, w4=false) %}
+{% if request.url_rule %}
+  {% for rule in request.url_rule.map.iter_rules() %}
+    {% if rule.endpoint == 'tuan_w4_ui.my_orders' %}{% set storefront_routes.w4 = true %}
+    {% elif rule.endpoint == 'acct.orders' %}{% set storefront_routes.orders = rule.endpoint %}
+    {% elif rule.endpoint == 'account_v2.profile' and sqlserver_v2|default(false) %}{% set storefront_routes.profile = rule.endpoint %}
+    {% elif rule.endpoint == 'acct.profile' and not sqlserver_v2|default(false) %}{% set storefront_routes.profile = rule.endpoint %}
+    {% elif rule.endpoint == 'staff_orders_v2.orders' and sqlserver_v2|default(false) %}{% set storefront_routes.staff = rule.endpoint %}
+    {% elif (rule.endpoint == 'new_arrivals.show' or (rule.rule == '/new-arrivals' and not rule.arguments)) %}{% set storefront_routes.latest = rule.endpoint %}
+    {% elif (rule.endpoint == 'best_sellers.show' or (rule.rule == '/best-sellers' and not rule.arguments)) %}{% set storefront_routes.best = rule.endpoint %}
+    {% elif rule.endpoint == 'w3_catalog.deals' %}{% set storefront_routes.deals = rule.endpoint %}
+    {% elif rule.endpoint == 'w3_catalog.trending' %}{% set storefront_routes.trending = rule.endpoint %}{% endif %}
+  {% endfor %}
+{% endif %}
 <!doctype html>
 <html lang="vi">
 <head>
@@ -8,6 +23,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/tuan_w4.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/product_hot.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/w11_upgrade.css') }}">
   {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -17,33 +34,223 @@
     <nav aria-label="Điều hướng chính" class="nav-links">
       <a href="{{ url_for('home') }}">Trang chủ</a>
       <a href="{{ url_for('w3_catalog.product_list') }}">Tất cả sản phẩm</a>
+      <a href="{{ url_for('collections.index') }}">Bộ sưu tập</a>
+      <a href="{{ url_for('collections.recommendations') }}">Gợi ý sản phẩm</a>
+      <a href="{{ url_for('collections.index') }}">Bộ sưu tập</a>
+      <a href="{{ url_for('collections.recommendations') }}">Gợi ý sản phẩm</a>
       {% for cat in categories %}
         <a href="{{ url_for('category', category_id=cat.MaDanhMuc) }}">{{ cat.TenDanhMuc }}</a>
       {% endfor %}
-      <a href="{{ url_for('view_cart') }}">Giỏ hàng <span class="count">{{ cart_count }}</span></a>
-      {% if session.get('role') == 'Customer' %}<a href="{{ url_for('tuan_w4_ui.my_orders') }}">Đơn của tôi</a>{% endif %}
+      <a href="{{ url_for('acct.orders') }}">Theo dõi đơn hàng</a>
     </nav>
     <div class="account-actions">
+      <a href="{{ url_for('view_cart') }}" class="cart-trigger" aria-label="Giỏ hàng">
+        <span class="account-avatar" style="width:34px; height:34px; font-size:14px;">🛒<span class="cart-badge">{{ cart_count }}</span></span>
+        <span class="account-text"><strong>Giỏ hàng</strong></span>
+      </a>
+
       {% if session.get('user_id') %}
-      {% if session.get('role')=='Admin' %}<a href="{{ url_for('admin_dashboard') }}">Quản trị</a>{% endif %}
-      <form method="post" action="{{ url_for('logout') }}" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="text-button" type="submit">Đăng xuất</button></form>
-      {% else %}<a href="{{ url_for('login') }}">Đăng nhập</a><a class="register-link" href="{{ url_for('register') }}">Đăng ký</a>{% endif %}
+        <details class="account-menu">
+          <summary class="account-trigger">
+            <span class="account-avatar" style="width:34px; height:34px; font-size:13px; font-weight:700; background:#1e293b;">
+              {{ (session.get('user_name') or 'U')[:1]|upper }}
+            </span>
+            <span class="account-text">
+              <strong>{{ session.get('user_name') }}</strong>
+              <small>
+                {% if session.get('role') == 'Admin' %}Quản trị viên{% elif session.get('role') == 'Seller' %}Nhân viên{% else %}Khách hàng{% endif %}
+              </small>
+            </span>
+            <span style="font-size:10px; color:#64748b; margin-left:2px;">▼</span>
+          </summary>
+          <div class="account-dropdown" style="right:0; width:250px; padding:16px; border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.12);">
+            <div style="padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #e2e8f0;">
+              <strong style="display:block; font-size:14px; color:#0f172a;">{{ session.get('user_name') }}</strong>
+              <span style="display:inline-block; font-size:11px; padding:2px 8px; border-radius:4px; background:#e2e8f0; color:#334155; margin-top:4px;">
+                {% if session.get('role') == 'Admin' %}Quản trị viên{% elif session.get('role') == 'Seller' %}Nhân viên bán hàng{% else %}Khách hàng{% endif %}
+              </span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <a href="{{ url_for('acct.profile') }}" class="account-link" style="display:block; padding:8px 12px; border-radius:6px; background:#f8fafc; font-weight:600; font-size:13px; text-decoration:none; color:#1e293b;">
+                👤 Thông tin tài khoản
+              </a>
+              {% if session.get('role') == 'Customer' or not session.get('role') %}
+                <a href="{{ url_for('acct.orders') }}" class="account-link" style="display:block; padding:8px 12px; border-radius:6px; background:#f8fafc; font-weight:600; font-size:13px; text-decoration:none; color:#1e293b;">
+                  📦 Đơn của tôi / Theo dõi đơn
+                </a>
+              {% endif %}
+              {% if session.get('role') == 'Seller' %}
+                <a href="{{ url_for('w12.staff_home') }}" class="account-link" style="display:block; padding:8px 12px; border-radius:6px; background:#eff6ff; color:#1d4ed8; font-weight:600; font-size:13px; text-decoration:none;">
+                  💼 Khu vực Nhân viên
+                </a>
+              {% endif %}
+              {% if session.get('role') == 'Admin' %}
+                <a href="{{ url_for('admin_dashboard') }}" class="account-link" style="display:block; padding:8px 12px; border-radius:6px; background:#eff6ff; color:#1d4ed8; font-weight:600; font-size:13px; text-decoration:none;">
+                  ⚙️ Khu vực Quản trị
+                </a>
+              {% endif %}
+              <form method="post" action="{{ url_for('logout') }}" style="margin-top:6px; border-top:1px solid #f1f5f9; padding-top:8px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="text-button" style="width:100%; text-align:left; padding:8px 12px; border-radius:6px; color:#dc2626; font-weight:600; font-size:13px; background:transparent; border:none; cursor:pointer;">
+                  🚪 Đăng xuất
+                </button>
+              </form>
+            </div>
+          </div>
+        </details>
+      {% else %}
+        <details class="account-menu">
+          <summary class="account-trigger">
+            <span class="account-avatar" style="width:34px; height:34px; font-size:14px; background:#64748b;">👤</span>
+            <span class="account-text"><strong>Tài khoản</strong></span>
+            <span style="font-size:10px; color:#64748b; margin-left:2px;">▼</span>
+          </summary>
+          <div class="account-dropdown" style="right:0; width:200px; padding:14px; border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.12);">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <a href="{{ url_for('login') }}" class="account-link" style="display:block; text-align:center; padding:9px 12px; border-radius:6px; background:#1e293b; color:#fff; font-weight:600; font-size:13px; text-decoration:none;">
+                Đăng nhập
+              </a>
+              <a href="{{ url_for('register') }}" class="register-link" style="display:block; text-align:center; padding:8px 12px; border-radius:6px; background:#f1f5f9; color:#1e293b; font-weight:600; font-size:13px; text-decoration:none; border:1px solid #cbd5e1;">
+                Đăng ký tài khoản
+              </a>
+              <a href="{{ url_for('acct.orders') }}" style="display:block; text-align:center; padding:6px 12px; font-size:12px; color:#2563eb; text-decoration:none; margin-top:4px;">
+                📦 Theo dõi đơn hàng
+              </a>
+            </div>
+          </div>
+        </details>
+      {% endif %}
     </div>
   </div>
 </header>
-<main class="container main-area">
+<main class="container main-area{% if request.endpoint and request.endpoint.startswith('admin_w3.') %} w3-admin-page{% endif %}">
   {% with flashes=get_flashed_messages(with_categories=true) %}{% if flashes %}
   <div aria-live="polite" class="flash-stack">
   {% for kind, message in flashes %}<div class="notice notice-{{ kind }}">{{ message }}</div>{% endfor %}
   </div>{% endif %}{% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer class="site-footer" id="lien-he">
-  <div class="container footer-flex"><div><strong>SHOES STORE</strong><p>Cửa hàng giày dép • Một cửa hàng duy nhất</p></div>
-  <div><strong>Khách hàng</strong><p>Tra cứu trực tuyến • Thông tin giao hàng đang hoàn thiện</p></div>
-  <div><strong>Liên hệ</strong><p>Điện thoại/Zalo/Facebook: cập nhật theo thông tin cửa hàng</p></div></div>
-  <p class="copyright">© 2026 Nhóm 6 • Bản tích hợp W2–W3 • Giao hàng/thanh toán online: chưa triển khai đầy đủ ở giai đoạn này.</p>
+<footer class="site-footer w11-footer" id="lien-he">
+  <div class="container w11-footer-top">
+    <div class="w11-footer-intro"><span class="w11-footer-symbol" aria-hidden="true">S</span><div>
+      <span class="w11-footer-kicker">KHÁM PHÁ · LỰA CHỌN · TRẢI NGHIỆM</span>
+      <h2>Đôi giày phù hợp<br><em>bắt đầu từ đây.</em></h2>
+      <p>Khám phá sản phẩm giày dép đang có tại cửa hàng Nhóm 6. Tìm kiếm nhanh hoặc thử trợ lý chọn giày.</p>
+    </div></div>
+    <a class="w11-footer-cta" href="{{ url_for('w11.shoe_finder') }}">Tìm đôi giày của bạn <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="container storefront-footer-grid w11-footer-grid">
+    <div class="storefront-footer-brand w11-footer-about">
+      <div class="site-footer-brand-lockup"><span class="site-footer-brand-mark" aria-hidden="true">S</span><strong>SHOES <span>STORE</span></strong></div>
+      <p>Website quản lý cửa hàng giày dép được xây dựng bởi Nhóm 6. Hình ảnh minh họa được ghi chú khi không phải ảnh sản phẩm thực tế.</p>
+      <span class="w11-footer-caption">Đồ án quản lý cửa hàng · Nhóm 6</span>
+    </div>
+    <nav class="storefront-footer-links" aria-label="Khám phá chân trang">
+      <strong>Khám phá</strong>
+      <a href="{{ url_for('home') }}">Trang chủ</a>
+      <a href="{{ url_for('w3_catalog.product_list') }}">Tất cả sản phẩm</a>
+      {% if storefront_routes.latest %}<a href="{{ url_for(storefront_routes.latest) }}">Sản phẩm mới nhất</a>{% endif %}
+      {% if storefront_routes.best %}<a href="{{ url_for(storefront_routes.best) }}">Sản phẩm bán chạy</a>{% endif %}
+      <a href="{{ url_for('w11.shoe_finder') }}">Trợ lý tìm giày ✦</a>
+    </nav>
+    <nav class="storefront-footer-links" aria-label="Tài khoản và hỗ trợ">
+      <strong>Tài khoản</strong>
+      <a href="{{ url_for('view_cart') }}">Giỏ hàng</a>
+      {% if session.get('role') == 'Customer' %}
+        <a href="{{ url_for('acct.profile') }}">Hồ sơ của tôi</a>
+        <a href="{{ url_for('acct.orders') }}">Đơn của tôi</a>
+      {% elif session.get('role') == 'Admin' %}
+        <a href="{{ url_for('admin_dashboard') }}">Quản trị</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Đăng nhập</a>
+        <a href="{{ url_for('register') }}">Đăng ký</a>
+      {% endif %}
+      <a href="{{ url_for('home') }}#san-pham">Khám phá sản phẩm</a>
+    </nav>
+    <div class="w11-footer-tools">
+      <strong>Tìm giày nhanh</strong>
+      <p>Nhập tên hoặc thương hiệu để tìm sản phẩm ngay.</p>
+      <form class="w11-footer-search" role="search" action="{{ url_for('w3_catalog.product_list') }}" method="get">
+        <label class="sr-only" for="w11-footer-q">Tìm sản phẩm</label>
+        <input id="w11-footer-q" type="search" name="q" placeholder="Ví dụ: Nike, sandal..." maxlength="80" required>
+        <button type="submit" aria-label="Tìm kiếm giày">↗</button>
+      </form>
+      <details class="w11-footer-faq"><summary>Giải đáp nhanh <span>＋</span></summary>
+        <p><b>Chọn size thế nào?</b> Mở chi tiết sản phẩm để xem các size còn hàng.</p>
+        <p><b>Xem lại đơn đã đặt?</b> Đăng nhập tài khoản khách hàng và chọn “Đơn của tôi”.</p>
+      </details>
+    </div>
+  </div>
+  <div class="container storefront-footer-bottom w11-footer-bottom">
+    <small>© {{ current_year }} SHOES STORE · Nhóm 6 · Đồ án quản lý cửa hàng giày dép.</small>
+    <button type="button" id="w11-back-to-top" class="w11-back-top" aria-label="Quay về đầu trang">↑ <span>Về đầu trang</span></button>
+  </div>
 </footer>
+<div class="w11-modal" id="w11-quick-view" role="dialog" aria-modal="true" aria-labelledby="w11-modal-title" hidden tabindex="-1">
+  <div class="w11-modal-overlay" data-w11-close></div>
+  <div class="w11-modal-panel" role="document">
+    <button class="w11-modal-close" type="button" aria-label="Đóng cửa sổ xem nhanh" data-w11-close>×</button>
+    <div class="w11-modal-main">
+      <div class="w11-modal-photo"><img id="w11-modal-image" src="{{ url_for('static', filename='images/shoe-1.svg') }}" alt="Ảnh sản phẩm" width="500" height="420"></div>
+      <div class="w11-modal-info" aria-live="polite">
+        <span class="w11-eyebrow">SHOES STORE · XEM NHANH</span>
+        <h2 id="w11-modal-title">Thông tin sản phẩm</h2>
+        <p id="w11-modal-category"></p><strong id="w11-modal-price"></strong>
+        <p id="w11-modal-stock"></p>
+        <div class="w11-modal-variants"><div><b>Màu còn hàng</b><p id="w11-modal-colors"></p></div><div><b>Size còn hàng</b><p id="w11-modal-sizes"></p></div></div>
+        <p id="w11-modal-description"></p>
+        <a id="w11-modal-detail" class="w11-btn" href="{{ url_for('w3_catalog.product_list') }}">Xem chi tiết đầy đủ ↗</a>
+      </div>
+    </div>
+    <p class="w11-modal-hint">Muốn mua hàng? Vào trang chi tiết để chọn đúng màu, size và số lượng.</p>
+  </div>
+</div>
 <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/w11_upgrade.js') }}" defer></script>
+<script>
+/* T2.1: một handler cho card public trên trang chủ/danh mục/danh sách.
+   data-product-image (JS W3) không dùng trên card đã nâng cấp để tránh listener trùng. */
+(() => {
+  "use strict";
+  if (window.__tuanStorefrontImageHandler) return;
+  window.__tuanStorefrontImageHandler = true;
+  function unavailable(img, visual) {
+    img.hidden = true;
+    const label = visual && visual.querySelector('.storefront-image-unavailable');
+    if (label) label.hidden = false;
+  }
+  function onBrokenImage(img) {
+    if (!img || !img.matches('img[data-storefront-image]')) return;
+    const visual = img.closest('.product-visual, .detail-visual');
+    if (img.dataset.fallbackApplied !== 'true') {
+      img.dataset.fallbackApplied = 'true';
+      const fallback = img.dataset.storefrontFallbackSrc;
+      if (fallback && img.getAttribute('src') !== fallback) {
+        img.alt = img.dataset.fallbackAlt || 'Ảnh minh họa sản phẩm';
+        const note = visual && visual.querySelector('.storefront-image-note');
+        if (note) note.hidden = false;
+        img.src = fallback;
+        return;
+      }
+    }
+    unavailable(img, visual);
+  }
+  document.addEventListener('error', event => {
+    if (event.target && event.target.matches('img[data-storefront-image]')) onBrokenImage(event.target);
+  }, true);
+  document.querySelectorAll('img[data-storefront-image]').forEach(img => {
+    if (img.complete && img.naturalWidth === 0) onBrokenImage(img);
+  });
+
+  // Tự động đóng dropdown tài khoản khi click ra ngoài
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('details.account-menu[open]').forEach(function(el) {
+      if (!el.contains(e.target)) {
+        el.removeAttribute('open');
+      }
+    });
+  });
+})();
+</script>
 {% block extra_js %}{% endblock %}
 </body></html>

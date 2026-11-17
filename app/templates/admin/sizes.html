@@ -1,0 +1,69 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Quản lý Kích thước sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="admin-ux-page">
+  <div class="w3-header">
+    <div>
+      <span class="eyebrow">QUẢN LÝ DỮ LIỆU</span>
+      <h1>Kích thước sản phẩm</h1>
+      <p>Quản lý các size chuẩn giày dép (38, 39, 40, 41...); kiểm tra an toàn trước khi xóa.</p>
+    </div>
+  </div>
+
+  <div style="background:#fff;padding:20px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:24px;">
+    <h3 style="margin-top:0;font-size:1.1rem;color:#1e293b;">＋ Thêm kích thước mới</h3>
+    <form method="post" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div style="flex:1;min-width:200px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Tên kích thước / Size *</label>
+        <input name="name" required maxlength="30" placeholder="VD: 39, 40, 41, 42, XL..." style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div>
+        <button type="submit" class="action-primary" style="padding:9px 18px;">Thêm kích thước</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Mã</th>
+          <th>Kích thước / Size</th>
+          <th style="width:140px;">Số biến thể</th>
+          <th style="width:200px;">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>S{{ '%02d' % item.MaKichThuoc }}</td>
+          <td>
+            <input form="edit-sz-{{ item.MaKichThuoc }}" name="name" value="{{ item.TenKichThuoc }}" required maxlength="30" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;width:100%;max-width:200px;">
+          </td>
+          <td>
+            <span style="display:inline-block;padding:2px 8px;border-radius:12px;background:#ecfdf5;color:#047857;font-weight:600;font-size:0.85rem;">
+              {{ item.SoBienThe }} biến thể
+            </span>
+          </td>
+          <td>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <form id="edit-sz-{{ item.MaKichThuoc }}" method="post" action="{{ url_for('admin_catalog.size_edit', size_id=item.MaKichThuoc) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #94a3b8;background:#f8fafc;cursor:pointer;">Lưu</button>
+              </form>
+              <form method="post" action="{{ url_for('admin_catalog.size_delete', size_id=item.MaKichThuoc) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa kích thước này?');" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #f87171;background:#fef2f2;color:#b91c1c;cursor:pointer;">Xóa</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">Chưa có kích thước nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

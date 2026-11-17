@@ -86,6 +86,123 @@ def init_demo_database():
         columns = {r[1] for r in conn.execute("PRAGMA table_info(SanPham)").fetchall()}
         if "HienThi" not in columns:
             conn.execute("ALTER TABLE SanPham ADD COLUMN HienThi INTEGER NOT NULL DEFAULT 1")
-            conn.commit()
+        # Hồ sơ khách hàng: thêm cột mới cho NguoiDung, giữ nguyên dữ liệu cũ.
+        user_cols = {r[1] for r in conn.execute("PRAGMA table_info(NguoiDung)").fetchall()}
+        for col in ("Ho", "Ten", "GioiTinh", "NgaySinh", "TinhThanh", "PhuongXa", "NguoiKhoa", "ThoiGianKhoa", "GhiChuKhoa"):
+            if col not in user_cols:
+                conn.execute(f"ALTER TABLE NguoiDung ADD COLUMN {col} TEXT")
+
+        # Cột theo dõi xử lý đơn hàng
+        order_cols = {r[1] for r in conn.execute("PRAGMA table_info(DonHang)").fetchall()}
+        if "MaNguoiXuLy" not in order_cols:
+            conn.execute("ALTER TABLE DonHang ADD COLUMN MaNguoiXuLy INTEGER REFERENCES NguoiDung(MaNguoiDung)")
+        if "ThoiGianXuLy" not in order_cols:
+            conn.execute("ALTER TABLE DonHang ADD COLUMN ThoiGianXuLy TEXT")
+
+        # Bảng thông tin giao dịch checkout
+        conn.execute("""CREATE TABLE IF NOT EXISTS ThongTinGiaoDich (
+            MaDonHang INTEGER PRIMARY KEY REFERENCES DonHang(MaDonHang) ON DELETE CASCADE,
+            HoTen TEXT NOT NULL, SoDienThoai TEXT NOT NULL, Email TEXT,
+            HinhThucNhanHang TEXT NOT NULL CHECK(HinhThucNhanHang IN ('delivery','pickup')),
+            DiaChiGiaoHang TEXT, PhuongThucThanhToan TEXT NOT NULL
+              CHECK(PhuongThucThanhToan IN ('cod','bank_transfer')),
+            TrangThaiThanhToan TEXT NOT NULL DEFAULT 'Chưa thanh toán',
+            PhiVanChuyen REAL,
+            GhiChu TEXT, NgayTao TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            NguoiThuTien INTEGER REFERENCES NguoiDung(MaNguoiDung),
+            ThoiGianThanhToan TEXT
+        )""")
+        tx_cols = {r[1] for r in conn.execute("PRAGMA table_info(ThongTinGiaoDich)").fetchall()}
+        if "NguoiThuTien" not in tx_cols:
+            conn.execute("ALTER TABLE ThongTinGiaoDich ADD COLUMN NguoiThuTien INTEGER REFERENCES NguoiDung(MaNguoiDung)")
+        if "ThoiGianThanhToan" not in tx_cols:
+            conn.execute("ALTER TABLE ThongTinGiaoDich ADD COLUMN ThoiGianThanhToan TEXT")
+
+        # Quản lý danh mục, thương hiệu, màu sắc, kích thước
+        conn.execute("""CREATE TABLE IF NOT EXISTS ThuongHieu (
+            MaThuongHieu INTEGER PRIMARY KEY AUTOINCREMENT,
+            TenThuongHieu TEXT NOT NULL UNIQUE,
+            MoTa TEXT
+        )""")
+        conn.execute("""CREATE TABLE IF NOT EXISTS MauSac (
+            MaMau INTEGER PRIMARY KEY AUTOINCREMENT,
+            TenMau TEXT NOT NULL UNIQUE,
+            MaHex TEXT,
+            MoTa TEXT
+        )""")
+        ms_cols = {r[1] for r in conn.execute("PRAGMA table_info(MauSac)").fetchall()}
+        if "MaHex" not in ms_cols:
+            conn.execute("ALTER TABLE MauSac ADD COLUMN MaHex TEXT")
+
+        conn.execute("""CREATE TABLE IF NOT EXISTS KichThuoc (
+            MaKichThuoc INTEGER PRIMARY KEY AUTOINCREMENT,
+            TenKichThuoc TEXT NOT NULL UNIQUE,
+            TenSize TEXT,
+            MoTa TEXT
+        )""")
+        kt_cols = {r[1] for r in conn.execute("PRAGMA table_info(KichThuoc)").fetchall()}
+        if "TenKichThuoc" not in kt_cols and "TenSize" in kt_cols:
+            conn.execute("ALTER TABLE KichThuoc ADD COLUMN TenKichThuoc TEXT")
+            conn.execute("UPDATE KichThuoc SET TenKichThuoc = TenSize WHERE TenKichThuoc IS NULL")
+        if "TenSize" not in kt_cols and "TenKichThuoc" in kt_cols:
+            conn.execute("ALTER TABLE KichThuoc ADD COLUMN TenSize TEXT")
+            conn.execute("UPDATE KichThuoc SET TenSize = TenKichThuoc WHERE TenSize IS NULL")
+        if "MaKichThuoc" not in kt_cols and "MaSize" in kt_cols:
+            conn.execute("ALTER TABLE KichThuoc ADD COLUMN MaKichThuoc INTEGER")
+            conn.execute("UPDATE KichThuoc SET MaKichThuoc = MaSize WHERE MaKichThuoc IS NULL")
+
+        if "MaThuongHieu" not in columns:
+            conn.execute("ALTER TABLE SanPham ADD COLUMN MaThuongHieu INTEGER REFERENCES ThuongHieu(MaThuongHieu)")
+
+        # Đồng bộ Thương hiệu, Màu sắc, Kích thước ban đầu nếu bảng đang trống
+        brand_count = conn.execute("SELECT COUNT(*) FROM ThuongHieu").fetchone()[0]
+        if brand_count == 0:
+            brands = conn.execute("SELECT DISTINCT ThuongHieu FROM SanPham WHERE ThuongHieu IS NOT NULL AND TRIM(ThuongHieu) <> ''").fetchall()
+            for (bname,) in brands:
+                conn.execute("INSERT OR IGNORE INTO ThuongHieu (TenThuongHieu) VALUES (?)", (bname.strip(),))
+        color_count = conn.execute("SELECT COUNT(*) FROM MauSac").fetchone()[0]
+        if color_count == 0:
+            colors = conn.execute("SELECT DISTINCT MauSac FROM BienTheSanPham WHERE MauSac IS NOT NULL AND TRIM(MauSac) <> ''").fetchall()
+            for (cname,) in colors:
+                conn.execute("INSERT OR IGNORE INTO MauSac (TenMau) VALUES (?)", (cname.strip(),))
+        size_count = conn.execute("SELECT COUNT(*) FROM KichThuoc").fetchone()[0]
+        if size_count == 0:
+            sizes = conn.execute("SELECT DISTINCT KichThuoc FROM BienTheSanPham WHERE KichThuoc IS NOT NULL AND TRIM(KichThuoc) <> ''").fetchall()
+            for (sname,) in sizes:
+                conn.execute("INSERT OR IGNORE INTO KichThuoc (TenKichThuoc, TenSize) VALUES (?, ?)", (sname.strip(), sname.strip()))
+        # Product image gallery: additive migration, keeps existing products intact.
+        conn.execute("""CREATE TABLE IF NOT EXISTS SanPhamHinhAnh (
+            MaHinhAnh INTEGER PRIMARY KEY AUTOINCREMENT,
+            MaSanPham INTEGER NOT NULL REFERENCES SanPham(MaSanPham) ON DELETE CASCADE,
+            TenTep TEXT NOT NULL,
+            LaAnhDaiDien INTEGER NOT NULL DEFAULT 0 CHECK(LaAnhDaiDien IN (0,1)),
+            ThuTu INTEGER NOT NULL DEFAULT 0,
+            NgayTao TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )""")
+        # Idempotent additive migration for the SQLite demo, no DROP or data loss.
+        conn.execute("""CREATE TABLE IF NOT EXISTS YeuThich (
+            MaNguoiDung INTEGER NOT NULL REFERENCES NguoiDung(MaNguoiDung) ON DELETE CASCADE,
+            MaSanPham INTEGER NOT NULL REFERENCES SanPham(MaSanPham) ON DELETE CASCADE,
+            PRIMARY KEY (MaNguoiDung, MaSanPham))""")
+        # Nâng cấp seed demo cũ (10 SP) không xóa dữ liệu hay thay đổi ID cũ.
+        # Không dùng cho SQL Server; trên SQL Server cần quy trình seed/migration test riêng.
+        examples = [
+            ("Sandal Học Sinh Chống Trượt", 3, 290000, "LocalShoes", "Test hết tồn", [ ("39", "Đỏ", 0), ("40", "Xanh", 0) ], 1),
+            ("Giày Thể Thao Mẫu Ẩn", 1, 590000, "LocalShoes", "Test sản phẩm ẩn", [ ("41", "Đen", 8) ], 0),
+        ]
+        for name, category, price, brand, detail, variants, visible in examples:
+            existing = conn.execute("SELECT MaSanPham FROM SanPham WHERE TenSanPham=?", (name,)).fetchone()
+            if not existing:
+                cur = conn.execute("INSERT INTO SanPham (MaDanhMuc,MaNguoiTao,TenSanPham,GiaBan,ThuongHieu,MoTa,HienThi) VALUES (?,?,?,?,?,?,?)",
+                    (category, None, name, price, brand, detail, visible))
+                pid = cur.lastrowid
+            else:
+                pid = int(existing[0])
+            if not visible:
+                conn.execute("UPDATE SanPham SET HienThi=0 WHERE MaSanPham=?", (pid,))
+            for size, color, stock in variants:
+                if not conn.execute("SELECT 1 FROM BienTheSanPham WHERE MaSanPham=? AND KichThuoc=? AND MauSac=?", (pid, size, color)).fetchone():
+                    conn.execute("INSERT INTO BienTheSanPham(MaSanPham,KichThuoc,MauSac,SoLuongTon) VALUES(?,?,?,?)", (pid, size, color, stock))
+        conn.commit()
     finally:
         conn.close()

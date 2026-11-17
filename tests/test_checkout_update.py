@@ -1,4 +1,5 @@
 """Kiểm thử sửa checkout và Trạng thái trên SQLite demo; không kiểm tra cổng thanh toán thực."""
+from contextlib import closing
 import sqlite3
 import tempfile
 import unittest
@@ -38,7 +39,7 @@ class CheckoutUpdateTests(unittest.TestCase):
         self.assertNotIn('<dt>Giới tính</dt>', page)
 
     def test_product_status_sold_out(self):
-        with sqlite3.connect(self.database) as conn:
+        with closing(sqlite3.connect(self.database)) as conn, conn:
             conn.execute('UPDATE BienTheSanPham SET SoLuongTon=0 WHERE MaSanPham=1')
         page = self.c.get('/product/1').get_data(as_text=True)
         self.assertIn('<dt>Trạng thái</dt><dd><span class="availability sold-out">Hết hàng</span>',page)
@@ -60,14 +61,14 @@ class CheckoutUpdateTests(unittest.TestCase):
         token = self.add_cart()
         response = self.submit(token,address='')
         self.assertIn('Hãy nhập địa chỉ giao hàng',response.get_data(as_text=True))
-        with sqlite3.connect(self.database) as c:
+        with closing(sqlite3.connect(self.database)) as c, c:
             self.assertEqual(c.execute("SELECT COUNT(*) FROM DonHang").fetchone()[0],1)
 
     def test_checkout_validate_invalid_payment(self):
         token = self.add_cart()
         response = self.submit(token,payment_method='gateway')
         self.assertIn('Cổng online chưa hoạt động',response.get_data(as_text=True))
-        with sqlite3.connect(self.database) as c:
+        with closing(sqlite3.connect(self.database)) as c, c:
             self.assertEqual(c.execute("SELECT COUNT(*) FROM DonHang").fetchone()[0],1)
 
     def test_checkout_validate_phone(self):
@@ -81,7 +82,7 @@ class CheckoutUpdateTests(unittest.TestCase):
         self.assertEqual(response.status_code,200)
         self.assertIn('Đã ghi nhận yêu cầu đặt hàng',response.get_data(as_text=True))
         self.assertIn('Chưa thanh toán',response.get_data(as_text=True))
-        with sqlite3.connect(self.database) as c:
+        with closing(sqlite3.connect(self.database)) as c, c:
             order = c.execute('SELECT MaDonHang,TongTien,TrangThai FROM DonHang ORDER BY MaDonHang DESC LIMIT 1').fetchone()
             info = c.execute('SELECT HinhThucNhanHang,DiaChiGiaoHang,PhuongThucThanhToan,TrangThaiThanhToan,PhiVanChuyen FROM ThongTinGiaoDich WHERE MaDonHang=?',(order[0],)).fetchone()
             self.assertEqual(order[1],2500000)
@@ -95,17 +96,17 @@ class CheckoutUpdateTests(unittest.TestCase):
         token=self.add_cart(quantity=1)
         response=self.submit(token,payment_method='bank_transfer')
         self.assertIn('Chuyển khoản ngân hàng',response.get_data(as_text=True))
-        with sqlite3.connect(self.database) as c:
+        with closing(sqlite3.connect(self.database)) as c, c:
             info=c.execute('SELECT HinhThucNhanHang,DiaChiGiaoHang,TrangThaiThanhToan,PhiVanChuyen FROM ThongTinGiaoDich ORDER BY MaDonHang DESC LIMIT 1').fetchone()
             self.assertEqual(info,('delivery','Số 1 đường Test, Hà Nội','Chưa thanh toán',None))
 
     def test_checkout_insufficient_stock_no_order(self):
         token=self.add_cart(quantity=2)
-        with sqlite3.connect(self.database) as c:
+        with closing(sqlite3.connect(self.database)) as c, c:
             c.execute('UPDATE BienTheSanPham SET SoLuongTon=1 WHERE MaBienThe=1')
         r=self.submit(token)
         self.assertIn('không đủ hàng',r.get_data(as_text=True))
-        with sqlite3.connect(self.database) as c:
+        with closing(sqlite3.connect(self.database)) as c, c:
             self.assertEqual(c.execute('SELECT COUNT(*) FROM DonHang').fetchone()[0],1)
 
     def test_success_not_public_without_session(self):

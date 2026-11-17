@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Tài khoản của tôi - Shoes Store{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">{% endblock %}
+{% block content %}
+<div class="acct-card">
+  <nav class="acct-tabs" aria-label="Khu vực tài khoản">
+    <a href="{{ url_for('acct.profile') }}" class="{{ 'active' if tab == 'profile' else '' }}">Tài khoản</a>
+    <a href="{{ url_for('acct.orders') }}" class="{{ 'active' if tab == 'orders' else '' }}">Đơn hàng</a>
+    <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Đăng xuất</button></form>
+  </nav>
+  {% block account_body %}{% endblock %}
+</div>
+{% endblock %}
