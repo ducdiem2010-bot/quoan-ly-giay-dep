@@ -1,0 +1,47 @@
+{
+  "src": "Nhom6_WebGiayDep_TichHop_W2_W3 (gốc)",
+  "dst": "Nhom6_WebGiayDep (refactor)",
+  "moves": [
+    {
+      "old": "app/routes.py",
+      "new": "app/routes/public.py",
+      "reason": "Tách route public/login/cart/checkout thành package routes"
+    },
+    {
+      "old": "app/catalog_w3.py",
+      "new": "app/routes/catalog.py",
+      "reason": "Nhóm route sản phẩm trong package routes"
+    },
+    {
+      "old": "app/admin_w3.py",
+      "new": "app/routes/admin.py",
+      "reason": "Nhóm route quản trị trong package routes"
+    },
+    {
+      "old": "app/checkout_service.py",
+      "new": "app/services/checkout.py",
+      "reason": "Tách service checkout khỏi module route"
+    },
+    {
+      "old": "verify_w3_offline.py",
+      "new": "scripts/verify_w3_offline.py",
+      "reason": "Chuyển tiện ích QA độc lập sang scripts"
+    }
+  ],
+  "updates": [
+    "app/routes/public.py",
+    "app/routes/catalog.py",
+    "app/routes/admin.py",
+    "app/services/checkout.py",
+    "app/__init__.py",
+    "scripts/verify_w3_offline.py",
+    "README.md",
+    "docs/QA_W3/HUONG_DAN_CHAY_TEST.md"
+  ],
+  "added": [
+    "app/routes/__init__.py",
+    "app/services/__init__.py",
+    "scripts/__init__.py",
+    "docs/TAI_CAU_TRUC_CODE.md"
+  ]
+}

@@ -9,18 +9,20 @@
 {% extends 'base.html' %}
 {% block title %}{{ product.TenSanPham }} - Shoes Store{% endblock %}
 {% block extra_css %}
+{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_feedback.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_detail.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/availability.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/favorite.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/empty_states.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_responsive.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/w13_customer_ux.css') }}">
 {% endblock %}
 {% block content %}
 {% set gallery = product_images if product_images is defined and product_images else [] %}
 {% set cover = namespace(photo=gallery[0] if gallery else none) %}
 {% for photo in gallery %}{% if photo.is_cover|default(false) %}{% set cover.photo = photo %}{% endif %}{% endfor %}
-{% set fallback = url_for('static', filename='images/shoe-' ~ ((product.MaSanPham % 3)+1) ~ '.svg') %}
+{% set fallback = url_for('static', filename='images/no-product-image.svg') %}
 <nav class="breadcrumbs" aria-label="Đường dẫn">
   <a href="{{ url_for('home') }}">Trang chủ</a> /
   <a href="{{ url_for('category', category_id=product.MaDanhMuc) }}">{{ product.TenDanhMuc }}</a> /
@@ -29,10 +31,16 @@
 <article class="product-detail detail-page" aria-labelledby="detail-title">
   <section class="detail-gallery" aria-label="Hình ảnh sản phẩm">
     <div class="detail-visual">
+      {% if cover.photo %}
       <img id="product-main-image" src="{{ url_for('static', filename=cover.photo.filename) if cover.photo else fallback }}"
            data-fallback-src="{{ fallback }}" width="600" height="520"
-           alt="{{ cover.photo.alt|default(product.TenSanPham, true) if cover.photo else 'Ảnh minh họa ' ~ product.TenSanPham }}">
+           alt="{{ cover.photo.alt|default(product.TenSanPham, true) if cover.photo else 'Chưa có ảnh sản phẩm: ' ~ product.TenSanPham }}">
+      {% else %}
+      {% set storefront_main_image = true %}
+      {% include '_storefront_image.html' %}
+      {% endif %}
     </div>
+    {% if not cover.photo %}<p class="storefront-photo-caption">Ảnh tham khảo kiểu dáng; màu thực tế theo biến thể bạn chọn.</p>{% endif %}
     {% if gallery|length > 1 %}
     <div class="detail-thumbnails" role="group" aria-label="Chọn ảnh sản phẩm">
       {% for photo in gallery %}
@@ -94,15 +102,22 @@
       </div>
       <label for="quantity">Số lượng</label>
       <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" step="1" required>
-      <button type="submit" class="action-primary" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
+      <div class="buy-actions">
+        <button type="submit" class="action-secondary" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>＋ Thêm vào giỏ hàng</button>
+        <button type="submit" class="action-primary buy-now-btn" formaction="{{ url_for('buy_now', product_id=product.MaSanPham) }}" {% if not variants or product.TongTon == 0 %}disabled{% endif %}>Mua ngay</button>
+      </div>
       <p class="pickup-hint">Có giao hàng tận nơi hoặc nhận tại cửa hàng. Xem phương thức thanh toán tại bước xác nhận đơn hàng.</p>
     </form>
   </section>
 </article>
+{# W13 K4: lưu duy nhất mã sản phẩm tại trình duyệt, không gửi thông tin khách. #}
+<span data-w13-view-product="{{ product.MaSanPham }}" hidden></span>
+{% include 'w13/_recently_viewed.html' %}
 {% endblock %}
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/product_detail.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/product_variants.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/favorite.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/empty_states.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/w13_recently_viewed.js') }}" defer></script>
 {% endblock %}

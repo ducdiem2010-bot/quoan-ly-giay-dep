@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if doc_kind == 'sale' %}{{ 'Hóa đơn bán hàng' if order.TrangThai=='Hoàn thành' else 'Phiếu đơn hàng' }}{% elif doc_kind=='return' %}Phiếu trả hàng{% else %}Xác nhận hoàn tiền{% endif %} #{{ order.MaDonHang }} - SHOES STORE</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/order_print.css') }}">
+</head>
+<body>
+  <div class="print-toolbar" aria-label="Thao tác với bản in">
+    <span>Xem trước chứng từ · A4 dọc</span>
+    <div>
+      <button type="button" onclick="window.print()">In / Lưu PDF</button>
+      <a href="{{ back_url }}">Quay lại chi tiết</a>
+      <button type="button" class="secondary" onclick="window.close()">Đóng</button>
+    </div>
+  </div>
+  <main class="paper" id="print-document">
+    <header class="print-head">
+      <div class="store-mark" aria-label="Shoes Store"><svg viewBox="0 0 64 36" role="img" aria-label="Giày" width="51" height="34"><path d="M5 26c6 0 12-6 17-16l9 4 2 5 13 5c5 2 11 2 12 9H6c-4 0-4-7-1-7Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M23 18l11 7m-4-13 7 8M5 31h51" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="store-heading"><strong>SHOES STORE</strong><span>Chứng từ giao dịch cửa hàng giày dép</span></div>
+      <div class="print-code">ĐƠN #{{ order.MaDonHang }}</div>
+    </header>
+
+    {% if doc_kind == 'sale' %}
+      <h1>{{ 'HÓA ĐƠN BÁN HÀNG' if order.TrangThai == 'Hoàn thành' else 'PHIẾU ĐƠN HÀNG' }}</h1>
+      {% if order.TrangThai != 'Hoàn thành' %}
+      <p class="document-notice">Đơn chưa hoàn thành. Đây là phiếu thông tin đơn hàng, không phải hóa đơn xác nhận giao dịch hoàn tất.</p>
+      {% endif %}
+      <div class="details-grid">
+        <section class="info-group"><h2>Thông tin chứng từ</h2>
+          <p><span>Mã đơn / hóa đơn</span><b>#{{ order.MaDonHang }}</b></p>
+          <p><span>Ngày đặt</span><b>{{ order.NgayDat|vn_datetime }}</b></p>
+          <p><span>Người lập / hoàn thành</span><b>{{ order.TenNguoiHoanThanh or 'Chưa có thông tin' }}</b></p>
+          <p><span>Trạng thái đơn</span><b>{{ order.TrangThai }}</b></p>
+        </section>
+        <section class="info-group"><h2>Khách hàng & thanh toán</h2>
+          <p><span>Khách hàng</span><b>{{ order.KhachHang or order.TenNguoiNhan or 'Khách vãng lai' }}</b></p>
+          {% if order.TenNguoiNhan %}<p><span>Người nhận</span><b>{{ order.TenNguoiNhan }}</b></p>{% endif %}
+          {% if order.SdtNguoiNhan %}<p><span>Điện thoại</span><b>{{ order.SdtNguoiNhan }}</b></p>{% endif %}
+          {% if order.DiaChiGiaoHang %}<p><span>Địa chỉ giao</span><b>{{ order.DiaChiGiaoHang }}</b></p>{% endif %}
+          <p><span>Phương thức</span><b>{{ 'COD' if order.PhuongThucThanhToan=='cod' else 'Chuyển khoản' if order.PhuongThucThanhToan=='bank_transfer' else 'Chưa có thông tin' }}</b></p>
+          <p><span>Thanh toán</span><b>{{ order.TrangThaiThanhToan or 'Chưa thanh toán' }}</b></p>
+        </section>
+      </div>
+      <h2 class="table-title">Chi tiết sản phẩm mua ban đầu</h2>
+      <table class="invoice-items"><colgroup><col style="width:6%"><col style="width:35%"><col style="width:20%"><col style="width:7%"><col style="width:15%"><col style="width:17%"></colgroup><thead><tr><th>STT</th><th>Sản phẩm</th><th>Size · Màu</th><th class="num">SL</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th></tr></thead>
+        <tbody>{% for i in items %}<tr><td>{{ loop.index }}</td><td>{{ i.TenSanPham }}</td><td>{{ i.KichThuoc }} · {{ i.MauSac }}</td><td class="num">{{ i.SoLuong }}</td><td class="num">{{ i.DonGia|vnd }}</td><td class="num">{{ i.ThanhTien|vnd }}</td></tr>{% else %}<tr><td colspan="6">Không có mặt hàng</td></tr>{% endfor %}</tbody>
+      </table>
+      <div class="totals">
+        <p><span>Tiền sản phẩm theo đơn mua ban đầu</span><b>{{ (items|sum(attribute='ThanhTien'))|vnd }}</b></p>
+        {% if order.PhiVanChuyen is not none %}<p><span>Phí vận chuyển ghi nhận</span><b>{{ order.PhiVanChuyen|vnd }}</b></p>{% endif %}
+        <p class="grand"><span>Tổng tiền đơn hàng gốc</span><strong>{{ order.TongTien|vnd }}</strong></p>
+      </div>
+      {% if has_returns %}<p class="document-notice">Đơn có phiếu trả hàng liên quan. Số lượng và tổng tiền ở đây là dữ liệu mua ban đầu; tiền trả hàng và tiền hoàn được theo dõi bằng chứng từ riêng.</p>{% endif %}
+
+    {% elif doc_kind == 'return' %}
+      <h1>PHIẾU TRẢ HÀNG</h1>
+      <div class="details-grid">
+        <section class="info-group"><h2>Thông tin phiếu</h2>
+          <p><span>Mã phiếu trả</span><b>#{{ receipt.receipt_id }}</b></p>
+          <p><span>Đơn gốc</span><b>#{{ order.MaDonHang }}</b></p>
+          <p><span>Ngày nhận hàng trả</span><b>{{ receipt.time|vn_datetime }}</b></p>
+          {% if receipt.legacy_unverified %}<p><span>Đối soát dữ liệu</span><b>Phiếu lịch sử chưa xác định nhóm</b></p>{% endif %}
+        </section>
+        <section class="info-group"><h2>Khách hàng & xử lý</h2>
+          <p><span>Khách hàng</span><b>{{ order.KhachHang or order.TenNguoiNhan or 'Khách vãng lai' }}</b></p>
+          <p><span>Nhân viên nhận</span><b>{{ receipt.lines[0].HoVaTenNguoiThucHien or 'Chưa rõ' }}</b></p>
+          <p><span>Tình trạng hoàn tiền TỔNG ĐƠN</span><b>{{ summary.status }}</b></p>
+        </section>
+      </div>
+      <h2 class="table-title">Sản phẩm thực nhận thuộc phiếu này</h2>
+      <table class="return-items"><colgroup><col style="width:37%"><col style="width:13%"><col style="width:17%"><col style="width:20%"><col style="width:13%"></colgroup><thead><tr><th>SP / Size / Màu</th><th class="num">Số đôi trả</th><th class="num">Đơn giá mua</th><th class="num">Thành tiền hoàn</th><th class="num">Đã cộng kho</th></tr></thead>
+        <tbody>{% for i in receipt.lines %}<tr><td>{{ i.TenSanPham }}<br><small>Size {{ i.KichThuoc }} · {{ i.MauSac }}</small></td><td class="num">{{ i.SoLuong }}</td><td class="num">{{ i.DonGia|vnd }}</td><td class="num">{{ i.TienGiamDoanhThu|vnd }}</td><td class="num">{{ i.SoLuongTot }}</td></tr>{% endfor %}</tbody>
+      </table>
+      <div class="reason"><b>Lý do trả hàng:</b> {% for reason in receipt.lines|map(attribute='LyDo')|unique %}{{ reason or 'Không ghi trong dữ liệu cũ' }}{% if not loop.last %}; {% endif %}{% endfor %}</div>
+      {% if receipt.lines|sum(attribute='SoLuongHong') %}<p class="document-notice">Có {{ receipt.lines|sum(attribute='SoLuongHong') }} đôi thuộc dữ liệu cũ không nhập lại kho bán được.</p>{% endif %}
+      <div class="totals">
+        <p class="grand"><span>Khoản PHẢI hoàn theo phiếu này</span><strong>{{ receipt.total|vnd }}</strong></p>
+        <p><span>Đã hoàn thực tế toàn đơn</span><b>{{ summary.refunded|vnd }}</b></p>
+        <p><span>Còn phải hoàn toàn đơn</span><b>{{ summary.remaining|vnd }}</b></p>
+      </div>
+      <p class="document-notice">Nhận hàng trả KHÔNG có nghĩa đã chuyển tiền hoàn. Các số “đã hoàn / còn hoàn” là đối soát theo TỔNG ĐƠN, không phải khoản tiền gán cho riêng phiếu này. Xem từng xác nhận giao dịch hoàn tiền để đối chiếu.</p>
+
+    {% else %}
+      <h1>XÁC NHẬN HOÀN TIỀN</h1>
+      <p class="document-notice">Chứng từ này xác nhận MỘT giao dịch hoàn tiền được ghi nhận thực tế; không xác nhận toàn bộ phiếu trả hàng.</p>
+      <div class="details-grid">
+        <section class="info-group"><h2>Giao dịch</h2>
+          <p><span>Mã giao dịch hoàn</span><b>#{{ transaction.MaHoanTien }}</b></p>
+          <p><span>Mã đơn gốc</span><b>#{{ order.MaDonHang }}</b></p>
+          <p><span>Ngày xác nhận</span><b>{{ transaction.ThoiGian|vn_datetime }}</b></p>
+          <p><span>Phương thức</span><b>{{ 'Tiền mặt' if transaction.PhuongThuc=='cash' else 'Chuyển khoản' }}</b></p>
+          {% if transaction.MaThamChieu %}<p><span>Mã tham chiếu</span><b>{{ transaction.MaThamChieu }}</b></p>{% endif %}
+        </section>
+        <section class="info-group"><h2>Người liên quan</h2>
+          <p><span>Khách hàng</span><b>{{ order.KhachHang or order.TenNguoiNhan or 'Khách vãng lai' }}</b></p>
+          <p><span>Người xác nhận</span><b>{{ transaction.HoVaTenNguoiXacNhan or 'Chưa rõ' }}</b></p>
+        </section>
+      </div>
+      <div class="totals full-width"><p class="grand"><span>Số tiền của GIAO DỊCH NÀY</span><strong>{{ transaction.SoTien|vnd }}</strong></p></div>
+      <div class="reason">Đối soát toàn đơn: phải hoàn {{ summary.approved|vnd }} · đã hoàn qua giao dịch thực tế {{ summary.refunded|vnd }} · còn phải hoàn {{ summary.remaining|vnd }}.</div>
+    {% endif %}
+
+    <div class="signatures"><div><b>Người lập / xử lý</b><small>(Ký, ghi rõ họ tên nếu cần)</small></div><div><b>Khách hàng</b><small>(Ký, ghi rõ họ tên nếu cần)</small></div></div>
+    <footer class="thanks">SHOES STORE chân thành cảm ơn quý khách!</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{# Nhận biến info từ route đã kiểm quyền; không suy diễn mốc lịch sử #}
+<section class="w13-panel" aria-labelledby="w13-timeline-title">
+<h3 id="w13-timeline-title">Tiến trình đơn #{{ info.order_id }}</h3>
+<p><strong>Trạng thái hiện tại:</strong> {{ info.status }} · Giao nhận: {{ info.shipping_status }}</p>
+<ol class="w13-timeline">
+{% for event in info.events %}
+<li><span class="w13-dot" aria-hidden="true"></span><div><strong>{{ event.name }}</strong><small>{{ event.timestamp|vn_datetime if event.timestamp else 'Không có thời gian ghi nhận' }}</small></div></li>
+{% else %}<li>Chưa có lịch sử thời gian đáng tin cậy.</li>{% endfor %}
+</ol>
+{% if info.has_unknown_times %}<p class="w13-note">Các mốc chưa được lưu trong dữ liệu gốc không được tự tạo giờ. Xem trạng thái hiện tại ở trên.</p>{% endif %}
+</section>

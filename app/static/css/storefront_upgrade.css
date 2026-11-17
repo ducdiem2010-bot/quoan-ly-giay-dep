@@ -62,3 +62,13 @@
   .site-header .brand { max-width: 100%; }
   .site-header .account-actions { flex-wrap: wrap; white-space: normal; max-width: 100%; }
 }
+
+/* Ảnh tải cục bộ: không cắt mất kiểu dáng và không kéo méo. */
+.storefront-card .product-visual { background: #f7f7f5; }
+.storefront-card .product-visual img { padding: 8px; mix-blend-mode: multiply; }
+.detail-gallery .detail-visual { position: relative; }
+.detail-gallery .detail-visual img { object-fit: contain; }
+.detail-gallery .storefront-image-note { position: absolute; left: 12px; bottom: 12px; padding: 4px 9px; border-radius: 7px; background: #ffffffed; color: #445f46; font-size: 12px; }
+.detail-gallery .storefront-image-unavailable { padding: 36px; text-align: center; }
+.detail-gallery [hidden] { display: none !important; }
+.storefront-photo-caption { margin: 10px 0; color: #596b60; font-size: 12px; }

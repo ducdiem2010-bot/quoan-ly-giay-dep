@@ -1,0 +1,13 @@
+/* W10: nhãn HOT chỉ trong thẻ sản phẩm; không đổi Footer/Header. */
+.product-card .product-visual { position: relative; }
+.product-card .site-product-hot {
+  position: absolute; top: 10px; left: 10px; z-index: 1;
+  padding: 5px 10px; border-radius: 7px;
+  background: #b83825; color: #fff; font-weight: 800;
+  font-size: 11px; letter-spacing: .07em;
+  box-shadow: 0 3px 12px rgba(76, 25, 18, .22);
+  pointer-events: none;
+}
+@media (max-width: 430px) {
+  .product-card .site-product-hot { top: 7px; left: 7px; padding: 4px 7px; font-size: 10px; }
+}

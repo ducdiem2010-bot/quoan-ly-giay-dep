@@ -1,4 +1,5 @@
 """Kiểm thử tự động SQLite thử nghiệm W3; KHÔNG xác minh SQL Server."""
+from contextlib import closing
 import tempfile,unittest,sqlite3,re
 from pathlib import Path
 from app import create_app
@@ -58,7 +59,7 @@ class IntegrationW3(unittest.TestCase):
         r=self.c.post('/admin/products/new',data={'csrf_token':tok,'name':'Test W3 Giày thử','category_id':'1','price':'320000','brand':'Nhóm 6','description':'Dữ liệu test'},follow_redirects=True)
         self.assertEqual(r.status_code,200)
         self.assertIn('Test W3 Giày thử',r.get_data(as_text=True))
-        with sqlite3.connect(self.db_path) as con:
+        with closing(sqlite3.connect(self.db_path)) as con, con:
             pid=con.execute('SELECT MaSanPham FROM SanPham WHERE TenSanPham=?',('Test W3 Giày thử',)).fetchone()[0]
         tok=self.token(f'/admin/products/{pid}/edit')
         r=self.c.post(f'/admin/products/{pid}/edit',data={'csrf_token':tok,'name':'Giày đã sửa W3','category_id':'1','price':'350000','brand':'Nhóm 6','description':'Sửa thành công'},follow_redirects=True)
@@ -71,7 +72,7 @@ class IntegrationW3(unittest.TestCase):
         self.admin()
         tok=self.token('/admin/products/new')
         self.c.post('/admin/products/new',data={'csrf_token':tok,'name':'Sản phẩm giá âm','category_id':'1','price':'-7'})
-        with sqlite3.connect(self.db_path) as c:
+        with closing(sqlite3.connect(self.db_path)) as c, c:
             self.assertEqual(c.execute("SELECT COUNT(*) FROM SanPham WHERE TenSanPham='Sản phẩm giá âm'").fetchone()[0],0)
     def test_admin_add_variant_duplicate_rejected(self):
         self.admin()
@@ -80,7 +81,7 @@ class IntegrationW3(unittest.TestCase):
         tok=self.token('/admin/products/1/variants')
         r=self.c.post('/admin/products/1/variants',data={'csrf_token':tok,'size':'45','color':'Tím','stock':'5'},follow_redirects=True)
         self.assertIn('Không thêm được',r.get_data(as_text=True))
-        with sqlite3.connect(self.db_path) as c:
+        with closing(sqlite3.connect(self.db_path)) as c, c:
             self.assertEqual(c.execute("SELECT COUNT(*) FROM BienTheSanPham WHERE MaSanPham=1 AND KichThuoc='45' AND MauSac='Tím'").fetchone()[0],1)
     def test_csrf_block(self):
         self.admin()

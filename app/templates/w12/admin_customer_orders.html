@@ -1,0 +1,77 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Lịch sử đơn của khách hàng{% endblock %}
+{% block admin_content %}
+<section class="w12-panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+    <div>
+      <span class="eyebrow" style="color:#64748b; font-size:0.8rem; font-weight:700;">KHÁCH HÀNG #{{ user.MaNguoiDung }}</span>
+      <h1>Lịch sử đơn hàng: {{ user.HoVaTen }}</h1>
+      <p style="margin:2px 0 0; color:#64748b;">Email: {{ user.Email }} · SĐT: {{ user.SoDienThoai or 'Chưa cập nhật' }} · Trạng thái: {{ 'Đang hoạt động' if user.TrangThai else 'Đang bị khóa' }}</p>
+    </div>
+    <a href="{{ url_for('w12.customers') }}" style="color:#2563eb; text-decoration:none;">← Quay lại danh sách khách hàng</a>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Ngày đặt</th>
+          <th>Trạng thái đơn</th>
+          <th>Thanh toán</th>
+          <th>Giao hàng</th>
+          <th>Phương thức</th>
+          <th>Tổng tiền</th>
+          <th>Trả hàng / Hoàn tiền</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td><strong>#{{ o.MaDonHang }}</strong></td>
+            <td style="font-size:0.85rem; color:#64748b;">{{ o.NgayDat|vn_datetime }}</td>
+            <td>
+              {% if o.TrangThai == 'Chờ xác nhận' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#fef3c7; color:#b45309; font-weight:600;">Chờ xác nhận</span>
+              {% elif o.TrangThai == 'Đã xác nhận' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#e0e7ff; color:#3730a3; font-weight:600;">Đã xác nhận</span>
+              {% elif o.TrangThai == 'Hoàn thành' %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#dcfce7; color:#15803d; font-weight:600;">Hoàn thành</span>
+              {% else %}
+                <span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8rem; background:#fee2e2; color:#b91c1c; font-weight:600;">Đã hủy</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if o.TrangThaiThanhToan == 'Đã thanh toán' %}
+                <span style="color:#16a34a; font-weight:600; font-size:0.85rem;">✓ Đã thanh toán</span>
+              {% else %}
+                <span style="color:#64748b; font-size:0.85rem;">Chưa thanh toán</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if o.TrangThaiGiaoHang == 'Đã giao' %}
+                <span style="color:#1e40af; font-weight:600; font-size:0.85rem;">📦 Đã giao</span>
+              {% elif o.TrangThaiGiaoHang == 'Đang giao' %}
+                <span style="color:#854d0e; font-weight:600; font-size:0.85rem;">🚚 Đang giao</span>
+              {% else %}
+                <span style="color:#64748b; font-size:0.85rem;">Chưa giao</span>
+              {% endif %}
+            </td>
+            <td>{{ 'COD' if o.PhuongThucThanhToan == 'cod' else 'Chuyển khoản' if o.PhuongThucThanhToan == 'bank_transfer' else '—' }}</td>
+            <td><strong>{{ o.TongTien|vnd }}</strong></td>
+            <td>{% include 'w12/_order_return_status.html' %}</td>
+            <td>
+              <a href="{{ url_for('w12.admin_order_detail', order_id=o.MaDonHang) }}" style="color:#2563eb; text-decoration:none; font-weight:600;">Xem chi tiết →</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="9" style="text-align:center; padding:20px; color:#64748b;">Khách hàng chưa có đơn hàng nào.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,2 @@
+﻿MaSanPham,SoBienThe,SoDonHopLe,ExpectedDaBan,ActualDaBan,DonHuyKhongTinh,MoiTruong,KetQua
+13,2,1,5,5,9,SQLite schema+seed in-memory; fixture riêng,PASS - truy vấn SQL độc lập

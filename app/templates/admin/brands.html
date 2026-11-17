@@ -1,0 +1,79 @@
+{% extends 'admin_base.html' %}
+{% block admin_title %}Quản lý Thương hiệu sản phẩm{% endblock %}
+{% block admin_content %}
+<div class="admin-ux-page">
+  <div class="w3-header">
+    <div>
+      <span class="eyebrow">QUẢN LÝ DỮ LIỆU</span>
+      <h1>Thương hiệu sản phẩm</h1>
+      <p>Quản lý các nhãn hàng, thương hiệu giày dép; bảo toàn lịch sử dữ liệu khi xóa.</p>
+    </div>
+  </div>
+
+  {% include 'admin/_attribute_tabs.html' %}
+
+  <div style="background:#fff;padding:20px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:24px;">
+    <h3 style="margin-top:0;font-size:1.1rem;color:#1e293b;">＋ Thêm thương hiệu mới</h3>
+    <form method="post" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div style="flex:1;min-width:200px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Tên thương hiệu *</label>
+        <input name="name" required maxlength="100" placeholder="VD: Nike, Adidas, Puma..." style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div style="flex:2;min-width:250px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:4px;">Mô tả</label>
+        <input name="description" maxlength="255" placeholder="Mô tả thương hiệu (tùy chọn)" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
+      </div>
+      <div>
+        <button type="submit" class="action-primary" style="padding:9px 18px;">Thêm thương hiệu</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Mã</th>
+          <th>Tên thương hiệu</th>
+          <th>Mô tả</th>
+          <th style="width:110px;">Số SP</th>
+          <th style="width:200px;">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>TH{{ '%02d' % item.MaThuongHieu }}</td>
+          <td>
+            <input form="edit-th-{{ item.MaThuongHieu }}" name="name" value="{{ item.TenThuongHieu }}" required maxlength="100" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;width:100%;">
+          </td>
+          <td>
+            <input form="edit-th-{{ item.MaThuongHieu }}" name="description" value="{{ item.MoTa or '' }}" maxlength="255" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:4px;width:100%;">
+          </td>
+          <td>
+            <span style="display:inline-block;padding:2px 8px;border-radius:12px;background:#fef3c7;color:#92400e;font-weight:600;font-size:0.85rem;">
+              {{ item.SoSanPham }} SP
+            </span>
+          </td>
+          <td>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <form id="edit-th-{{ item.MaThuongHieu }}" method="post" action="{{ url_for('admin_catalog.brand_edit', brand_id=item.MaThuongHieu) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #94a3b8;background:#f8fafc;cursor:pointer;">Lưu</button>
+              </form>
+              <form method="post" action="{{ url_for('admin_catalog.brand_delete', brand_id=item.MaThuongHieu) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thương hiệu này?');" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="w3-small" style="padding:4px 10px;border-radius:4px;border:1px solid #f87171;background:#fef2f2;color:#b91c1c;cursor:pointer;">Xóa</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Chưa có thương hiệu nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

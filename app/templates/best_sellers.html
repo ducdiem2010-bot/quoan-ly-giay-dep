@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Sản phẩm bán chạy - Shoes Store{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/storefront_upgrade.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/best_sellers.css') }}">
+{% endblock %}
+{% block content %}
+<section class="best-sellers-page" aria-labelledby="best-sellers-title">
+  <header class="featured-page-header">
+    <span class="eyebrow">SỐ LƯỢNG BÁN THỰC TẾ</span>
+    <h1 id="best-sellers-title">Sản phẩm bán chạy</h1>
+    <p>Xếp hạng theo số lượng sản phẩm thuộc các đơn hàng hợp lệ đã hoàn thành.</p>
+  </header>
+  {% if products %}
+    <div class="product-grid storefront-featured-grid">
+      {% for product in products %}
+        <div class="best-sellers-item">
+          {% include '_product_card.html' %}
+          <p class="best-sellers-count">Đã bán: <strong>{{ product.TongDaBan|int }}</strong></p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="storefront-featured-empty">Chưa có đơn hoàn thành hợp lệ để thống kê bán chạy.</p>
+  {% endif %}
+</section>
+{% endblock %}

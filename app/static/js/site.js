@@ -6,3 +6,14 @@ document.querySelectorAll('form').forEach(form => {
     if (btn && !btn.disabled) btn.setAttribute('aria-busy', 'true');
   });
 });
+
+// Menu tài khoản: đóng khi bấm ra ngoài hoặc nhấn Esc; tự focus ô email khi mở.
+(function () {
+  const menu = document.getElementById('account-menu');
+  if (!menu) return;
+  menu.addEventListener('toggle', () => {
+    if (menu.open) { const f = menu.querySelector('#hd-email'); if (f) f.focus(); }
+  });
+  document.addEventListener('click', e => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); } });
+})();

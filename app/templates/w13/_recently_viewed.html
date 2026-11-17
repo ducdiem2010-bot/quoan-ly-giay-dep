@@ -1,0 +1,13 @@
+{# Chèn tại product_detail hoặc trang chủ sau khi Điểm tích hợp. #}
+<section class="w13-recent" data-w13-recent
+ data-api="{{ url_for('w13_tuan.recent_products') }}" aria-labelledby="w13-recent-title">
+ <div class="w13-recent-head">
+   <h2 id="w13-recent-title">Sản phẩm vừa xem</h2>
+   <div class="w13-recent-head-actions">
+     {% if request.endpoint != 'w13_tuan.recently_viewed_page' %}<a class="w13-btn w13-btn-secondary" href="{{ url_for('w13_tuan.recently_viewed_page') }}">Xem lịch sử</a>{% endif %}
+     <button type="button" data-w13-clear class="w13-btn w13-btn-secondary">Xóa lịch sử</button>
+   </div>
+ </div>
+ <p data-w13-message role="status" aria-live="polite">Đang tải lịch sử...</p>
+ <div data-w13-list class="w13-recent-grid" aria-live="polite"></div>
+</section>

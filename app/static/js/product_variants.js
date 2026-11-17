@@ -10,7 +10,10 @@
   const enhanced = document.querySelector("[data-variant-enhanced]");
   const fallback = document.querySelector("[data-variant-fallback]");
   const form = original ? original.closest("form") : null;
-  const submit = form ? form.querySelector('button[type="submit"]') : null;
+  const submitButtons = form ? Array.from(form.querySelectorAll('button[type="submit"]')) : [];
+  const submit = submitButtons.length ? {
+    set disabled(value) { submitButtons.forEach(button => { button.disabled = value; }); }
+  } : null;
   if (!original || !color || !size || !stockLabel || !quantity || !enhanced || !fallback || !form || !submit) return;
 
   const sourceOptions = Array.from(original.options).filter(option => option.value);
