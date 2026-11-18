@@ -1,0 +1,74 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="w6-container">
+  <div class="w6-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <h2>Thống kê Doanh thu & Tồn kho</h2>
+    <form method="GET" action="{{ url_for('w6.admin_reports') }}" style="display:flex; gap:8px; align-items:center;">
+      <input type="date" name="start_date" value="{{ report.start_date }}">
+      <span>đến</span>
+      <input type="date" name="end_date" value="{{ report.end_date }}">
+      <button type="submit" class="w6-btn w6-btn-primary">Lọc dữ liệu</button>
+      <a href="{{ url_for('w6.export_reports_csv', start_date=report.start_date, end_date=report.end_date) }}" class="w6-btn w6-btn-success">
+        Xuất CSV
+      </a>
+    </form>
+  </div>
+
+  <div class="w6-kpi-grid">
+    <div class="w6-kpi-card">
+      <span>Doanh thu gộp</span>
+      <strong>{{ "{:,.0f}".format(report.gross_revenue) }}đ</strong>
+    </div>
+    <div class="w6-kpi-card">
+      <span>Giảm giá Voucher</span>
+      <strong>-{{ "{:,.0f}".format(report.total_discount) }}đ</strong>
+    </div>
+    <div class="w6-kpi-card">
+      <span>Hoàn trả khách</span>
+      <strong>-{{ "{:,.0f}".format(report.total_refund) }}đ</strong>
+    </div>
+    <div class="w6-kpi-card w6-kpi-highlight">
+      <span>Doanh thu thuần thực nhận</span>
+      <strong>{{ "{:,.0f}".format(report.net_revenue) }}đ</strong>
+    </div>
+  </div>
+
+  <div class="w6-two-col">
+    <div class="w6-card">
+      <h3>Top 5 sản phẩm bán chạy</h3>
+      <table class="w6-table">
+        <thead><tr><th>Sản phẩm</th><th>Đã bán</th><th>Doanh thu</th></tr></thead>
+        <tbody>
+          {% for p in report.top_products %}
+          <tr>
+            <td>{{ p.product_name }}</td>
+            <td>{{ p.sold_qty }}</td>
+            <td>{{ "{:,.0f}".format(p.revenue or 0) }}đ</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3">Không có dữ liệu trong khoảng ngày này.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="w6-card">
+      <h3>Cảnh báo sản phẩm sắp hết hàng (≤ 5)</h3>
+      <table class="w6-table">
+        <thead><tr><th>Mã SP</th><th>Tên sản phẩm</th><th>Tồn kho</th></tr></thead>
+        <tbody>
+          {% for item in report.low_stock %}
+          <tr>
+            <td>#{{ item.id }}</td>
+            <td>{{ item.product_name }}</td>
+            <td><span class="w6-badge w6-badge-danger">{{ item.stock }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3">Tồn kho các sản phẩm đều ổn định.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

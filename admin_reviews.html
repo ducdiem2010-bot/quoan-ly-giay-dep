@@ -1,0 +1,49 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="w6-container">
+  <div class="w6-header">
+    <h2>Quản lý Đánh giá & Bình luận sản phẩm</h2>
+  </div>
+  <div class="w6-card">
+    <table class="w6-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Sản phẩm</th>
+          <th>Khách hàng</th>
+          <th>Số sao</th>
+          <th>Bình luận</th>
+          <th>Thời gian</th>
+          <th>Hiển thị</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rv in reviews %}
+        <tr>
+          <td>#{{ rv.id }}</td>
+          <td>{{ rv.product_name }}</td>
+          <td>{{ rv.user_name }}</td>
+          <td><span class="w6-stars">{{ '★' * rv.rating }}{{ '☆' * (5 - rv.rating) }}</span></td>
+          <td>{{ rv.comment }}</td>
+          <td><small>{{ rv.created_at }}</small></td>
+          <td>{{ 'Hiển thị' if rv.is_visible else 'Đang ẩn' }}</td>
+          <td style="display:flex; gap:6px;">
+            <form method="POST" action="{{ url_for('w6.admin_toggle_review', review_id=rv.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" class="w6-btn w6-btn-sm">{{ 'Ẩn' if rv.is_visible else 'Hiện' }}</button>
+            </form>
+            <form method="POST" action="{{ url_for('w6.admin_delete_review', review_id=rv.id) }}" onsubmit="return confirm('Xóa vĩnh viễn bình luận này?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" class="w6-btn w6-btn-danger w6-btn-sm">Xóa</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;">Chưa có đánh giá nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
